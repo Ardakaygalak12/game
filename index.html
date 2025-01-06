@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enhanced Neon Cyber Dino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            max-height: 300px;
+            background: linear-gradient(to bottom, #000000, #1a1a1a);
+            overflow: hidden;
+            border-top: 2px solid #0ff;
+            border-bottom: 2px solid #0ff;
+            box-shadow: 0 0 30px #0ff;
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 255, 0.02) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            animation: scanline 10s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(30px); }
+        }
+
+        #dino {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            bottom: 0;
+            left: 50px;
+            background: #0ff;
+            box-shadow: 0 0 15px #0ff;
+            clip-path: polygon(
+                20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%
+            );
+            z-index: 2;
+        }
+
+        .dino-trail {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #0ff;
+            opacity: 0;
+            clip-path: polygon(
+                20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%
+            );
+            transition: opacity 0.2s;
+        }
+
+        .obstacle {
+            position: absolute;
+            width: 15px;
+            background: #f0f;
+            bottom: 0;
+            box-shadow: 0 0 20px #f0f;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .powerup {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #0f0;
+            border-radius: 50%;
+            box-shadow: 0 0 25px #0f0;
+            z-index: 1;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 25px #0f0; }
+            50% { transform: scale(1.2); box-shadow: 0 0 35px #0f0; }
+            100% { transform: scale(1); box-shadow: 0 0 25px #0f0; }
+        }
+
+        .grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(transparent 98%, #0ff 98%),
+                linear-gradient(90deg, transparent 98%, #0ff 98%);
+            background-size: 40px 40px;
+            opacity: 0.1;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            from { transform: translateX(0); }
+            to { transform: translateX(-40px); }
+        }
+
+        #hud {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            font-size: 20px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+            border-bottom: 2px solid #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        #powerBar {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            width: 100px;
+            height: 10px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #0ff;
+            box-shadow: 0 0 10px #0ff;
+            border-radius: 5px;
+        }
+
+        #powerFill {
+            width: 100%;
+            height: 100%;
+            background: #0ff;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        #tutorial {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 255, 0.1);
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            border: 1px solid #0ff;
+        }
+
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 50px;
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 30px #0ff;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+
+        #gameOver h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        #gameOver p {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: fadeOut 0.8s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                transform: translate(var(--tx), var(--ty));
+                opacity: 0;
+                scale: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            #gameContainer {
+                height: 40vh;
+            }
+            #dino {
+                width: 20px;
+                height: 20px;
+            }
+            .dino-trail {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="hud">
+        <div id="score">Score: 0</div>
+        <div id="highScore">Best: 0</div>
+    </div>
+
+    <div id="powerBar">
+        <div id="powerFill"></div>
+    </div>
+
+    <div id="gameContainer">
+        <div class="grid"></div>
+        <div class="scanline"></div>
+        <div id="dino"></div>
+        <div id="tutorial">Tap to Jump & Double Jump!</div>
+        <div id="gameOver">
+            <h2>GAME OVER</h2>
+            <p>Score: <span id="finalScore">0</span></p>
+            <p>Tap to restart</p>
+        </div>
+    </div>
+
+    <script>
+        const gameContainer = document.getElementById('gameContainer');
+        const dino = document.getElementById('dino');
+        const scoreDisplay = document.getElementById('score');
+        const highScoreDisplay = document.getElementById('highScore');
+        const gameOverScreen = document.getElementById('gameOver');
+        const tutorial = document.getElementById('tutorial');
+        const finalScoreDisplay = document.getElementById('finalScore');
+        const powerFill = document.getElementById('powerFill');
+
+        let isJumping = false;
+        let isDoubleJumping = false;
+        let gravity = 0.5;  // Azaltıldı
+        let jumpForce = -10;  // Azaltıldı
+        let velocity = 0;
+        let score = 0;
+        let highScore = localStorage.getItem('highScore') || 0;
+        let gameSpeed = 3;  // Azaltıldı
+        let isGameOver = false;
+        let gameStarted = false;
+        let powerLevel = 100;
+
+        let lastTrailTime = 0;
+
+        function createTrail() {
+            if (Date.now() - lastTrailTime > 50) {  // Her 50ms'de bir iz oluştur
+                const trail = document.createElement('div');
+                trail.className = 'dino-trail';
+                trail.style.left = dino.style.left;
+                trail.style.bottom = dino.style.bottom;
+                gameContainer.appendChild(trail);
+
+                requestAnimationFrame(() => {
+                    trail.style.opacity = '0.3';
+                    setTimeout(() => trail.remove(), 200);
+                });
+
+                lastTrailTime = Date.now();
+            }
+        }
+
+        function createParticles(x, y, color) {
+            const count = 10;
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.background = color;
+                particle.style.boxShadow = `0 0 10px ${color}`;
+
+                const angle = (Math.random() * Math.PI * 2);
+                const velocity = Math.random() * 100 + 50;
+                particle.style.setProperty('--tx', `${Math.cos(angle) * velocity}px`);
+                particle.style.setProperty('--ty', `${Math.sin(angle) * velocity}px`);
+
+                gameContainer.appendChild(particle);
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
+        function createPowerup() {
+            if (Math.random() < 0.02 && !isGameOver) {  // Arttırıldı
+                const powerup = document.createElement('div');
+                powerup.className = 'powerup';
+                powerup.style.left = gameContainer.offsetWidth + 'px';
+                powerup.style.bottom = '40px';  // Sabit yükseklik
+                gameContainer.appendChild(powerup);
+
+                function movePowerup() {
+                    if (isGameOver) {
+                        powerup.remove();
+                        return;
+                    }
+
+                    const powerupLeft = parseFloat(powerup.style.left);
+                    
+                    if (powerupLeft <= -20) {
+                        powerup.remove();
+                        return;
+                    }
+
+                    if (checkCollision(dino, powerup)) {
+                        score += 50;
+                        updateScore();
+                        createParticles(powerup.offsetLeft, powerup.offsetTop, '#0f0');
+                        powerup.remove();
+                        
+                        // Power boost
+                        powerLevel = 100;
+                        powerFill.style.width = '100%';
+                        dino.style.boxShadow = '0 0 30px #0ff';
+                        setTimeout(() => {
+                            dino.style.boxShadow = '0 0 15px #0ff';
+                        }, 1000);
+                        return;
+                    }
+
+                    powerup.style.left = (powerupLeft - gameSpeed) + 'px';
+                    requestAnimationFrame(movePowerup);
+                }
+
+                movePowerup();
+            }
+        }
+
+        function createObstacle() {
+            if (Math.random() < 0.015 && !isGameOver) {  // Azaltıldı
+                const obstacle = document.createElement('div');
+                obstacle.className = 'obstacle';
+                obstacle.style.left = gameContainer.offsetWidth + 'px';
+                const height = Math.random() * 15 + 25;  // Azaltıldı
+                obstacle.style.height = height + 'px';
+                gameContainer.appendChild(obstacle);
+
+                function moveObstacle() {
+                    if (isGameOver) {
+                        obstacle.remove();
+                        return;
+                    }
+
+                    const obstacleLeft = parseFloat(obstacle.style.left);
+
+                    if (obstacleLeft <= -15) {
+                        obstacle.remove();
+                        score++;
+                        updateScore();
+                        return;
+                    }
+
+                    if (checkCollision(dino, obstacle)) {
+                        gameOver();
+                        createParticles(dino.offsetLeft, dino.offsetTop, '#f00');
+                        return;
+                    }
+
+                    obstacle.style.left = (obstacleLeft - gameSpeed) + 'px';
+                    requestAnimationFrame(moveObstacle);
+                }
+
+                moveObstacle();
+            }
+        }
+
+        function jump() {
+            if (!gameStarted) {
+                gameStarted = true;
+                tutorial.style.display = 'none';
+            }
+
+            if (!isJumping) {
+                isJumping = true;
+                velocity = jumpForce;
+                createParticles(dino.offsetLeft, dino.offsetTop + dino.offsetHeight, '#0ff');
+            } else if (!isDoubleJumping && powerLevel > 0) {
+                isDoubleJumping = true;
+                velocity = jumpForce * 0.8;
+                powerLevel = Math.max(0, powerLevel - 30);
+                powerFill.style.width = powerLevel + '%';
+                createParticles(dino.offsetLeft, dino.offsetTop, '#0ff');
+            }
+        }
+
+        function updateScore() {
+            scoreDisplay.textContent = `Score: ${score}`;
+            // Best skoru sadece yeni skor daha yüksekse güncelle
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('highScore', score.toString());
+                highScoreDisplay.textContent = `Best: ${highScore}`;
+            }
+        }
+
+        function checkCollision(el1, el2) {
+            const rect1 = el1.getBoundingClientRect();
+            const rect2 = el2.getBoundingClientRect();
+            const buffer = 5; // Çarpışma toleransını azalt
+            return !(rect1.right - buffer < rect2.left || 
+                    rect1.left + buffer > rect2.right || 
+                    rect1.bottom - buffer < rect2.top || 
+                    rect1.top + buffer > rect2.bottom);
+        }
+
+        function gameLoop() {
+            if (isGameOver) return;
+
+            if (isJumping) {
+                velocity += gravity;
+                const newY = parseFloat(dino.style.bottom || '0') - velocity;
+
+                if (newY <= 0) {
+                    dino.style.bottom = '0px';
+                    isJumping = false;
+                    isDoubleJumping = false;
+                    velocity = 0;
+                    createParticles(dino.offsetLeft, dino.offsetBottom, '#0ff');
+                } else {
+                    dino.style.bottom = newY + 'px';
+                    createTrail();
+                }
+            }
+
+            createObstacle();
+            createPowerup();
+
+            if (score > 0 && score % 100 === 0) {
+                gameSpeed = Math.min(gameSpeed + 0.1, 6); // Maksimum hız azaltıldı
+            }
+
+            powerLevel = Math.min(100, powerLevel + 0.1);
+            powerFill.style.width = powerLevel + '%';
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            isGameOver = true;
+            gameOverScreen.style.display = 'block';
+            finalScoreDisplay.textContent = score;
+            createParticles(dino.offsetLeft, dino.offsetTop, '#f00');
+            dino.style.boxShadow = '0 0 30px #f00';
+        }
+
+        // Oyunu yeniden başlat
+        function restartGame() {
+            document.querySelectorAll('.obstacle, .powerup, .particle, .dino-trail').forEach(el => el.remove());
+            score = 0;
+            gameSpeed = 3;
+            isGameOver = false;
+            isJumping = false;
+            isDoubleJumping = false;
+            velocity = 0;
+            gameStarted = false;
+            powerLevel = 100;
+            dino.style.bottom = '0px';
+            dino.style.boxShadow = '0 0 15px #0ff';
+            gameOverScreen.style.display = 'none';
+            tutorial.style.display = 'block';
+            powerFill.style.width = '100%';
+            
+            // High score'u localStorage'dan al ve göster
+            highScore = parseInt(localStorage.getItem('highScore')) || 0;
+            highScoreDisplay.textContent = `Best: ${highScore}`;
+            
+            setTimeout(() => tutorial.style.display = 'none', 3000);
+            updateScore();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (isGameOver) restartGame();
+            else jump();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isGameOver) restartGame();
+                else jump();
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>
