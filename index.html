@@ -3,205 +3,382 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tıkla ve Kazan</title>
+    <title>Earn DOGE</title>
+    <script src='//niphaumeenses.net/vignette.min.js' data-zone='8760116' data-sdk='show_8760116'></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #1c1c1c;
-            color: white;
-            user-select: none;
+        :root {
+            --primary-color: #f2a900;
+            --secondary-color: #ffcb52;
+            --background-dark: #1a1a1a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --error-color: #ff4444;
+            --success-color: #00c851;
         }
-        .game-container {
-            text-align: center;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--background-dark), #2d2d2d);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
-        .click-area {
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button.active {
+            background: var(--primary-color);
+            color: var(--text-primary);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .coin-display {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .coin-circle {
             width: 200px;
             height: 200px;
-            background: #4CAF50;
+            margin: 0 auto;
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
             border-radius: 50%;
-            margin: 20px;
-            cursor: pointer;
-            transition: transform 0.1s;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            position: relative;
+            animation: pulse 2s infinite;
         }
-        .click-area:active {
-            transform: scale(0.95);
-        }
-        .upgrades {
+
+        .coin-inner {
+            width: 180px;
+            height: 180px;
+            background: var(--background-dark);
+            border-radius: 50%;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
+            align-items: center;
+            justify-content: center;
         }
-        .upgrade-btn {
-            padding: 10px;
-            background: #2196F3;
+
+        .coin-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .coin-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .earn-button {
+            width: 100%;
+            padding: 1.5rem;
             border: none;
-            border-radius: 5px;
-            color: white;
+            border-radius: 16px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-primary);
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
         }
-        .upgrade-btn:disabled {
-            background: #666;
+
+        .earn-button:disabled {
+            opacity: 0.7;
             cursor: not-allowed;
         }
-        .stats {
-            margin-top: 20px;
-            font-size: 18px;
+
+        .earn-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .button-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .button-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .button-text {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .reward-amount {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .withdraw-section {
+            text-align: center;
+        }
+
+        .withdraw-info {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+        }
+
+        .withdraw-minimum {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .withdraw-address {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--text-secondary);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .withdraw-button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .withdraw-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .message.error {
+            background: var(--error-color);
+            display: block;
+        }
+
+        .message.success {
+            background: var(--success-color);
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes claim {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>Tıkla ve Kazan</h1>
-        <div class="stats">
-            <div>Para: <span id="money">0</span> TL</div>
-            <div>Tıklama Başına: <span id="clickValue">1</span> TL</div>
-            <div>Otomatik Kazanç: <span id="autoClickValue">0</span> TL/s</div>
+    <div class="container">
+        <!-- Navigasyon -->
+        <div class="navigation">
+            <button class="nav-button active" data-section="earn">💰 Kazan</button>
+            <button class="nav-button" data-section="withdraw">💳 Para Çek</button>
         </div>
-        <div class="click-area" id="clickArea">TIKLA!</div>
-        <div class="upgrades">
-            <button class="upgrade-btn" id="upgradeClick">
-                Tıklama Güçlendir (100 TL)
+
+        <!-- Kazanma Bölümü -->
+        <div class="section active" id="earn-section">
+            <div class="coin-display">
+                <div class="coin-circle">
+                    <div class="coin-inner">
+                        <div class="coin-value" id="balance">0.00</div>
+                        <div class="coin-label">DOGE</div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="earn-button" class="earn-button">
+                <div class="button-content">
+                    <div class="button-icon">💰</div>
+                    <div class="button-text">REKLAM İZLE</div>
+                    <div class="reward-amount">+0.05 DOGE</div>
+                </div>
             </button>
-            <button class="upgrade-btn" id="upgradeAuto">
-                Otomatik Kazanç Al (500 TL)
+        </div>
+
+        <!-- Para Çekme Bölümü -->
+        <div class="section" id="withdraw-section">
+            <div class="withdraw-info">
+                <div class="coin-value" id="withdraw-balance">0.00 DOGE</div>
+                <div class="withdraw-minimum">Minimum çekim: 50 DOGE</div>
+            </div>
+
+            <input type="text" class="withdraw-address" id="doge-address" 
+                   placeholder="DOGE Cüzdan Adresiniz" maxlength="100">
+
+            <button id="withdraw-button" class="withdraw-button" disabled>
+                Para Çek
             </button>
+
+            <div id="withdraw-message" class="message"></div>
         </div>
     </div>
 
     <script>
-        // URL'den Telegram ID'sini al
-        const urlParams = new URLSearchParams(window.location.search);
-        const telegramId = urlParams.get('id');
-        
-        let money = 0;
-        let clickValue = 1;
-        let autoClickValue = 0;
-        let clickUpgradeCost = 100;
-        let autoUpgradeCost = 500;
-        
-        // Sunucu ile iletişim fonksiyonları
-        async function loadUserData() {
-            try {
-                const API_URL = 'http://localhost:3000/api';
-                const response = await fetch(`${API_URL}/user/${telegramId}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    money = data.money;
-                    clickValue = data.clickValue;
-                    autoClickValue = data.autoClickValue;
-                    clickUpgradeCost = data.clickUpgradeCost;
-                    autoUpgradeCost = data.autoUpgradeCost;
-                    updateDisplays();
-                }
-            } catch (err) {
-                console.error('Veri yüklenirken hata:', err);
-            }
-        }
-        
-        async function saveUserData() {
-            try {
-                await fetch(`${API_URL}/user/save`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        telegramId,
-                        money,
-                        clickValue,
-                        autoClickValue,
-                        clickUpgradeCost,
-                        autoUpgradeCost
-                    })
-                });
-            } catch (err) {
-                console.error('Veri kaydedilirken hata:', err);
-            }
-        }
-        
-        // Sayfa yüklendiğinde verileri yükle
-        if (telegramId) {
-            loadUserData();
+        // Durum değişkenleri
+        let balance = 0;
+        let dogeAddress = '';
 
-        const moneyDisplay = document.getElementById('money');
-        const clickValueDisplay = document.getElementById('clickValue');
-        const autoClickValueDisplay = document.getElementById('autoClickValue');
-        const clickArea = document.getElementById('clickArea');
-        const upgradeClickBtn = document.getElementById('upgradeClick');
-        const upgradeAutoBtn = document.getElementById('upgradeAuto');
-
-        // Tıklama fonksiyonu
-        clickArea.addEventListener('click', () => {
-            money += clickValue;
-            updateDisplays();
-        });
-
-        // Tıklama yükseltme
-        upgradeClickBtn.addEventListener('click', () => {
-            if (money >= clickUpgradeCost) {
-                money -= clickUpgradeCost;
-                clickValue *= 2;
-                clickUpgradeCost *= 2;
-                upgradeClickBtn.textContent = `Tıklama Güçlendir (${clickUpgradeCost} TL)`;
-                updateDisplays();
-            }
-        });
-
-        // Otomatik kazanç yükseltme
-        upgradeAutoBtn.addEventListener('click', () => {
-            if (money >= autoUpgradeCost) {
-                money -= autoUpgradeCost;
-                autoClickValue += 1;
-                autoUpgradeCost *= 2;
-                upgradeAutoBtn.textContent = `Otomatik Kazanç Al (${autoUpgradeCost} TL)`;
-                updateDisplays();
-            }
-        });
-
-        // Otomatik kazanç sistemi
-        setInterval(() => {
-            money += autoClickValue;
-            updateDisplays();
-        }, 1000);
-
-        // Ekranı güncelle
-        function updateDisplays() {
-            moneyDisplay.textContent = Math.floor(money);
-            clickValueDisplay.textContent = clickValue;
-            autoClickValueDisplay.textContent = autoClickValue;
+        // Sayfa yüklendiğinde kaydedilmiş verileri yükle
+        window.addEventListener('load', () => {
+            const savedBalance = localStorage.getItem('dogeBalance');
+            const savedAddress = localStorage.getItem('dogeAddress');
             
-            // Yükseltme butonlarını kontrol et
-            upgradeClickBtn.disabled = money < clickUpgradeCost;
-            upgradeAutoBtn.disabled = money < autoUpgradeCost;
-
-            // Oyun verilerini kaydet
-            if (telegramId) {
-                saveUserData();
+            if (savedBalance) balance = parseFloat(savedBalance);
+            if (savedAddress) {
+                dogeAddress = savedAddress;
+                document.getElementById('doge-address').value = savedAddress;
             }
+            
+            updateUI();
+        });
+
+        // Navigasyon
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Aktif buton ve bölümü güncelle
+                document.querySelector('.nav-button.active').classList.remove('active');
+                button.classList.add('active');
+
+                // Bölümleri güncelle
+                document.querySelector('.section.active').classList.remove('active');
+                document.getElementById(button.dataset.section + '-section').classList.add('active');
+
+                updateUI();
+            });
+        });
+
+        // Reklam ve ödül sistemi
+        document.getElementById('earn-button').addEventListener('click', async () => {
+            try {
+                show_8760116().then(() => {
+                    giveReward();
+                    alert('Tebrikler! 0.05 DOGE kazandınız!');
+                }).catch(error => {
+                    console.error('Reklam gösteriminde hata:', error);
+                    alert('Reklam yüklenirken bir hata oluştu. Lütfen tekrar deneyin.');
+                });
+            } catch (error) {
+                console.error('Reklam sisteminde hata:', error);
+                alert('Reklam sistemi şu anda çalışmıyor. Lütfen daha sonra tekrar deneyin.');
+            }
+        });
+
+        // Cüzdan adresi kaydetme
+        document.getElementById('doge-address').addEventListener('input', (e) => {
+            dogeAddress = e.target.value.trim();
+            localStorage.setItem('dogeAddress', dogeAddress);
+            updateWithdrawButton();
+        });
+
+        // Para çekme işlemi
+        document.getElementById('withdraw-button').addEventListener('click', () => {
+            const withdrawMessage = document.getElementById('withdraw-message');
+            
+            if (balance < 50) {
+                withdrawMessage.textContent = 'Minimum 50 DOGE gerekli!';
+                withdrawMessage.className = 'message error';
+                return;
+            }
+
+            if (!dogeAddress) {
+                withdrawMessage.textContent = 'Lütfen geçerli bir DOGE adresi girin!';
+                withdrawMessage.className = 'message error';
+                return;
+            }
+
+            // Para çekme isteği simülasyonu
+            withdrawMessage.textContent = 'Para çekme talebi alındı! 24 saat içinde işleme alınacak.';
+            withdrawMessage.className = 'message success';
+            
+            // Bakiyeyi sıfırla
+            balance = 0;
+            localStorage.setItem('dogeBalance', '0');
+            updateUI();
+        });
+
+        function giveReward() {
+            const reward = 0.05;
+            balance += reward;
+            localStorage.setItem('dogeBalance', balance.toString());
+            updateUI();
         }
 
-        // Kayıtlı oyun verilerini yükle
-        const savedData = localStorage.getItem('clickerGameData');
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            money = data.money;
-            clickValue = data.clickValue;
-            autoClickValue = data.autoClickValue;
-            clickUpgradeCost = data.clickUpgradeCost;
-            autoUpgradeCost = data.autoUpgradeCost;
-            upgradeClickBtn.textContent = `Tıklama Güçlendir (${clickUpgradeCost} TL)`;
-            upgradeAutoBtn.textContent = `Otomatik Kazanç Al (${autoUpgradeCost} TL)`;
-            updateDisplays();
+        function updateUI() {
+            // Bakiye göstergeleri
+            document.getElementById('balance').textContent = balance.toFixed(2);
+            document.getElementById('withdraw-balance').textContent = balance.toFixed(2) + ' DOGE';
+            
+            // Para çekme butonu durumu
+            updateWithdrawButton();
+        }
+
+        function updateWithdrawButton() {
+            const withdrawButton = document.getElementById('withdraw-button');
+            withdrawButton.disabled = balance < 50 || !dogeAddress;
         }
     </script>
 </body>
