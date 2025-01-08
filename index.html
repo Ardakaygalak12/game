@@ -92,7 +92,8 @@
         // Sunucu ile iletişim fonksiyonları
         async function loadUserData() {
             try {
-                const response = await fetch(`/api/user/${telegramId}`);
+                const API_URL = 'http://localhost:3000/api';
+                const response = await fetch(`${API_URL}/user/${telegramId}`);
                 if (response.ok) {
                     const data = await response.json();
                     money = data.money;
@@ -109,7 +110,7 @@
         
         async function saveUserData() {
             try {
-                await fetch('/api/user/save', {
+                await fetch(`${API_URL}/user/save`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
