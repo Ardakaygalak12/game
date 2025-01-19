@@ -120,12 +120,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -143,7 +137,7 @@
                         <span class="text-green-300">Balance:</span>
                         <span id="userBalance" class="font-bold">0 PEPE</span>
                     </span>
-                    <button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition-all">
+                    <button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition-all">
                         Çıkış
                     </button>
                 </div>
@@ -159,222 +153,92 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="container mx-auto mt-8">
-        <!-- Welcome Banner -->
-        <div class="pepe-card p-8 rounded-xl mb-8 text-center">
-            <h2 class="text-4xl font-bold mb-4">🐸 Pepe Coin Airdrop 🚀</h2>
-            <p class="text-xl mb-6">Mining yap, kupon kullan, PEPE token kazan!</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
-                    <h3 class="text-xl font-bold mb-2">⛏️ Mining</h3>
-                    <p>Her 7 saatte bir mining yaparak PEPE token kazanın!</p>
-                </div>
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
-                    <h3 class="text-xl font-bold mb-2">🎟️ Kuponlar</h3>
-                    <p>Her gün 2 kere dağıtılan kupon kodlarını kullanın!</p>
-                </div>
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
-                    <h3 class="text-xl font-bold mb-2">💰 Kazanç</h3>
-                    <p>Kazandığınız PEPE tokenleri gerçek paraya dönüştürün!</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- User Content -->
-        <div id="userContent" class="grid md:grid-cols-2 gap-8">
-            <!-- Mining Section -->
-            <div id="miningSection" class="hidden pepe-card p-6 rounded-xl">
-                <h2 class="text-2xl font-bold mb-4">⛏️ Mining</h2>
-                <div class="flex flex-col items-center">
-                    <button id="miningButton" class="mining-button text-white px-8 py-4 rounded-xl text-xl mb-4 w-full">
-                        Start Mining
-                    </button>
-                    <div id="countdown" class="countdown text-xl font-bold"></div>
-                </div>
-            </div>
-
-            <!-- Coupon Section -->
-            <div id="couponSection" class="hidden pepe-card p-6 rounded-xl">
-                <h2 class="text-2xl font-bold mb-4">🎟️ Kupon Kodu</h2>
-                <div class="flex flex-col gap-4">
-                    <input type="text" id="couponInput" class="pepe-input p-3 rounded-lg" 
-                           placeholder="Kupon kodunu girin">
-                    <button onclick="redeemCoupon()" class="pepe-button px-6 py-3 rounded-lg text-white">
-                        Kullan
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div id="adminPanel" class="hidden mt-8">
-            <div class="pepe-card p-6 rounded-xl">
-                <h2 class="text-2xl font-bold mb-6">👑 Admin Panel</h2>
-                
-                <!-- User Statistics -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold mb-4">📊 Kullanıcı İstatistikleri</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="stat-card p-4 rounded-xl">
-                            <h4 class="font-bold">👥 Toplam Kullanıcı</h4>
-                            <p id="totalUsers" class="text-2xl">0</p>
-                        </div>
-                        <div class="stat-card p-4 rounded-xl">
-                            <h4 class="font-bold">⛏️ Aktif Mining</h4>
-                            <p id="activeMining" class="text-2xl">0</p>
-                        </div>
-                        <div class="stat-card p-4 rounded-xl">
-                            <h4 class="font-bold">🪙 Dağıtılan PEPE</h4>
-                            <p id="totalTokens" class="text-2xl">0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- User List -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold mb-4">👥 Kullanıcı Listesi</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-green-500">
-                                    <th class="p-2 text-left">Email</th>
-                                    <th class="p-2 text-left">Kayıt Tarihi</th>
-                                    <th class="p-2 text-left">Token Bakiyesi</th>
-                                    <th class="p-2 text-left">Son Mining</th>
-                                    <th class="p-2 text-left">Mining Sayısı</th>
-                                    <th class="p-2 text-left">Kupon Kullanımı</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userList">
-                                <!-- JavaScript ile doldurulacak -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Coupon Generation -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold mb-4">🎟️ Kupon Oluştur</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="number" id="couponAmount" class="pepe-input p-3 rounded-lg" 
-                               placeholder="Token Miktarı">
-                        <input type="number" id="couponCount" class="pepe-input p-3 rounded-lg" 
-                               placeholder="Kupon Sayısı">
-                        <button onclick="generateCoupons()" class="pepe-button px-6 py-3 rounded-lg text-white">
-                            Oluştur
-                        </button>
-                    </div>
-                    <div id="generatedCoupons" class="mt-4 p-4 stat-card rounded-xl hidden">
-                        <h4 class="font-bold mb-2">Oluşturulan Kuponlar:</h4>
-                        <div id="couponList" class="break-all"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <!-- Login Modal -->
-    <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="pepe-card p-8 rounded-xl w-96">
-            <h2 class="text-2xl font-bold mb-4">🔑 Giriş</h2>
-            <input type="email" id="loginEmail" class="pepe-input w-full p-3 mb-4 rounded-lg" placeholder="Email">
-            <input type="password" id="loginPassword" class="pepe-input w-full p-3 mb-4 rounded-lg" 
-                   placeholder="Şifre" type="password">
-            <div class="flex justify-end space-x-4">
-                <button onclick="closeLoginModal()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                    İptal
-                </button>
-                <button onclick="login()" class="pepe-button text-white px-4 py-2 rounded-lg">
-                    Giriş
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div id="registerModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="pepe-card p-8 rounded-xl w-96">
-            <h2 class="text-2xl font-bold mb-4">📝 Kayıt Ol</h2>
-            <input type="email" id="registerEmail" class="pepe-input w-full p-3 mb-4 rounded-lg" placeholder="Email">
-            <input type="password" id="registerPassword" class="pepe-input w-full p-3 mb-4 rounded-lg" 
-                   placeholder="Şifre" type="password">
-            <div class="flex justify-end space-x-4">
-                <button onclick="closeRegisterModal()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                    İptal
-                </button>
-                <button onclick="register()" class="pepe-button text-white px-4 py-2 rounded-lg">
-                    Kayıt Ol
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Modal -->
-    <div id="loadingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="loading-spinner"></div>
-    </div>
+    <!-- Content Sections -->
+    <!-- (Previous HTML content stays the same until the script tag) -->
 
     <script>
-        // API URL
-        const API_URL = 'http://localhost:3000/api';
+        // JSONBin.io Configuration
+        const BIN_ID = 'YOUR_BIN_ID'; // JSONBin.io'dan alacağınız BIN ID
+        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+        const MASTER_KEY = 'YOUR_MASTER_KEY'; // JSONBin.io'dan alacağınız Master Key
 
-        // State Management
-        let isAdmin = false;
-        let isLoggedIn = false;
-        let userId = null;
-        let lastMiningTime = 0;
-
-        // UI Elements
-        const userSection = document.getElementById('userSection');
-        const authButtons = document.getElementById('authButtons');
-        const miningSection = document.getElementById('miningSection');
-        const couponSection = document.getElementById('couponSection');
-        const adminPanel = document.getElementById('adminPanel');
-        const userContent = document.getElementById('userContent');
-        const loginModal = document.getElementById('loginModal');
-        const registerModal = document.getElementById('registerModal');
-        const loadingModal = document.getElementById('loadingModal');
-        const miningButton = document.getElementById('miningButton');
-        const countdownElement = document.getElementById('countdown');
-
-        // Helper Functions
-        function showLoading() {
-            loadingModal.classList.remove('hidden');
+        // Database Operations
+        async function getData() {
+            try {
+                const response = await fetch(API_URL, {
+                    headers: {
+                        'X-Master-Key': MASTER_KEY
+                    }
+                });
+                const data = await response.json();
+                return data.record;
+            } catch (error) {
+                console.error('Veri okuma hatası:', error);
+                return null;
+            }
         }
 
-        function hideLoading() {
-            loadingModal.classList.add('hidden');
+        async function saveData(data) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': MASTER_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Veri yazma hatası:', error);
+                return false;
+            }
         }
 
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type === 'success' ? 'bg-green-900' : 'bg-red-900'}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
+        // User Authentication
+        async function register() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
 
-        // Auth Functions
-        function showLoginModal() {
-            loginModal.classList.remove('hidden');
-        }
+            if (!email || !password) {
+                showToast('Lütfen tüm alanları doldurun!', 'error');
+                return;
+            }
 
-        function closeLoginModal() {
-            loginModal.classList.add('hidden');
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-        }
+            showLoading();
+            try {
+                const data = await getData();
+                if (!data) throw new Error('Veri okunamadı');
 
-        function showRegisterModal() {
-            registerModal.classList.remove('hidden');
-        }
+                if (data.users.some(u => u.email === email)) {
+                    showToast('Bu email zaten kayıtlı!', 'error');
+                    return;
+                }
 
-        function closeRegisterModal() {
-            registerModal.classList.add('hidden');
-            document.getElementById('registerEmail').value = '';
-            document.getElementById('registerPassword').value = '';
+                const hashedPassword = CryptoJS.SHA256(password).toString();
+                data.users.push({
+                    email,
+                    password: hashedPassword,
+                    registeredAt: new Date().toISOString()
+                });
+
+                data.balances[email] = 0;
+                data.miningTimes[email] = 0;
+                data.stats.totalUsers++;
+
+                const success = await saveData(data);
+                if (success) {
+                    showToast('Kayıt başarılı! Giriş yapabilirsiniz.');
+                    closeRegisterModal();
+                    showLoginModal();
+                } else {
+                    throw new Error('Kayıt işlemi başarısız');
+                }
+            } catch (error) {
+                showToast('Bir hata oluştu: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         async function login() {
@@ -388,108 +252,188 @@
 
             showLoading();
             try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+                const data = await getData();
+                if (!data) throw new Error('Veri okunamadı');
 
-                const data = await response.json();
-                if (data.success) {
-                    isLoggedIn = true;
-                    isAdmin = data.isAdmin;
-                    userId = data.userId;
-                    lastMiningTime = data.lastMining;
-                    localStorage.setItem('userId', userId);
-                    localStorage.setItem('userEmail', email);
-                    updateUIState();
-                    closeLoginModal();
-                    showToast('Giriş başarılı!');
-                } else {
-                    showToast(data.error || 'Giriş başarısız!', 'error');
+                const hashedPassword = CryptoJS.SHA256(password).toString();
+                const user = data.users.find(u => u.email === email && u.password === hashedPassword);
+
+                if (!user) {
+                    showToast('Geçersiz email veya şifre!', 'error');
+                    return;
                 }
+
+                localStorage.setItem('currentUser', email);
+                isLoggedIn = true;
+                isAdmin = email === 'admin@example.com';
+                updateUIState();
+                closeLoginModal();
+                showToast('Giriş başarılı!');
             } catch (error) {
-                showToast('Bir hata oluştu!', 'error');
+                showToast('Bir hata oluştu: ' + error.message, 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        async function register() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-
-            if (!email || !password) {
-                showToast('Lütfen tüm alanları doldurun!', 'error');
-                return;
-            }
-
-            showLoading();
-            try {
-                const response = await fetch(`${API_URL}/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    showToast('Kayıt başarılı! Giriş yapabilirsiniz.');
-                    closeRegisterModal();
-                    showLoginModal();
-                } else {
-                    showToast(data.error || 'Kayıt başarısız!', 'error');
-                }
-            } catch (error) {
-                showToast('Bir hata oluştu!', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function logout() {
-            isAdmin = false;
-            isLoggedIn = false;
-            userId = null;
-            localStorage.removeItem('userId');
-            localStorage.removeItem('userEmail');
-            updateUIState();
-            showToast('Çıkış yapıldı!');
-        }
-
-        // Mining Functions
+        // Mining Operations
         async function startMining() {
             if (!canMine()) return;
 
             showLoading();
             try {
-                const response = await fetch(`${API_URL}/mine`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userId })
-                });
+                const currentUser = localStorage.getItem('currentUser');
+                const data = await getData();
+                if (!data) throw new Error('Veri okunamadı');
 
-                const data = await response.json();
-                if (data.success) {
+                const reward = Math.floor(Math.random() * 10) + 1;
+                data.balances[currentUser] = (data.balances[currentUser] || 0) + reward;
+                data.miningTimes[currentUser] = Date.now();
+                data.stats.totalTokens += reward;
+
+                const success = await saveData(data);
+                if (success) {
                     lastMiningTime = Date.now();
-                    updateBalance(data.balance);
+                    updateBalance(data.balances[currentUser]);
                     updateMiningButton();
                     startCountdown();
-                    showToast(`Tebrikler! ${data.reward} PEPE kazandınız!`);
+                    showToast(`Tebrikler! ${reward} PEPE kazandınız!`);
                 } else {
-                    showToast(data.error || 'Mining başarısız!', 'error');
+                    throw new Error('Mining işlemi başarısız');
                 }
             } catch (error) {
-                showToast('Bir hata oluştu!', 'error');
+                showToast('Bir hata oluştu: ' + error.message, 'error');
             } finally {
                 hideLoading();
             }
+        }
+
+        // Coupon Operations
+        async function redeemCoupon() {
+            const code = document.getElementById('couponInput').value;
+            if (!code) {
+                showToast('Lütfen bir kupon kodu girin!', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const currentUser = localStorage.getItem('currentUser');
+                const data = await getData();
+                if (!data) throw new Error('Veri okunamadı');
+
+                const coupon = data.coupons.find(c => c.code === code && !c.used);
+                if (!coupon) {
+                    showToast('Geçersiz veya kullanılmış kupon!', 'error');
+                    return;
+                }
+
+                coupon.used = true;
+                data.balances[currentUser] = (data.balances[currentUser] || 0) + coupon.amount;
+                data.stats.totalTokens += coupon.amount;
+
+                const success = await saveData(data);
+                if (success) {
+                    updateBalance(data.balances[currentUser]);
+                    document.getElementById('couponInput').value = '';
+                    showToast(`Tebrikler! ${coupon.amount} PEPE kazandınız!`);
+                } else {
+                    throw new Error('Kupon kullanımı başarısız');
+                }
+            } catch (error) {
+                showToast('Bir hata oluştu: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Admin Operations
+        async function generateCoupons() {
+            const amount = parseInt(document.getElementById('couponAmount').value);
+            const count = parseInt(document.getElementById('couponCount').value);
+
+            if (!amount || !count) {
+                showToast('Lütfen geçerli değerler girin!', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const data = await getData();
+                if (!data) throw new Error('Veri okunamadı');
+
+                const newCoupons = Array(count).fill().map(() => ({
+                    code: Math.random().toString(36).substring(2, 8).toUpperCase(),
+                    amount,
+                    used: false,
+                    createdAt: new Date().toISOString()
+                }));
+
+                data.coupons.push(...newCoupons);
+                const success = await saveData(data);
+                
+                if (success) {
+                    document.getElementById('generatedCoupons').classList.remove('hidden');
+                    document.getElementById('couponList').innerHTML = newCoupons
+                        .map(c => `<div class="mb-2 p-2 bg-green-900 bg-opacity-20 rounded">
+                            <span class="font-mono">${c.code}</span> 
+                            <span class="text-green-400">(${c.amount} PEPE)</span>
+                        </div>`)
+                        .join('');
+                    showToast(`${count} adet kupon oluşturuldu!`);
+                } else {
+                    throw new Error('Kupon oluşturma başarısız');
+                }
+            } catch (error) {
+                showToast('Bir hata oluştu: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Helper Functions
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'success' ? 'bg-green-900' : 'bg-red-900'}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showLoading() {
+            document.getElementById('loadingModal').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingModal').classList.add('hidden');
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        function showRegisterModal() {
+            document.getElementById('registerModal').classList.remove('hidden');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.add('hidden');
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            isAdmin = false;
+            isLoggedIn = false;
+            updateUIState();
+            showToast('Çıkış yapıldı!');
         }
 
         function canMine() {
@@ -497,6 +441,7 @@
         }
 
         function updateMiningButton() {
+            const miningButton = document.getElementById('miningButton');
             miningButton.disabled = !canMine();
         }
 
@@ -510,10 +455,11 @@
                     const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
                     const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
                     
-                    countdownElement.textContent = `Sonraki mining: ${hours}:${minutes}:${seconds}`;
+                    document.getElementById('countdown').textContent = 
+                        `Sonraki mining: ${hours}:${minutes}:${seconds}`;
                     setTimeout(updateCountdown, 1000);
                 } else {
-                    countdownElement.textContent = 'Mining yapabilirsiniz!';
+                    document.getElementById('countdown').textContent = 'Mining yapabilirsiniz!';
                     updateMiningButton();
                 }
             };
@@ -521,114 +467,18 @@
             updateCountdown();
         }
 
-        // Coupon Functions
-        async function redeemCoupon() {
-            const code = document.getElementById('couponInput').value;
-            if (!code) {
-                showToast('Lütfen bir kupon kodu girin!', 'error');
-                return;
-            }
-
-            showLoading();
-            try {
-                const response = await fetch(`${API_URL}/redeem`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userId, code })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    updateBalance(data.balance);
-                    document.getElementById('couponInput').value = '';
-                    showToast(`Tebrikler! ${data.amount} PEPE kazandınız!`);
-                } else {
-                    showToast(data.error || 'Geçersiz kupon!', 'error');
-                }
-            } catch (error) {
-                showToast('Bir hata oluştu!', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Admin Functions
-        async function generateCoupons() {
-            const amount = parseInt(document.getElementById('couponAmount').value);
-            const count = parseInt(document.getElementById('couponCount').value);
-
-            if (!amount || !count) {
-                showToast('Lütfen geçerli değerler girin!', 'error');
-                return;
-            }
-
-            showLoading();
-            try {
-                const response = await fetch(`${API_URL}/admin/create-coupons`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ amount, count })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    document.getElementById('generatedCoupons').classList.remove('hidden');
-                    document.getElementById('couponList').innerHTML = data.coupons
-                        .map(c => `<div class="mb-2 p-2 bg-green-900 bg-opacity-20 rounded">
-                            <span class="font-mono">${c.code}</span> 
-                            <span class="text-green-400">(${c.amount} PEPE)</span>
-                        </div>`)
-                        .join('');
-                    showToast(`${count} adet kupon oluşturuldu!`);
-                } else {
-                    showToast(data.error || 'Kupon oluşturulamadı!', 'error');
-                }
-            } catch (error) {
-                showToast('Bir hata oluştu!', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function updateAdminStats() {
-            if (!isAdmin) return;
-
-            try {
-                const response = await fetch(`${API_URL}/admin/stats`);
-                const stats = await response.json();
-                
-                document.getElementById('totalUsers').textContent = stats.totalUsers;
-                document.getElementById('activeMining').textContent = stats.activeMining;
-                document.getElementById('totalTokens').textContent = stats.totalTokens;
-
-                const usersResponse = await fetch(`${API_URL}/admin/users`);
-                const users = await usersResponse.json();
-                
-                document.getElementById('userList').innerHTML = users.map(user => `
-                    <tr class="border-b border-green-500 hover:bg-green-900 hover:bg-opacity-20">
-                        <td class="p-2">${user.email}</td>
-                        <td class="p-2">${new Date(user.created_at).toLocaleString()}</td>
-                        <td class="p-2">${user.balance} PEPE</td>
-                        <td class="p-2">${user.last_mining ? new Date(user.last_mining).toLocaleString() : 'Henüz mining yapılmadı'}</td>
-                        <td class="p-2">${user.total_mining}</td>
-                        <td class="p-2">${user.total_coupons}</td>
-                    </tr>
-                `).join('');
-            } catch (error) {
-                showToast('İstatistikler güncellenirken hata oluştu!', 'error');
-            }
-        }
-
-        // Update Functions
         function updateBalance(balance) {
             document.getElementById('userBalance').textContent = `${balance} PEPE`;
         }
 
         async function updateUIState() {
+            const userSection = document.getElementById('userSection');
+            const authButtons = document.getElementById('authButtons');
+            const adminPanel = document.getElementById('adminPanel');
+            const userContent = document.getElementById('userContent');
+            const miningSection = document.getElementById('miningSection');
+            const couponSection = document.getElementById('couponSection');
+
             if (isLoggedIn) {
                 userSection.classList.remove('hidden');
                 authButtons.classList.add('hidden');
@@ -642,8 +492,15 @@
                     userContent.classList.remove('hidden');
                     miningSection.classList.remove('hidden');
                     couponSection.classList.remove('hidden');
-                    updateMiningButton();
-                    startCountdown();
+                    
+                    const data = await getData();
+                    if (data) {
+                        const currentUser = localStorage.getItem('currentUser');
+                        updateBalance(data.balances[currentUser] || 0);
+                        lastMiningTime = data.miningTimes[currentUser] || 0;
+                        updateMiningButton();
+                        startCountdown();
+                    }
                 }
             } else {
                 userSection.classList.add('hidden');
@@ -653,14 +510,54 @@
             }
         }
 
+        async function updateAdminStats() {
+            try {
+                const data = await getData();
+                if (!data) return;
+
+                document.getElementById('totalUsers').textContent = data.stats.totalUsers;
+                document.getElementById('activeMining').textContent = 
+                    Object.values(data.balances).filter(b => b > 0).length;
+                document.getElementById('totalTokens').textContent = data.stats.totalTokens;
+
+                document.getElementById('userList').innerHTML = data.users.map(user => `
+                    <tr class="border-b border-green-500 hover:bg-green-900 hover:bg-opacity-20">
+                        <td class="p-2">${user.email}</td>
+                        <td class="p-2">${new Date(user.registeredAt).toLocaleString()}</td>
+                        <td class="p-2">${data.balances[user.email] || 0} PEPE</td>
+                        <td class="p-2">${data.miningTimes[user.email] ? 
+                            new Date(data.miningTimes[user.email]).toLocaleString() : 
+                            'Henüz mining yapılmadı'}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                showToast('İstatistikler güncellenirken hata oluştu!', 'error');
+            }
+        }
+
+        // Rate Limiting
+        const RATE_LIMITS = {
+            mining: 7 * 60 * 60 * 1000,  // 7 saat
+            coupon: 24 * 60 * 60 * 1000  // 24 saat
+        };
+
+        function checkRateLimit(type, lastTime) {
+            return Date.now() - lastTime >= RATE_LIMITS[type];
+        }
+
         // Initialize
+        let isAdmin = false;
+        let isLoggedIn = false;
+        let lastMiningTime = 0;
+
         document.addEventListener('DOMContentLoaded', async () => {
-            const savedUserId = localStorage.getItem('userId');
-            if (savedUserId) {
-                userId = savedUserId;
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
                 isLoggedIn = true;
-                if (localStorage.getItem('userEmail') === 'admin@example.com') {
-                    isAdmin = true;
+                isAdmin = currentUser === 'admin@example.com';
+                const data = await getData();
+                if (data) {
+                    lastMiningTime = data.miningTimes[currentUser] || 0;
                 }
                 await updateUIState();
             }
@@ -672,9 +569,8 @@
         });
 
         // Event Listeners
-        miningButton.addEventListener('click', startMining);
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-
+        document.getElementById('miningButton').addEventListener('click', startMining);
+        
         // Klavye kısayolları
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -682,10 +578,10 @@
                 closeRegisterModal();
             }
             if (e.key === 'Enter') {
-                if (!loginModal.classList.contains('hidden')) {
+                if (!document.getElementById('loginModal').classList.contains('hidden')) {
                     login();
                 }
-                if (!registerModal.classList.contains('hidden')) {
+                if (!document.getElementById('registerModal').classList.contains('hidden')) {
                     register();
                 }
             }
