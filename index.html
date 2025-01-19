@@ -502,6 +502,9 @@
         const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
         const MASTER_KEY = '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W'; 
 
+        const ADMIN_EMAIL = "pepe_admin_7734@secure-admin.pepe"; 
+        const ADMIN_PASSWORD = "PepeAdmin7734!@#$%";
+
         // State Management
         let isAdmin = false;
         let isLoggedIn = false;
@@ -672,8 +675,19 @@
         }
 
         async function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    // İşte buraya admin kontrolünü ekliyoruz
+    if (email === "pepe_admin_7734@secure-admin.pepe" && password === "PepeAdmin7734!@#$%") {
+        isAdmin = true;
+        isLoggedIn = true;
+        localStorage.setItem('currentUser', email);
+        updateUIState();
+        closeLoginModal();
+        showToast('Admin girişi başarılı!');
+        return;
+    }
 
             if (!email || !password) {
                 showToast('Lütfen tüm alanları doldurun!', 'error');
