@@ -1,0 +1,16 @@
+{
+  "ADMIN_USER": {
+    "email": "admin@example.com",
+    "password": "admin123",
+    "isAdmin": true
+  },
+  "users": [],
+  "balances": {},
+  "coupons": [],
+  "miningTimes": {},
+  "stats": {
+    "totalUsers": 0,
+    "activeMining": 0,
+    "totalTokens": 0
+  }
+}
