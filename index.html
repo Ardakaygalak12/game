@@ -3,63 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐸 Cyber Pepe Mining Platform</title>
+    <title>🐸 Pepe Coin Faucet</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         :root {
             --pepe-green: #45D754;
             --pepe-dark: #1E4620;
-            --cyber-glow: 0 0 15px var(--pepe-green);
-            --cyber-glow-intense: 0 0 25px var(--pepe-green);
         }
         
-        /* Enhanced Background */
         body {
             background-color: #0F1F11;
             color: #ffffff;
             font-family: 'Arial', sans-serif;
             background-image: 
-                radial-gradient(circle at 100% 100%, rgba(69, 215, 84, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 0% 0%, rgba(69, 215, 84, 0.15) 0%, transparent 50%),
-                linear-gradient(45deg, rgba(69, 215, 84, 0.05) 0%, transparent 20%),
-                linear-gradient(-45deg, rgba(69, 215, 84, 0.05) 0%, transparent 20%);
-            background-attachment: fixed;
+                radial-gradient(circle at 100% 100%, rgba(69, 215, 84, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 0% 0%, rgba(69, 215, 84, 0.1) 0%, transparent 50%);
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Cyber Pepe Character Animations */
-        .cyber-pepe {
-            width: 120px;
-            height: 120px;
+        /* Temel Animation Stilleri */
+        .hover\:shadow-neon:hover {
+            box-shadow: 0 0 15px var(--pepe-green);
+        }
+
+        .pepe-gradient {
+            background: linear-gradient(135deg, var(--pepe-green), var(--pepe-dark));
             position: relative;
-            margin: 20px auto;
-            transition: all 0.3s ease;
+            overflow: hidden;
         }
 
-        .cyber-pepe::before {
-            content: '🐸';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 50px;
-            filter: drop-shadow(0 0 10px var(--pepe-green));
-            animation: float 3s ease-in-out infinite;
+        .pepe-button {
+            background-color: var(--pepe-green);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .cyber-pepe.mining::before {
-            animation: miningBounce 0.5s ease-in-out infinite alternate;
+        .pepe-button:hover {
+            background-color: #3AC847;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 15px rgba(69, 215, 84, 0.3);
         }
 
-        @keyframes miningBounce {
-            from { transform: translate(-50%, -50%) scale(1); }
-            to { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
+        .pepe-card {
+            background: rgba(30, 70, 32, 0.9);
+            border: 1px solid var(--pepe-green);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease-out;
         }
 
-        /* Enhanced Mining Progress Bar */
-        .progress-cyber {
+        .pepe-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(69, 215, 84, 0.2);
+        }
+
+        /* Mining Section Stilleri */
+        .mining-button {
+            transition: all 0.3s;
+            background: var(--pepe-green);
+            box-shadow: 0 4px 15px rgba(69, 215, 84, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mining-button:not(:disabled):hover {
+            animation: pulse 2s infinite;
+        }
+
+        .mining-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Mining Progress Bar */
+        .progress-bar {
             width: 100%;
             height: 25px;
             background: rgba(30, 70, 32, 0.3);
@@ -69,284 +95,75 @@
             position: relative;
         }
 
-        .progress-cyber::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: progressShine 2s linear infinite;
-        }
-
         .progress-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, 
                 var(--pepe-green), 
-                #2FFF35, 
-                var(--pepe-green));
-            background-size: 200% 100%;
-            animation: gradientMove 2s linear infinite;
+                #2FFF35);
             transition: width 0.3s linear;
-            position: relative;
         }
 
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 5px;
-            height: 100%;
-            background: rgba(255,255,255,0.8);
-            filter: blur(3px);
-        }
-
-        @keyframes progressShine {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(100%); }
-        }
-
-        @keyframes gradientMove {
-            from { background-position: 100% 0; }
-            to { background-position: -100% 0; }
-        }
-
-        /* Cyber Button Enhancements */
-        .cyber-button {
-            background: var(--pepe-green);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            clip-path: polygon(
-                10px 0, 
-                calc(100% - 10px) 0, 
-                100% 10px, 
-                100% calc(100% - 10px), 
-                calc(100% - 10px) 100%, 
-                10px 100%, 
-                0 calc(100% - 10px), 
-                0 10px
-            );
-        }
-
-        .cyber-button:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: var(--cyber-glow);
-            border-color: var(--pepe-green);
-            background: transparent;
-        }
-
-        .cyber-button:hover::before {
-            transform: translateX(100%);
-        }
-
-        .cyber-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            transition: transform 0.5s ease;
-        }
-
-        /* Enhanced Card Styles */
-        .cyber-card {
-            background: rgba(30, 70, 32, 0.2);
-            border: 1px solid var(--pepe-green);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cyber-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(69, 215, 84, 0.1),
-                transparent
-            );
-            animation: cardShine 8s infinite;
-        }
-
-        @keyframes cardShine {
-            0% { transform: translateX(0); }
-            20% { transform: translateX(200%); }
-            100% { transform: translateX(200%); }
-        }
-
-        /* Stats Display */
-        .stats-value {
-            font-family: 'Courier New', monospace;
-            color: var(--pepe-green);
-            text-shadow: var(--cyber-glow);
-            position: relative;
-            padding: 0.5rem 1rem;
-            background: rgba(69, 215, 84, 0.1);
-            border-radius: 4px;
-            border: 1px solid var(--pepe-green);
-        }
-
-        .stats-value.updating {
-            animation: statsUpdate 0.5s ease;
-        }
-
-        @keyframes statsUpdate {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* Enhanced Toast Notifications */
+        /* Toast Notifications */
         .toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
             padding: 1rem;
-            border-radius: 8px;
-            background: rgba(30, 70, 32, 0.9);
+            border-radius: 0.5rem;
+            background: var(--pepe-dark);
             border: 1px solid var(--pepe-green);
             color: white;
             z-index: 1000;
-            backdrop-filter: blur(8px);
-            animation: toastSlide 0.3s ease-out;
-            box-shadow: var(--cyber-glow);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes toastSlide {
-            from { transform: translateX(100%) translateY(100%); opacity: 0; }
-            to { transform: translateX(0) translateY(0); opacity: 1; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Loading Animation */
-        .cyber-loading {
-            width: 60px;
-            height: 60px;
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
             border: 3px solid var(--pepe-dark);
             border-radius: 50%;
             border-top-color: var(--pepe-green);
-            animation: cyberSpin 1s linear infinite;
-            position: relative;
+            animation: spin 1s infinite linear;
         }
 
-        .cyber-loading::before,
-        .cyber-loading::after {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            border: 3px solid transparent;
-            border-top-color: var(--pepe-green);
-            border-radius: 50%;
-            animation: cyberSpinReverse 2s linear infinite;
-            opacity: 0.5;
-        }
-
-        .cyber-loading::after {
-            animation: cyberSpin 3s linear infinite;
-            opacity: 0.3;
-        }
-
-        @keyframes cyberSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes cyberSpinReverse {
-            0% { transform: rotate(360deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        /* Modal Enhancements */
-        .cyber-modal {
-            background: rgba(15, 31, 17, 0.95);
-            border: 2px solid var(--pepe-green);
-            box-shadow: var(--cyber-glow);
-            backdrop-filter: blur(10px);
-            animation: modalEnter 0.3s ease-out;
-            position: relative;
-        }
-
-        .cyber-modal::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border: 2px solid var(--pepe-green);
-            animation: modalBorder 2s linear infinite;
-            opacity: 0.5;
-        }
-
-        @keyframes modalEnter {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes modalBorder {
-            0% { clip-path: inset(0 0 98% 0); }
-            25% { clip-path: inset(0 98% 0 0); }
-            50% { clip-path: inset(98% 0 0 0); }
-            75% { clip-path: inset(0 0 0 98%); }
-            100% { clip-path: inset(0 0 98% 0); }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Enhanced Navigation -->
-    <nav class="bg-green-900 bg-opacity-90 p-4 sticky top-0 z-50 backdrop-filter backdrop-blur">
+    <!-- Navigation -->
+    <nav class="pepe-gradient p-4 shadow-lg sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <div class="cyber-pepe w-12 h-12"></div>
-                <h1 class="text-2xl font-bold tracking-wider">
-                    <span class="text-green-400">CYBER</span> 
-                    <span class="text-white">PEPE</span>
-                </h1>
+            <div class="flex items-center">
+                <span class="text-4xl mr-3">🐸</span>
+                <h1 class="text-2xl font-bold">Pepe Faucet</h1>
             </div>
-            <!-- User Balance Section -->
             <div id="userSection" class="hidden">
                 <div class="flex items-center space-x-4">
-                    <div class="stats-value flex items-center">
-                        <span class="mr-2">💰</span>
-                        <span id="userBalance">0 PEPE</span>
-                    </div>
-                    <button onclick="logout()" class="cyber-button bg-red-500">
-                        <span class="mr-2">🚪</span> Exit
+                    <span class="px-4 py-2 rounded-lg bg-green-900 border border-green-500">
+                        <span class="text-green-300">Balance:</span>
+                        <span id="userBalance" class="font-bold">0 PEPE</span>
+                    </span>
+                    <button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition-all">
+                        Logout
                     </button>
                 </div>
             </div>
-            <!-- Auth Buttons -->
             <div id="authButtons" class="space-x-4">
-                <button onclick="showLoginModal()" class="cyber-button">
-                    <span class="mr-2">🔑</span> Login
+                <button onclick="showLoginModal()" class="pepe-button px-4 py-2 rounded-lg text-white">
+                    Login
                 </button>
-                <button onclick="showRegisterModal()" class="cyber-button bg-white text-green-600">
-                    <span class="mr-2">📝</span> Register
+                <button onclick="showRegisterModal()" class="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-gray-100">
+                    Register
                 </button>
             </div>
         </div>
@@ -355,131 +172,145 @@
     <!-- Main Content -->
     <div class="container mx-auto mt-8 px-4">
         <!-- Welcome Banner -->
-        <div class="cyber-card p-8 rounded-xl mb-8 text-center">
-            <h2 class="text-4xl font-bold mb-4">
-                <span class="text-green-400">CYBER</span> 
-                <span class="inline-block transform hover:scale-110 transition-transform">🐸</span> 
-                <span class="text-green-400">MINING</span>
-            </h2>
-            <p class="text-xl mb-6 text-gray-300">Mine, Earn, Trade - The Cyber Way!</p>
-            
-            <!-- Feature Grid -->
+        <div class="pepe-card p-8 rounded-xl mb-8 text-center">
+            <h2 class="text-4xl font-bold mb-4">🐸 Pepe Coin Mining Platform</h2>
+            <p class="text-xl mb-6">Mine PEPE tokens and earn rewards!</p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Mining Feature -->
-                <div class="cyber-card p-6 transform hover:scale-105 transition-all duration-300">
+                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
                     <div class="text-4xl mb-4">⛏️</div>
-                    <h3 class="text-xl font-bold mb-2 text-green-400">Active Mining</h3>
-                    <p class="text-gray-300">Mine continuously for 7 hours to maximize your earnings!</p>
+                    <h3 class="text-xl font-bold mb-2">Active Mining</h3>
+                    <p>Mine continuously for 7 hours to maximize earnings!</p>
                 </div>
-                <!-- Rewards Feature -->
-                <div class="cyber-card p-6 transform hover:scale-105 transition-all duration-300">
-                    <div class="text-4xl mb-4">🎁</div>
-                    <h3 class="text-xl font-bold mb-2 text-green-400">Daily Rewards</h3>
-                    <p class="text-gray-300">Claim special bonus rewards every day!</p>
+                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
+                    <div class="text-4xl mb-4">🎟️</div>
+                    <h3 class="text-xl font-bold mb-2">Bonus Codes</h3>
+                    <p>Use bonus codes to get extra tokens!</p>
                 </div>
-                <!-- Trading Feature -->
-                <div class="cyber-card p-6 transform hover:scale-105 transition-all duration-300">
-                    <div class="text-4xl mb-4">💱</div>
-                    <h3 class="text-xl font-bold mb-2 text-green-400">Quick Trade</h3>
-                    <p class="text-gray-300">Convert your PEPE tokens instantly!</p>
+                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
+                    <div class="text-4xl mb-4">💰</div>
+                    <h3 class="text-xl font-bold mb-2">Rewards</h3>
+                    <p>Convert your PEPE tokens to real value!</p>
                 </div>
             </div>
         </div>
+        <!-- User Content -->
+        <div id="userContent" class="grid md:grid-cols-2 gap-8">
+            <!-- Mining Section -->
+            <div id="miningSection" class="hidden">
+                <div class="pepe-card p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <span class="text-3xl mr-2">⛏️</span>
+                        Active Mining
+                    </h2>
+                    
+                    <!-- Mining Progress -->
+                    <div class="mb-6">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="miningProgress"></div>
+                        </div>
+                        <div class="flex justify-between mt-2">
+                            <span id="progressText" class="text-sm">0%</span>
+                            <span id="timeLeft" class="text-sm">7:00:00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Mining Rate -->
+                    <div class="bg-green-900 bg-opacity-50 p-4 rounded-lg mb-4">
+                        <div class="text-center">
+                            <span class="text-green-400">Mining Rate:</span>
+                            <span id="miningRate" class="font-bold">0.00 PEPE/s</span>
+                        </div>
+                    </div>
+                    
+                    <button id="miningButton" 
+                            onclick="startMining()" 
+                            class="mining-button text-white px-8 py-4 rounded-xl text-xl w-full">
+                        Start Mining
+                    </button>
+                </div>
+            </div>
 
-        <!-- Mining Interface -->
-        <div id="miningSection" class="hidden">
-            <div class="cyber-card p-6 rounded-xl mb-8">
-                <h2 class="text-2xl font-bold mb-6 flex items-center">
-                    <span class="text-3xl mr-2">⛏️</span>
-                    Active Mining
-                </h2>
-                
-                <!-- Mining Animation -->
-                <div class="cyber-pepe"></div>
-                
-                <!-- Mining Progress -->
-                <div class="mb-6">
-                    <div class="progress-cyber">
-                        <div class="progress-fill" id="miningProgress"></div>
-                    </div>
-                    <div class="flex justify-between mt-2">
-                        <span class="text-sm text-gray-400">Progress:</span>
-                        <span class="stats-value text-sm" id="progressText">0%</span>
+            <!-- Coupon Section -->
+            <div id="couponSection" class="hidden">
+                <div class="pepe-card p-6 rounded-xl">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center">
+                        <span class="text-3xl mr-2">🎟️</span>
+                        Bonus Code
+                    </h2>
+                    <div class="flex flex-col gap-4">
+                        <input type="text" id="couponInput" 
+                               class="bg-green-900 bg-opacity-50 p-3 rounded-lg border border-green-500 text-white uppercase" 
+                               placeholder="Enter bonus code">
+                        <button onclick="redeemCoupon()" 
+                                class="pepe-button px-6 py-3 rounded-lg text-white">
+                            Redeem Code
+                        </button>
                     </div>
                 </div>
-                
-                <!-- Mining Stats -->
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="cyber-card p-4">
-                        <h4 class="text-sm text-gray-400">Mining Rate</h4>
-                        <div class="stats-value" id="miningRate">0 PEPE/s</div>
-                    </div>
-                    <div class="cyber-card p-4">
-                        <h4 class="text-sm text-gray-400">Total Mined</h4>
-                        <div class="stats-value" id="totalMined">0 PEPE</div>
-                    </div>
-                </div>
-                
-                <!-- Mining Controls -->
-                <button id="miningButton" class="cyber-button w-full py-4 text-xl">
-                    <span class="mr-2">⚡</span>
-                    Start Mining
-                </button>
             </div>
         </div>
 
         <!-- Admin Panel -->
-        <div id="adminPanel" class="hidden">
-            <div class="cyber-card p-6 rounded-xl">
+        <div id="adminPanel" class="hidden mt-8">
+            <div class="pepe-card p-6 rounded-xl">
                 <h2 class="text-2xl font-bold mb-6 flex items-center">
                     <span class="text-3xl mr-2">👑</span>
-                    Admin Dashboard
+                    Admin Panel
                 </h2>
                 
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="cyber-card p-4">
-                        <h4 class="text-gray-400 mb-2">Total Users</h4>
-                        <div class="stats-value text-2xl" id="totalUsers">0</div>
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-green-900 bg-opacity-50 p-4 rounded-xl">
+                        <h4 class="font-bold">Total Users</h4>
+                        <p id="totalUsers" class="text-2xl">0</p>
                     </div>
-                    <div class="cyber-card p-4">
-                        <h4 class="text-gray-400 mb-2">Active Miners</h4>
-                        <div class="stats-value text-2xl" id="activeMiners">0</div>
+                    <div class="bg-green-900 bg-opacity-50 p-4 rounded-xl">
+                        <h4 class="font-bold">Active Mining</h4>
+                        <p id="activeMining" class="text-2xl">0</p>
                     </div>
-                    <div class="cyber-card p-4">
-                        <h4 class="text-gray-400 mb-2">Total PEPE</h4>
-                        <div class="stats-value text-2xl" id="totalTokens">0</div>
-                    </div>
-                </div>
-                
-                <!-- Mining Activity -->
-                <div class="cyber-card p-4 mb-8">
-                    <h3 class="text-xl font-bold mb-4 flex items-center">
-                        <span class="text-2xl mr-2">📊</span>
-                        Live Mining Activity
-                    </h3>
-                    <div id="miningActivity" class="max-h-60 overflow-y-auto space-y-2">
-                        <!-- Activity items will be inserted here -->
+                    <div class="bg-green-900 bg-opacity-50 p-4 rounded-xl">
+                        <h4 class="font-bold">Total PEPE</h4>
+                        <p id="totalTokens" class="text-2xl">0</p>
                     </div>
                 </div>
                 
-                <!-- User Management -->
-                <div class="cyber-card p-4 mb-8">
-                    <h3 class="text-xl font-bold mb-4">👥 User Management</h3>
+                <!-- User List -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-4">User List</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
                                 <tr class="border-b border-green-500">
-                                    <th class="p-2 text-left">User</th>
+                                    <th class="p-2 text-left">Email</th>
                                     <th class="p-2 text-left">Balance</th>
                                     <th class="p-2 text-left">Mining Status</th>
-                                    <th class="p-2 text-left">Actions</th>
+                                    <th class="p-2 text-left">Last Mining</th>
                                 </tr>
                             </thead>
                             <tbody id="userList">
-                                <!-- User rows will be inserted here -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                
+                <!-- Coupon Generation -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-4">Generate Bonus Codes</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="number" id="couponAmount" 
+                               class="bg-green-900 bg-opacity-50 p-3 rounded-lg border border-green-500" 
+                               placeholder="Amount">
+                        <input type="number" id="couponCount" 
+                               class="bg-green-900 bg-opacity-50 p-3 rounded-lg border border-green-500" 
+                               placeholder="Count">
+                        <button onclick="generateCoupons()" 
+                                class="pepe-button px-6 py-3 rounded-lg text-white">
+                            Generate
+                        </button>
+                    </div>
+                    <div id="generatedCoupons" class="mt-4 p-4 bg-green-900 bg-opacity-50 rounded-xl hidden">
+                        <h4 class="font-bold mb-2">Generated Codes:</h4>
+                        <div id="couponList" class="break-all"></div>
                     </div>
                 </div>
             </div>
@@ -489,21 +320,24 @@
     <!-- Modals -->
     <!-- Login Modal -->
     <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="cyber-modal p-8 rounded-xl w-96">
-            <h2 class="text-2xl font-bold mb-6">🔑 Login</h2>
+        <div class="pepe-card p-8 rounded-xl w-96">
+            <h2 class="text-2xl font-bold mb-4">
+                <span class="text-3xl mr-2">🔑</span>
+                Login
+            </h2>
             <input type="email" id="loginEmail" 
-                   class="cyber-input w-full p-3 mb-4 rounded-lg bg-black bg-opacity-50" 
+                   class="bg-green-900 bg-opacity-50 w-full p-3 mb-4 rounded-lg border border-green-500" 
                    placeholder="Email">
             <input type="password" id="loginPassword" 
-                   class="cyber-input w-full p-3 mb-6 rounded-lg bg-black bg-opacity-50" 
+                   class="bg-green-900 bg-opacity-50 w-full p-3 mb-4 rounded-lg border border-green-500" 
                    placeholder="Password">
             <div class="flex justify-end space-x-4">
                 <button onclick="closeLoginModal()" 
-                        class="cyber-button bg-gray-600">
+                        class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
                     Cancel
                 </button>
                 <button onclick="login()" 
-                        class="cyber-button">
+                        class="pepe-button text-white px-4 py-2 rounded-lg">
                     Login
                 </button>
             </div>
@@ -512,21 +346,24 @@
 
     <!-- Register Modal -->
     <div id="registerModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="cyber-modal p-8 rounded-xl w-96">
-            <h2 class="text-2xl font-bold mb-6">📝 Register</h2>
+        <div class="pepe-card p-8 rounded-xl w-96">
+            <h2 class="text-2xl font-bold mb-4">
+                <span class="text-3xl mr-2">📝</span>
+                Register
+            </h2>
             <input type="email" id="registerEmail" 
-                   class="cyber-input w-full p-3 mb-4 rounded-lg bg-black bg-opacity-50" 
+                   class="bg-green-900 bg-opacity-50 w-full p-3 mb-4 rounded-lg border border-green-500" 
                    placeholder="Email">
             <input type="password" id="registerPassword" 
-                   class="cyber-input w-full p-3 mb-6 rounded-lg bg-black bg-opacity-50" 
+                   class="bg-green-900 bg-opacity-50 w-full p-3 mb-4 rounded-lg border border-green-500" 
                    placeholder="Password">
             <div class="flex justify-end space-x-4">
                 <button onclick="closeRegisterModal()" 
-                        class="cyber-button bg-gray-600">
+                        class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
                     Cancel
                 </button>
                 <button onclick="register()" 
-                        class="cyber-button">
+                        class="pepe-button text-white px-4 py-2 rounded-lg">
                     Register
                 </button>
             </div>
@@ -535,148 +372,438 @@
 
     <!-- Loading Modal -->
     <div id="loadingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="cyber-loading"></div>
+        <div class="loading-spinner"></div>
     </div>
 
     <script>
-        // Constants
-        const MINING_DURATION = 7 * 60 * 60 * 1000; // 7 hours
-        const BASE_REWARD_RATE = 0.1; // PEPE per second
+        // JSONBin.io Configuration
         const BIN_ID = '678d525ae41b4d34e47ad3b8';
         const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
         const MASTER_KEY = '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W';
-        
+
+        const ADMIN_EMAIL = "pepe_admin_7734@secure-admin.pepe";
+        const ADMIN_PASSWORD = "PepeAdmin7734!@#$%";
+
         // State Management
-        let miningInterval = null;
-        let miningStartTime = 0;
-        let totalMined = 0;
         let isAdmin = false;
         let isLoggedIn = false;
-        let currentMiningPower = 1;
+        let miningInterval = null;
+        let miningStartTime = 0;
 
-        // Enhanced Mining System
+        // Database Operations
+        async function getData() {
+            try {
+                const response = await fetch(API_URL, {
+                    headers: {
+                        'X-Master-Key': MASTER_KEY
+                    }
+                });
+                const data = await response.json();
+                return data.record;
+            } catch (error) {
+                console.error('Data read error:', error);
+                showToast('Error reading data!', 'error');
+                return null;
+            }
+        }
+
+        async function saveData(data) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': MASTER_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Data write error:', error);
+                showToast('Error saving data!', 'error');
+                return false;
+            }
+        }
+
+        // Modal Functions
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        function showRegisterModal() {
+            document.getElementById('registerModal').classList.remove('hidden');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.add('hidden');
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+        }
+
+        // Authentication Functions
+        async function register() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            if (!email || !password) {
+                showToast('Please fill all fields!', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const data = await getData();
+                if (!data) throw new Error('Could not read data');
+
+                if (data.users.some(u => u.email === email)) {
+                    showToast('Email already registered!', 'error');
+                    return;
+                }
+
+                const hashedPassword = CryptoJS.SHA256(password).toString();
+                data.users.push({
+                    email,
+                    password: hashedPassword,
+                    registeredAt: new Date().toISOString()
+                });
+
+                data.balances[email] = 0;
+                data.miningTimes[email] = 0;
+                data.stats.totalUsers++;
+
+                const success = await saveData(data);
+                if (success) {
+                    showToast('Registration successful! Please login.');
+                    closeRegisterModal();
+                    setTimeout(showLoginModal, 500);
+                } else {
+                    throw new Error('Registration failed');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                isLoggedIn = true;
+                localStorage.setItem('currentUser', email);
+                updateUIState();
+                closeLoginModal();
+                showToast('Admin login successful!');
+                return;
+            }
+
+            showLoading();
+            try {
+                const data = await getData();
+                if (!data) throw new Error('Could not read data');
+
+                const hashedPassword = CryptoJS.SHA256(password).toString();
+                const user = data.users.find(u => u.email === email && u.password === hashedPassword);
+
+                if (!user) {
+                    showToast('Invalid email or password!', 'error');
+                    return;
+                }
+
+                localStorage.setItem('currentUser', email);
+                isLoggedIn = true;
+                updateUIState();
+                closeLoginModal();
+                showToast('Login successful!');
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            isAdmin = false;
+            isLoggedIn = false;
+            updateUIState();
+            showToast('Logged out successfully!');
+        }
+
+        // Mining Functions
         function startMining() {
             if (miningInterval) return;
             
             miningStartTime = Date.now();
-            document.querySelector('.cyber-pepe').classList.add('mining');
-            
             updateMiningButton(true);
-            initializeMiningAnimation();
             
-            miningInterval = setInterval(updateMining, 100); // Smoother updates
-            
-            showToast('⛏️ Mining started! Keep the page open to continue mining.');
+            miningInterval = setInterval(updateMining, 1000);
+            showToast('Mining started!');
         }
 
         function updateMining() {
             const now = Date.now();
             const elapsed = now - miningStartTime;
-            const progress = Math.min((elapsed / MINING_DURATION) * 100, 100);
+            const progress = Math.min((elapsed / (7 * 60 * 60 * 1000)) * 100, 100);
             
-            // Update progress bar and text
             document.getElementById('miningProgress').style.width = `${progress}%`;
             document.getElementById('progressText').textContent = `${Math.floor(progress)}%`;
             
-            // Calculate and update mining rate
-            const miningRate = calculateMiningRate(progress);
+            const miningRate = 0.1 * (1 + (progress / 100));
             document.getElementById('miningRate').textContent = `${miningRate.toFixed(3)} PEPE/s`;
+            Fixed(3)} PEPE/s`;
             
-            // Update total mined
-            totalMined += miningRate * 0.1; // Since we update every 100ms
-            document.getElementById('totalMined').textContent = `${Math.floor(totalMined)} PEPE`;
-            
-            if (progress >= 100) {
+            const timeLeft = 7 * 60 * 60 * 1000 - elapsed;
+            if (timeLeft <= 0) {
                 completeMining();
+            } else {
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
+                document.getElementById('timeLeft').textContent = 
+                    `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }
-        }
-
-        function calculateMiningRate(progress) {
-            const baseRate = BASE_REWARD_RATE * currentMiningPower;
-            const progressBonus = 1 + (progress / 100); // Up to 2x bonus at 100%
-            return baseRate * progressBonus;
         }
 
         async function completeMining() {
             clearInterval(miningInterval);
             miningInterval = null;
             
-            const finalReward = Math.floor(totalMined);
-            document.querySelector('.cyber-pepe').classList.remove('mining');
+            const currentUser = localStorage.getItem('currentUser');
+            const miningDuration = Date.now() - miningStartTime;
+            const reward = Math.floor(miningDuration / 1000 * 0.1);
             
             try {
                 const data = await getData();
-                const currentUser = localStorage.getItem('currentUser');
+                if (!data) throw new Error('Could not read data');
                 
-                // Update user balance
-                data.balances[currentUser] = (data.balances[currentUser] || 0) + finalReward;
-                data.stats.totalTokens += finalReward;
+                data.balances[currentUser] = (data.balances[currentUser] || 0) + reward;
+                data.miningTimes[currentUser] = Date.now();
+                data.stats.totalTokens += reward;
                 
-                // Add mining history
-                data.miningHistory = data.miningHistory || [];
+                // Add to mining history
                 data.miningHistory.push({
                     user: currentUser,
-                    reward: finalReward,
-                    duration: MINING_DURATION,
+                    reward: reward,
                     timestamp: new Date().toISOString()
                 });
                 
-                await saveData(data);
-                
-                showSuccessfulMining(finalReward);
-                updateBalance(data.balances[currentUser]);
-                resetMiningInterface();
-                
+                const success = await saveData(data);
+                if (success) {
+                    showToast(`Mining completed! Earned ${reward} PEPE!`);
+                    updateBalance(data.balances[currentUser]);
+                    resetMiningUI();
+                } else {
+                    throw new Error('Could not save mining rewards');
+                }
             } catch (error) {
-                showToast('❌ Error completing mining session', 'error');
+                showToast(error.message, 'error');
             }
         }
 
-        function showSuccessfulMining(reward) {
-            showToast(`🎉 Mining Complete! Earned ${reward} PEPE!`, 'success', 5000);
-            
-            // Trigger celebration animation
-            const pepe = document.querySelector('.cyber-pepe');
-            pepe.style.animation = 'celebration 1s ease-in-out';
-            // Enhanced UI Functions
-        function resetMiningInterface() {
+        function resetMiningUI() {
             document.getElementById('miningProgress').style.width = '0%';
             document.getElementById('progressText').textContent = '0%';
-            document.getElementById('miningRate').textContent = '0 PEPE/s';
-            document.getElementById('totalMined').textContent = '0 PEPE';
+            document.getElementById('timeLeft').textContent = '7:00:00';
+            document.getElementById('miningRate').textContent = '0.00 PEPE/s';
             updateMiningButton(false);
-            totalMined = 0;
         }
 
         function updateMiningButton(isMining) {
             const button = document.getElementById('miningButton');
-            if (isMining) {
-                button.innerHTML = '<span class="mr-2">⚡</span> Mining in Progress...';
-                button.disabled = true;
-                button.classList.add('opacity-50');
+            button.textContent = isMining ? 'Mining in Progress...' : 'Start Mining';
+            button.disabled = isMining;
+            button.classList.toggle('opacity-50', isMining);
+        }
+
+        // Coupon Functions
+        async function redeemCoupon() {
+            const code = document.getElementById('couponInput').value.trim().toUpperCase();
+            if (!code) {
+                showToast('Please enter a code!', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const currentUser = localStorage.getItem('currentUser');
+                const data = await getData();
+                if (!data) throw new Error('Could not read data');
+
+                const coupon = data.coupons.find(c => c.code === code && !c.used);
+                if (!coupon) {
+                    showToast('Invalid or used code!', 'error');
+                    return;
+                }
+
+                coupon.used = true;
+                coupon.usedBy = currentUser;
+                coupon.usedAt = new Date().toISOString();
+                data.balances[currentUser] = (data.balances[currentUser] || 0) + coupon.amount;
+                data.stats.totalTokens += coupon.amount;
+
+                const success = await saveData(data);
+                if (success) {
+                    updateBalance(data.balances[currentUser]);
+                    document.getElementById('couponInput').value = '';
+                    showToast(`Success! Received ${coupon.amount} PEPE!`);
+                } else {
+                    throw new Error('Could not redeem code');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Admin Functions
+        async function generateCoupons() {
+            if (!isAdmin) return;
+
+            const amount = parseInt(document.getElementById('couponAmount').value);
+            const count = parseInt(document.getElementById('couponCount').value);
+
+            if (!amount || !count) {
+                showToast('Please enter valid values!', 'error');
+                return;
+            }
+
+            showLoading();
+            try {
+                const data = await getData();
+                if (!data) throw new Error('Could not read data');
+
+                const newCoupons = Array(count).fill().map(() => ({
+                    code: generateCouponCode(),
+                    amount,
+                    used: false,
+                    createdAt: new Date().toISOString()
+                }));
+
+                data.coupons.push(...newCoupons);
+                const success = await saveData(data);
+                
+                if (success) {
+                    document.getElementById('generatedCoupons').classList.remove('hidden');
+                    document.getElementById('couponList').innerHTML = newCoupons
+                        .map(c => `
+                            <div class="mb-2 p-2 bg-green-900 bg-opacity-20 rounded flex justify-between">
+                                <span class="font-mono">${c.code}</span> 
+                                <span class="text-green-400">${c.amount} PEPE</span>
+                            </div>
+                        `).join('');
+                    showToast(`Generated ${count} codes successfully!`);
+                    
+                    document.getElementById('couponAmount').value = '';
+                    document.getElementById('couponCount').value = '';
+                } else {
+                    throw new Error('Could not generate codes');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function generateCouponCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        // UI Update Functions
+        function updateBalance(balance) {
+            document.getElementById('userBalance').textContent = `${balance} PEPE`;
+        }
+
+        async function updateUIState() {
+            const elements = {
+                userSection: document.getElementById('userSection'),
+                authButtons: document.getElementById('authButtons'),
+                adminPanel: document.getElementById('adminPanel'),
+                userContent: document.getElementById('userContent'),
+                miningSection: document.getElementById('miningSection'),
+                couponSection: document.getElementById('couponSection')
+            };
+
+            if (isLoggedIn) {
+                elements.userSection.classList.remove('hidden');
+                elements.authButtons.classList.add('hidden');
+                
+                if (isAdmin) {
+                    elements.adminPanel.classList.remove('hidden');
+                    elements.userContent.classList.add('hidden');
+                    await updateAdminStats();
+                } else {
+                    elements.adminPanel.classList.add('hidden');
+                    elements.userContent.classList.remove('hidden');
+                    elements.miningSection.classList.remove('hidden');
+                    elements.couponSection.classList.remove('hidden');
+                    
+                    const data = await getData();
+                    if (data) {
+                        const currentUser = localStorage.getItem('currentUser');
+                        updateBalance(data.balances[currentUser] || 0);
+                    }
+                }
             } else {
-                button.innerHTML = '<span class="mr-2">⚡</span> Start Mining';
-                button.disabled = false;
-                button.classList.remove('opacity-50');
+                Object.values(elements).forEach(el => el.classList.add('hidden'));
+                elements.authButtons.classList.remove('hidden');
             }
         }
 
-        // Enhanced Animation Functions
-        function initializeMiningAnimation() {
-            const pepe = document.querySelector('.cyber-pepe');
-            pepe.style.animation = 'none';
-            pepe.offsetHeight; // Trigger reflow
-            pepe.style.animation = null;
-            pepe.classList.add('mining');
+        async function updateAdminStats() {
+            try {
+                const data = await getData();
+                if (!data) return;
+
+                document.getElementById('totalUsers').textContent = data.stats.totalUsers;
+                document.getElementById('activeMining').textContent = 
+                    Object.values(data.miningTimes || {})
+                        .filter(time => Date.now() - time < 7 * 60 * 60 * 1000).length;
+                document.getElementById('totalTokens').textContent = data.stats.totalTokens;
+
+                const userListHTML = data.users.map(user => `
+                    <tr class="border-b border-green-500">
+                        <td class="p-2">${user.email}</td>
+                        <td class="p-2">${data.balances[user.email] || 0} PEPE</td>
+                        <td class="p-2">${isMining(data.miningTimes[user.email]) ? '🟢 Mining' : '⚫ Idle'}</td>
+                        <td class="p-2">${formatLastMining(data.miningTimes[user.email])}</td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('userList').innerHTML = userListHTML;
+
+            } catch (error) {
+                showToast('Error updating stats!', 'error');
+            }
         }
 
-        // Enhanced Toast System
-        function showToast(message, type = 'success', duration = 3000) {
-            const existingToast = document.querySelector('.toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
+        function isMining(lastMiningTime) {
+            return Date.now() - lastMiningTime < 7 * 60 * 60 * 1000;
+        }
 
+        function formatLastMining(timestamp) {
+            if (!timestamp) return 'Never';
+            return new Date(timestamp).toLocaleString();
+        }
+
+        // Utility Functions
+        function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `toast ${type === 'success' ? 'bg-green-900' : 'bg-red-900'}`;
             toast.innerHTML = `
@@ -684,129 +811,21 @@
                     <span class="text-2xl mr-2">${type === 'success' ? '✅' : '❌'}</span>
                     <span>${message}</span>
                 </div>
-                <div class="toast-progress"></div>
             `;
-
             document.body.appendChild(toast);
-
-            // Add progress bar animation
-            const progress = document.createElement('style');
-            progress.innerHTML = `
-                @keyframes toast-progress {
-                    to { width: 0% }
-                }
-                .toast-progress {
-                    width: 100%;
-                    height: 3px;
-                    background: ${type === 'success' ? '#45D754' : '#ff4444'};
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    animation: toast-progress ${duration}ms linear;
-                }
-            `;
-            document.head.appendChild(progress);
-
+            
             setTimeout(() => {
                 toast.style.animation = 'slideOut 0.3s ease-out forwards';
-                setTimeout(() => {
-                    toast.remove();
-                    progress.remove();
-                }, 300);
-            }, duration);
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
-        // Enhanced Admin Functions
-        async function updateAdminDashboard() {
-            if (!isAdmin) return;
-
-            try {
-                const data = await getData();
-                
-                // Update stats with animations
-                updateStatWithAnimation('totalUsers', data.stats.totalUsers);
-                updateStatWithAnimation('activeMiners', getActiveMinerCount(data));
-                updateStatWithAnimation('totalTokens', data.stats.totalTokens);
-
-                // Update mining activity feed
-                updateMiningActivityFeed(data.miningHistory || []);
-
-                // Update user list with enhanced details
-                updateUserList(data);
-
-            } catch (error) {
-                showToast('Error updating dashboard', 'error');
-            }
+        function showLoading() {
+            document.getElementById('loadingModal').classList.remove('hidden');
         }
 
-        function updateStatWithAnimation(elementId, value) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-
-            element.classList.add('updating');
-            element.textContent = value.toLocaleString();
-
-            setTimeout(() => {
-                element.classList.remove('updating');
-            }, 500);
-        }
-
-        function updateMiningActivityFeed(history) {
-            const activityFeed = document.getElementById('miningActivity');
-            if (!activityFeed) return;
-
-            const recentActivity = history
-                .slice(-10)
-                .reverse()
-                .map(activity => `
-                    <div class="cyber-card p-3 transform hover:scale-[1.02] transition-all">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center">
-                                <span class="text-green-400 mr-2">⛏️</span>
-                                <span>${activity.user}</span>
-                            </div>
-                            <span class="stats-value">+${activity.reward} PEPE</span>
-                        </div>
-                        <small class="text-gray-400 block mt-1">
-                            ${new Date(activity.timestamp).toLocaleString()}
-                        </small>
-                    </div>
-                `)
-                .join('');
-
-            activityFeed.innerHTML = recentActivity || '<p class="text-gray-400">No mining activity yet</p>';
-        }
-
-        function updateUserList(data) {
-            const userList = document.getElementById('userList');
-            if (!userList) return;
-
-            const userRows = data.users.map(user => {
-                const balance = data.balances[user.email] || 0;
-                const isMining = data.miningTimes[user.email] > Date.now() - MINING_DURATION;
-
-                return `
-                    <tr class="border-b border-green-500 hover:bg-green-900 hover:bg-opacity-20 transition-all">
-                        <td class="p-3">${user.email}</td>
-                        <td class="p-3">
-                            <span class="stats-value">${balance} PEPE</span>
-                        </td>
-                        <td class="p-3">
-                            <span class="px-2 py-1 rounded-full ${isMining ? 'bg-green-500' : 'bg-gray-500'}">
-                                ${isMining ? '🟢 Mining' : '⚫ Idle'}
-                            </span>
-                        </td>
-                        <td class="p-3">
-                            <button onclick="showUserDetails('${user.email}')" 
-                                    class="cyber-button p-2">
-                                View Details
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            userList.innerHTML = userRows;
+        function hideLoading() {
+            document.getElementById('loadingModal').classList.add('hidden');
         }
 
         // Initialize
@@ -816,43 +835,13 @@
                 isLoggedIn = true;
                 isAdmin = currentUser === ADMIN_EMAIL;
                 await updateUIState();
-
-                if (isAdmin) {
-                    // Start real-time updates for admin
-                    setInterval(updateAdminDashboard, 5000);
-                }
             }
 
-            // Add click handler for mining button
-            document.getElementById('miningButton')?.addEventListener('click', startMining);
+            // Admin panel auto-update
+            if (isAdmin) {
+                setInterval(updateAdminStats, 30000);
+            }
         });
-
-        // Event Listeners
-        function setupEventListeners() {
-            // Input validation for coupon code
-            document.getElementById('couponInput')?.addEventListener('input', (e) => {
-                e.target.value = e.target.value.toUpperCase();
-            });
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    closeLoginModal();
-                    closeRegisterModal();
-                }
-                if (e.key === 'Enter') {
-                    if (!document.getElementById('loginModal').classList.contains('hidden')) {
-                        login();
-                    }
-                    if (!document.getElementById('registerModal').classList.contains('hidden')) {
-                        register();
-                    }
-                }
-            });
-        }
-
-        // Initialize event listeners
-        setupEventListeners();
     </script>
 </body>
 </html>
