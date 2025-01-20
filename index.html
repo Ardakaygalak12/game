@@ -3,283 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐸 Pepe Coin Faucet & Airdrop</title>
+    <title>🐸 Cyber Pepe Mining Platform</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         :root {
             --pepe-green: #45D754;
             --pepe-dark: #1E4620;
+            --cyber-glow: 0 0 15px var(--pepe-green);
+            --cyber-glow-intense: 0 0 25px var(--pepe-green);
         }
         
+        /* Enhanced Background */
         body {
             background-color: #0F1F11;
             color: #ffffff;
             font-family: 'Arial', sans-serif;
             background-image: 
-                radial-gradient(circle at 100% 100%, rgba(69, 215, 84, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 0% 0%, rgba(69, 215, 84, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 100% 100%, rgba(69, 215, 84, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 0% 0%, rgba(69, 215, 84, 0.15) 0%, transparent 50%),
+                linear-gradient(45deg, rgba(69, 215, 84, 0.05) 0%, transparent 20%),
+                linear-gradient(-45deg, rgba(69, 215, 84, 0.05) 0%, transparent 20%);
+            background-attachment: fixed;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Yeni eklenen stil sınıfları */
-        .hover\:shadow-neon:hover {
-            box-shadow: 0 0 15px var(--pepe-green);
-        }
-
-        .modal-content {
-            transform: scale(0.95);
-            opacity: 0;
-            transition: all 0.3s ease-out;
-        }
-
-        .modal-content.show {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        /* Mevcut stiller ile yeni animasyonlar */
-        .pepe-gradient {
-            background: linear-gradient(135deg, var(--pepe-green), var(--pepe-dark));
+        /* Cyber Pepe Character Animations */
+        .cyber-pepe {
+            width: 120px;
+            height: 120px;
             position: relative;
-            overflow: hidden;
+            margin: 20px auto;
+            transition: all 0.3s ease;
         }
 
-        .pepe-gradient::after {
+        .cyber-pepe::before {
+            content: '🐸';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            filter: drop-shadow(0 0 10px var(--pepe-green));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .cyber-pepe.mining::before {
+            animation: miningBounce 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes miningBounce {
+            from { transform: translate(-50%, -50%) scale(1); }
+            to { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
+        }
+
+        /* Enhanced Mining Progress Bar */
+        .progress-cyber {
+            width: 100%;
+            height: 25px;
+            background: rgba(30, 70, 32, 0.3);
+            border: 2px solid var(--pepe-green);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-cyber::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                linear-gradient(
-                    transparent 0%,
-                    rgba(255, 255, 255, 0.1) 45%,
-                    rgba(255, 255, 255, 0.1) 55%,
-                    transparent 100%
-                );
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: progressShine 2s linear infinite;
         }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        .pepe-button {
-            background-color: var(--pepe-green);
-            transition: all 0.3s;
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, 
+                var(--pepe-green), 
+                #2FFF35, 
+                var(--pepe-green));
+            background-size: 200% 100%;
+            animation: gradientMove 2s linear infinite;
+            transition: width 0.3s linear;
             position: relative;
-            overflow: hidden;
         }
 
-        .pepe-button:hover {
-            background-color: #3AC847;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 4px 15px rgba(69, 215, 84, 0.3);
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            filter: blur(3px);
         }
 
-        .pepe-button:active {
-            transform: translateY(0) scale(0.98);
+        @keyframes progressShine {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
         }
 
-        .pepe-card {
-            background: rgba(30, 70, 32, 0.9);
-            border: 1px solid var(--pepe-green);
-            backdrop-filter: blur(5px);
-            transition: transform 0.3s ease-out;
+        @keyframes gradientMove {
+            from { background-position: 100% 0; }
+            to { background-position: -100% 0; }
         }
 
-        .pepe-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(69, 215, 84, 0.2);
-        }
-
-        .mining-button {
-            transition: all 0.3s;
+        /* Cyber Button Enhancements */
+        .cyber-button {
             background: var(--pepe-green);
-            box-shadow: 0 4px 15px rgba(69, 215, 84, 0.3);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            clip-path: polygon(
+                10px 0, 
+                calc(100% - 10px) 0, 
+                100% 10px, 
+                100% calc(100% - 10px), 
+                calc(100% - 10px) 100%, 
+                10px 100%, 
+                0 calc(100% - 10px), 
+                0 10px
+            );
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--cyber-glow);
+            border-color: var(--pepe-green);
+            background: transparent;
+        }
+
+        .cyber-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: transform 0.5s ease;
+        }
+
+        /* Enhanced Card Styles */
+        .cyber-card {
+            background: rgba(30, 70, 32, 0.2);
+            border: 1px solid var(--pepe-green);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .mining-button:not(:disabled):hover {
-            animation: pulse 2s infinite;
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(69, 215, 84, 0.1),
+                transparent
+            );
+            animation: cardShine 8s infinite;
         }
 
-        .mining-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            animation: none;
+        @keyframes cardShine {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(200%); }
+            100% { transform: translateX(200%); }
         }
 
-        @keyframes pulse {
+        /* Stats Display */
+        .stats-value {
+            font-family: 'Courier New', monospace;
+            color: var(--pepe-green);
+            text-shadow: var(--cyber-glow);
+            position: relative;
+            padding: 0.5rem 1rem;
+            background: rgba(69, 215, 84, 0.1);
+            border-radius: 4px;
+            border: 1px solid var(--pepe-green);
+        }
+
+        .stats-value.updating {
+            animation: statsUpdate 0.5s ease;
+        }
+
+        @keyframes statsUpdate {
             0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+            50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
 
-        .countdown {
-            font-family: monospace;
-            color: var(--pepe-green);
-            text-shadow: 0 0 10px rgba(69, 215, 84, 0.5);
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .pepe-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--pepe-green);
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .pepe-input:focus {
-            border-color: #3AC847;
-            box-shadow: 0 0 0 2px rgba(69, 215, 84, 0.2);
-            outline: none;
-            transform: translateY(-1px);
-        }
-
-        .pepe-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .stat-card {
-            background: rgba(69, 215, 84, 0.1);
-            border: 1px solid var(--pepe-green);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            background: rgba(69, 215, 84, 0.15);
-            transform: translateY(-2px);
-        }
-
+        /* Enhanced Toast Notifications */
         .toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
             padding: 1rem;
-            border-radius: 0.5rem;
-            background: var(--pepe-dark);
+            border-radius: 8px;
+            background: rgba(30, 70, 32, 0.9);
             border: 1px solid var(--pepe-green);
             color: white;
             z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-            max-width: 90%;
-            width: auto;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            animation: toastSlide 0.3s ease-out;
+            box-shadow: var(--cyber-glow);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        @keyframes toastSlide {
+            from { transform: translateX(100%) translateY(100%); opacity: 0; }
+            to { transform: translateX(0) translateY(0); opacity: 1; }
         }
 
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .float-animation {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
+        /* Loading Animation */
+        .cyber-loading {
+            width: 60px;
+            height: 60px;
             border: 3px solid var(--pepe-dark);
             border-radius: 50%;
             border-top-color: var(--pepe-green);
-            animation: spin 1s ease-in-out infinite;
+            animation: cyberSpin 1s linear infinite;
+            position: relative;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .cyber-loading::before,
+        .cyber-loading::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 3px solid transparent;
+            border-top-color: var(--pepe-green);
+            border-radius: 50%;
+            animation: cyberSpinReverse 2s linear infinite;
+            opacity: 0.5;
         }
 
-        /* Responsive tasarım için medya sorguları */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .pepe-card {
-                margin-bottom: 1rem;
-            }
-            
-            .grid {
-                gap: 1rem;
-            }
-            
-            .text-4xl {
-                font-size: 2rem;
-            }
-
-            .toast {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-                width: auto;
-                max-width: none;
-            }
+        .cyber-loading::after {
+            animation: cyberSpin 3s linear infinite;
+            opacity: 0.3;
         }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
+        @keyframes cyberSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        ::-webkit-scrollbar-track {
-            background: rgba(30, 70, 32, 0.1);
+        @keyframes cyberSpinReverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--pepe-green);
-            border-radius: 5px;
+        /* Modal Enhancements */
+        .cyber-modal {
+            background: rgba(15, 31, 17, 0.95);
+            border: 2px solid var(--pepe-green);
+            box-shadow: var(--cyber-glow);
+            backdrop-filter: blur(10px);
+            animation: modalEnter 0.3s ease-out;
+            position: relative;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3AC847;
+        .cyber-modal::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border: 2px solid var(--pepe-green);
+            animation: modalBorder 2s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes modalEnter {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes modalBorder {
+            0% { clip-path: inset(0 0 98% 0); }
+            25% { clip-path: inset(0 98% 0 0); }
+            50% { clip-path: inset(98% 0 0 0); }
+            75% { clip-path: inset(0 0 0 98%); }
+            100% { clip-path: inset(0 0 98% 0); }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="pepe-gradient p-4 shadow-lg sticky top-0 z-50">
+    <!-- Enhanced Navigation -->
+    <nav class="bg-green-900 bg-opacity-90 p-4 sticky top-0 z-50 backdrop-filter backdrop-blur">
         <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center">
-                <img src="https://raw.githubusercontent.com/pepe-token-images/token-images/main/pepe.png" 
-                     alt="Pepe Coin" class="h-10 mr-3 float-animation">
-                <h1 class="text-2xl font-bold">Pepe Faucet</h1>
+            <div class="flex items-center space-x-4">
+                <div class="cyber-pepe w-12 h-12"></div>
+                <h1 class="text-2xl font-bold tracking-wider">
+                    <span class="text-green-400">CYBER</span> 
+                    <span class="text-white">PEPE</span>
+                </h1>
             </div>
+            <!-- User Balance Section -->
             <div id="userSection" class="hidden">
                 <div class="flex items-center space-x-4">
-                    <span class="px-4 py-2 rounded-lg bg-green-900 border border-green-500 hover:border-green-400 transition-all">
-                        <span class="text-green-300">Balance:</span>
-                        <span id="userBalance" class="font-bold">0 PEPE</span>
-                    </span>
-                    <button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition-all hover:shadow-neon">
-                        Çıkış
+                    <div class="stats-value flex items-center">
+                        <span class="mr-2">💰</span>
+                        <span id="userBalance">0 PEPE</span>
+                    </div>
+                    <button onclick="logout()" class="cyber-button bg-red-500">
+                        <span class="mr-2">🚪</span> Exit
                     </button>
                 </div>
             </div>
+            <!-- Auth Buttons -->
             <div id="authButtons" class="space-x-4">
-                <button onclick="showLoginModal()" class="pepe-button px-4 py-2 rounded-lg text-white">
-                    Giriş
+                <button onclick="showLoginModal()" class="cyber-button">
+                    <span class="mr-2">🔑</span> Login
                 </button>
-                <button onclick="showRegisterModal()" class="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-gray-100 hover:shadow-neon">
-                    Kayıt Ol
+                <button onclick="showRegisterModal()" class="cyber-button bg-white text-green-600">
+                    <span class="mr-2">📝</span> Register
                 </button>
             </div>
         </div>
@@ -288,151 +355,131 @@
     <!-- Main Content -->
     <div class="container mx-auto mt-8 px-4">
         <!-- Welcome Banner -->
-        <div class="pepe-card p-8 rounded-xl mb-8 text-center transform hover:scale-[1.01] transition-all">
-            <h2 class="text-4xl font-bold mb-4 animate-pulse">🐸 Pepe Coin Airdrop 🚀</h2>
-            <p class="text-xl mb-6">Mining yap, kupon kullan, PEPE token kazan!</p>
+        <div class="cyber-card p-8 rounded-xl mb-8 text-center">
+            <h2 class="text-4xl font-bold mb-4">
+                <span class="text-green-400">CYBER</span> 
+                <span class="inline-block transform hover:scale-110 transition-transform">🐸</span> 
+                <span class="text-green-400">MINING</span>
+            </h2>
+            <p class="text-xl mb-6 text-gray-300">Mine, Earn, Trade - The Cyber Way!</p>
+            
+            <!-- Feature Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl transform hover:scale-105 transition-all">
-                    <div class="text-4xl mb-4 float-animation">⛏️</div>
-                    <h3 class="text-xl font-bold mb-2">Mining</h3>
-                    <p>Her 7 saatte bir mining yaparak PEPE token kazanın!</p>
+                <!-- Mining Feature -->
+                <div class="cyber-card p-6 transform hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-4">⛏️</div>
+                    <h3 class="text-xl font-bold mb-2 text-green-400">Active Mining</h3>
+                    <p class="text-gray-300">Mine continuously for 7 hours to maximize your earnings!</p>
                 </div>
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl transform hover:scale-105 transition-all">
-                    <div class="text-4xl mb-4 float-animation">🎟️</div>
-                    <h3 class="text-xl font-bold mb-2">Kuponlar</h3>
-                    <p>Her gün 2 kere dağıtılan kupon kodlarını kullanın!</p>
+                <!-- Rewards Feature -->
+                <div class="cyber-card p-6 transform hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-4">🎁</div>
+                    <h3 class="text-xl font-bold mb-2 text-green-400">Daily Rewards</h3>
+                    <p class="text-gray-300">Claim special bonus rewards every day!</p>
                 </div>
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl transform hover:scale-105 transition-all">
-                    <div class="text-4xl mb-4 float-animation">💰</div>
-                    <h3 class="text-xl font-bold mb-2">Kazanç</h3>
-                    <p>Kazandığınız PEPE tokenleri gerçek paraya dönüştürün!</p>
+                <!-- Trading Feature -->
+                <div class="cyber-card p-6 transform hover:scale-105 transition-all duration-300">
+                    <div class="text-4xl mb-4">💱</div>
+                    <h3 class="text-xl font-bold mb-2 text-green-400">Quick Trade</h3>
+                    <p class="text-gray-300">Convert your PEPE tokens instantly!</p>
                 </div>
             </div>
         </div>
 
-        <!-- User Content -->
-        <div id="userContent" class="grid md:grid-cols-2 gap-8">
-            <!-- Mining Section -->
-            <div id="miningSection" class="hidden">
-                <div class="pepe-card p-6 rounded-xl transform hover:scale-[1.02] transition-all">
-                    <h2 class="text-2xl font-bold mb-4 flex items-center">
-                        <span class="text-3xl mr-2 float-animation">⛏️</span>
-                        Mining
-                    </h2>
-                    <div class="flex flex-col items-center">
-                        <button id="miningButton" 
-                                class="mining-button text-white px-8 py-4 rounded-xl text-xl mb-4 w-full hover:shadow-neon relative overflow-hidden">
-                            <span class="relative z-10">Start Mining</span>
-                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 
-                                      translate-x-[-100%] hover:translate-x-[100%] transition-transform duration-1000"></div>
-                        </button>
-                        <div id="countdown" class="countdown text-xl font-bold"></div>
+        <!-- Mining Interface -->
+        <div id="miningSection" class="hidden">
+            <div class="cyber-card p-6 rounded-xl mb-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <span class="text-3xl mr-2">⛏️</span>
+                    Active Mining
+                </h2>
+                
+                <!-- Mining Animation -->
+                <div class="cyber-pepe"></div>
+                
+                <!-- Mining Progress -->
+                <div class="mb-6">
+                    <div class="progress-cyber">
+                        <div class="progress-fill" id="miningProgress"></div>
+                    </div>
+                    <div class="flex justify-between mt-2">
+                        <span class="text-sm text-gray-400">Progress:</span>
+                        <span class="stats-value text-sm" id="progressText">0%</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Coupon Section -->
-            <div id="couponSection" class="hidden">
-                <div class="pepe-card p-6 rounded-xl transform hover:scale-[1.02] transition-all">
-                    <h2 class="text-2xl font-bold mb-4 flex items-center">
-                        <span class="text-3xl mr-2 float-animation">🎟️</span>
-                        Kupon Kodu
-                    </h2>
-                    <div class="flex flex-col gap-4">
-                        <input type="text" id="couponInput" 
-                               class="pepe-input p-3 rounded-lg uppercase" 
-                               placeholder="Kupon kodunu girin">
-                        <button onclick="redeemCoupon()" 
-                                class="pepe-button px-6 py-3 rounded-lg text-white hover:shadow-neon">
-                            <span class="mr-2">🎫</span> Kullan
-                        </button>
+                
+                <!-- Mining Stats -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="cyber-card p-4">
+                        <h4 class="text-sm text-gray-400">Mining Rate</h4>
+                        <div class="stats-value" id="miningRate">0 PEPE/s</div>
+                    </div>
+                    <div class="cyber-card p-4">
+                        <h4 class="text-sm text-gray-400">Total Mined</h4>
+                        <div class="stats-value" id="totalMined">0 PEPE</div>
                     </div>
                 </div>
+                
+                <!-- Mining Controls -->
+                <button id="miningButton" class="cyber-button w-full py-4 text-xl">
+                    <span class="mr-2">⚡</span>
+                    Start Mining
+                </button>
             </div>
         </div>
 
         <!-- Admin Panel -->
-        <div id="adminPanel" class="hidden mt-8">
-            <div class="pepe-card p-6 rounded-xl">
+        <div id="adminPanel" class="hidden">
+            <div class="cyber-card p-6 rounded-xl">
                 <h2 class="text-2xl font-bold mb-6 flex items-center">
                     <span class="text-3xl mr-2">👑</span>
-                    Admin Panel
+                    Admin Dashboard
                 </h2>
                 
-                <!-- User Statistics -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold mb-4 flex items-center">
-                        <span class="text-2xl mr-2">📊</span>
-                        Kullanıcı İstatistikleri
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="stat-card p-4 rounded-xl">
-                            <h4 class="font-bold flex items-center">
-                                <span class="text-xl mr-2">👥</span>
-                                Toplam Kullanıcı
-                            </h4>
-                            <p id="totalUsers" class="text-2xl"></p>
-                        </div>
-                        <div class="stat-card p-4 rounded-xl">
-                            <h4 class="font-bold flex items-center">
-                                <span class="text-xl mr-2">⛏️</span>
-                                Aktif Mining
-                            </h4>
-                            <p id="activeMining" class="text-2xl"></p>
-                        </div>
-                        <div class="stat-card p-4 rounded-xl">
-                            <h4 class="font-bold flex items-center">
-                                <span class="text-xl mr-2">🪙</span>
-                                Dağıtılan PEPE
-                            </h4>
-                            <p id="totalTokens" class="text-2xl"></p>
-                        </div>
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="cyber-card p-4">
+                        <h4 class="text-gray-400 mb-2">Total Users</h4>
+                        <div class="stats-value text-2xl" id="totalUsers">0</div>
+                    </div>
+                    <div class="cyber-card p-4">
+                        <h4 class="text-gray-400 mb-2">Active Miners</h4>
+                        <div class="stats-value text-2xl" id="activeMiners">0</div>
+                    </div>
+                    <div class="cyber-card p-4">
+                        <h4 class="text-gray-400 mb-2">Total PEPE</h4>
+                        <div class="stats-value text-2xl" id="totalTokens">0</div>
                     </div>
                 </div>
-
-                <!-- User List -->
-                <div class="mb-8">
+                
+                <!-- Mining Activity -->
+                <div class="cyber-card p-4 mb-8">
                     <h3 class="text-xl font-bold mb-4 flex items-center">
-                        <span class="text-2xl mr-2">👥</span>
-                        Kullanıcı Listesi
+                        <span class="text-2xl mr-2">📊</span>
+                        Live Mining Activity
                     </h3>
+                    <div id="miningActivity" class="max-h-60 overflow-y-auto space-y-2">
+                        <!-- Activity items will be inserted here -->
+                    </div>
+                </div>
+                
+                <!-- User Management -->
+                <div class="cyber-card p-4 mb-8">
+                    <h3 class="text-xl font-bold mb-4">👥 User Management</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
                                 <tr class="border-b border-green-500">
-                                    <th class="p-2 text-left">Email</th>
-                                    <th class="p-2 text-left">Kayıt Tarihi</th>
-                                    <th class="p-2 text-left">Token Bakiyesi</th>
-                                    <th class="p-2 text-left">Son Mining</th>
+                                    <th class="p-2 text-left">User</th>
+                                    <th class="p-2 text-left">Balance</th>
+                                    <th class="p-2 text-left">Mining Status</th>
+                                    <th class="p-2 text-left">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="userList" class="divide-y divide-green-500">
+                            <tbody id="userList">
+                                <!-- User rows will be inserted here -->
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <!-- Coupon Generation -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold mb-4 flex items-center">
-                        <span class="text-2xl mr-2">🎟️</span>
-                        Kupon Oluştur
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="number" id="couponAmount" 
-                               class="pepe-input p-3 rounded-lg" 
-                               placeholder="Token Miktarı">
-                        <input type="number" id="couponCount" 
-                               class="pepe-input p-3 rounded-lg" 
-                               placeholder="Kupon Sayısı">
-                        <button onclick="generateCoupons()" 
-                                class="pepe-button px-6 py-3 rounded-lg text-white hover:shadow-neon">
-                            <span class="mr-2">🎫</span> Oluştur
-                        </button>
-                    </div>
-                    <div id="generatedCoupons" class="mt-4 p-4 stat-card rounded-xl hidden">
-                        <h4 class="font-bold mb-2">Oluşturulan Kuponlar:</h4>
-                        <div id="couponList" class="break-all"></div>
                     </div>
                 </div>
             </div>
@@ -442,25 +489,22 @@
     <!-- Modals -->
     <!-- Login Modal -->
     <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="pepe-card p-8 rounded-xl w-96 transform scale-95 opacity-0 transition-all duration-300">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
-                <span class="text-3xl mr-2">🔑</span>
-                Giriş
-            </h2>
+        <div class="cyber-modal p-8 rounded-xl w-96">
+            <h2 class="text-2xl font-bold mb-6">🔑 Login</h2>
             <input type="email" id="loginEmail" 
-                   class="pepe-input w-full p-3 mb-4 rounded-lg" 
+                   class="cyber-input w-full p-3 mb-4 rounded-lg bg-black bg-opacity-50" 
                    placeholder="Email">
             <input type="password" id="loginPassword" 
-                   class="pepe-input w-full p-3 mb-4 rounded-lg" 
-                   placeholder="Şifre">
+                   class="cyber-input w-full p-3 mb-6 rounded-lg bg-black bg-opacity-50" 
+                   placeholder="Password">
             <div class="flex justify-end space-x-4">
                 <button onclick="closeLoginModal()" 
-                        class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                    İptal
+                        class="cyber-button bg-gray-600">
+                    Cancel
                 </button>
                 <button onclick="login()" 
-                        class="pepe-button text-white px-4 py-2 rounded-lg hover:shadow-neon">
-                    Giriş
+                        class="cyber-button">
+                    Login
                 </button>
             </div>
         </div>
@@ -468,25 +512,22 @@
 
     <!-- Register Modal -->
     <div id="registerModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="pepe-card p-8 rounded-xl w-96 transform scale-95 opacity-0 transition-all duration-300">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
-                <span class="text-3xl mr-2">📝</span>
-                Kayıt Ol
-            </h2>
+        <div class="cyber-modal p-8 rounded-xl w-96">
+            <h2 class="text-2xl font-bold mb-6">📝 Register</h2>
             <input type="email" id="registerEmail" 
-                   class="pepe-input w-full p-3 mb-4 rounded-lg" 
+                   class="cyber-input w-full p-3 mb-4 rounded-lg bg-black bg-opacity-50" 
                    placeholder="Email">
             <input type="password" id="registerPassword" 
-                   class="pepe-input w-full p-3 mb-4 rounded-lg" 
-                   placeholder="Şifre">
+                   class="cyber-input w-full p-3 mb-6 rounded-lg bg-black bg-opacity-50" 
+                   placeholder="Password">
             <div class="flex justify-end space-x-4">
                 <button onclick="closeRegisterModal()" 
-                        class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                    İptal
+                        class="cyber-button bg-gray-600">
+                    Cancel
                 </button>
                 <button onclick="register()" 
-                        class="pepe-button text-white px-4 py-2 rounded-lg hover:shadow-neon">
-                    Kayıt Ol
+                        class="cyber-button">
+                    Register
                 </button>
             </div>
         </div>
@@ -494,104 +535,148 @@
 
     <!-- Loading Modal -->
     <div id="loadingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="loading-spinner"></div>
+        <div class="cyber-loading"></div>
     </div>
+
     <script>
-        // JSONBin.io Configuration
-        const BIN_ID = '678d525ae41b4d34e47ad3b8'; 
+        // Constants
+        const MINING_DURATION = 7 * 60 * 60 * 1000; // 7 hours
+        const BASE_REWARD_RATE = 0.1; // PEPE per second
+        const BIN_ID = '678d525ae41b4d34e47ad3b8';
         const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-        const MASTER_KEY = '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W'; 
-
-        const ADMIN_EMAIL = "pepe_admin_7734@secure-admin.pepe"; 
-        const ADMIN_PASSWORD = "PepeAdmin7734!@#$%";
-
+        const MASTER_KEY = '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W';
+        
         // State Management
+        let miningInterval = null;
+        let miningStartTime = 0;
+        let totalMined = 0;
         let isAdmin = false;
         let isLoggedIn = false;
-        let lastMiningTime = 0;
+        let currentMiningPower = 1;
 
-        // Database Operations
-        async function getData() {
-            try {
-                const response = await fetch(API_URL, {
-                    headers: {
-                        'X-Master-Key': MASTER_KEY
-                    }
-                });
-                const data = await response.json();
-                return data.record;
-            } catch (error) {
-                console.error('Veri okuma hatası:', error);
-                showToast('Veri okuma hatası oluştu!', 'error');
-                return null;
+        // Enhanced Mining System
+        function startMining() {
+            if (miningInterval) return;
+            
+            miningStartTime = Date.now();
+            document.querySelector('.cyber-pepe').classList.add('mining');
+            
+            updateMiningButton(true);
+            initializeMiningAnimation();
+            
+            miningInterval = setInterval(updateMining, 100); // Smoother updates
+            
+            showToast('⛏️ Mining started! Keep the page open to continue mining.');
+        }
+
+        function updateMining() {
+            const now = Date.now();
+            const elapsed = now - miningStartTime;
+            const progress = Math.min((elapsed / MINING_DURATION) * 100, 100);
+            
+            // Update progress bar and text
+            document.getElementById('miningProgress').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `${Math.floor(progress)}%`;
+            
+            // Calculate and update mining rate
+            const miningRate = calculateMiningRate(progress);
+            document.getElementById('miningRate').textContent = `${miningRate.toFixed(3)} PEPE/s`;
+            
+            // Update total mined
+            totalMined += miningRate * 0.1; // Since we update every 100ms
+            document.getElementById('totalMined').textContent = `${Math.floor(totalMined)} PEPE`;
+            
+            if (progress >= 100) {
+                completeMining();
             }
         }
 
-        async function saveData(data) {
+        function calculateMiningRate(progress) {
+            const baseRate = BASE_REWARD_RATE * currentMiningPower;
+            const progressBonus = 1 + (progress / 100); // Up to 2x bonus at 100%
+            return baseRate * progressBonus;
+        }
+
+        async function completeMining() {
+            clearInterval(miningInterval);
+            miningInterval = null;
+            
+            const finalReward = Math.floor(totalMined);
+            document.querySelector('.cyber-pepe').classList.remove('mining');
+            
             try {
-                const response = await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': MASTER_KEY
-                    },
-                    body: JSON.stringify(data)
+                const data = await getData();
+                const currentUser = localStorage.getItem('currentUser');
+                
+                // Update user balance
+                data.balances[currentUser] = (data.balances[currentUser] || 0) + finalReward;
+                data.stats.totalTokens += finalReward;
+                
+                // Add mining history
+                data.miningHistory = data.miningHistory || [];
+                data.miningHistory.push({
+                    user: currentUser,
+                    reward: finalReward,
+                    duration: MINING_DURATION,
+                    timestamp: new Date().toISOString()
                 });
-                return response.ok;
+                
+                await saveData(data);
+                
+                showSuccessfulMining(finalReward);
+                updateBalance(data.balances[currentUser]);
+                resetMiningInterface();
+                
             } catch (error) {
-                console.error('Veri yazma hatası:', error);
-                showToast('Veri kaydetme hatası oluştu!', 'error');
-                return false;
+                showToast('❌ Error completing mining session', 'error');
             }
         }
 
-        // Enhanced Modal Functions
-        function showLoginModal() {
-            const modal = document.getElementById('loginModal');
-            const modalContent = modal.querySelector('.pepe-card');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.style.transform = 'scale(1)';
-                modalContent.style.opacity = '1';
-            }, 10);
+        function showSuccessfulMining(reward) {
+            showToast(`🎉 Mining Complete! Earned ${reward} PEPE!`, 'success', 5000);
+            
+            // Trigger celebration animation
+            const pepe = document.querySelector('.cyber-pepe');
+            pepe.style.animation = 'celebration 1s ease-in-out';
+            // Enhanced UI Functions
+        function resetMiningInterface() {
+            document.getElementById('miningProgress').style.width = '0%';
+            document.getElementById('progressText').textContent = '0%';
+            document.getElementById('miningRate').textContent = '0 PEPE/s';
+            document.getElementById('totalMined').textContent = '0 PEPE';
+            updateMiningButton(false);
+            totalMined = 0;
         }
 
-        function closeLoginModal() {
-            const modal = document.getElementById('loginModal');
-            const modalContent = modal.querySelector('.pepe-card');
-            modalContent.style.transform = 'scale(0.95)';
-            modalContent.style.opacity = '0';
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.getElementById('loginEmail').value = '';
-                document.getElementById('loginPassword').value = '';
-            }, 300);
+        function updateMiningButton(isMining) {
+            const button = document.getElementById('miningButton');
+            if (isMining) {
+                button.innerHTML = '<span class="mr-2">⚡</span> Mining in Progress...';
+                button.disabled = true;
+                button.classList.add('opacity-50');
+            } else {
+                button.innerHTML = '<span class="mr-2">⚡</span> Start Mining';
+                button.disabled = false;
+                button.classList.remove('opacity-50');
+            }
         }
 
-        function showRegisterModal() {
-            const modal = document.getElementById('registerModal');
-            const modalContent = modal.querySelector('.pepe-card');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.style.transform = 'scale(1)';
-                modalContent.style.opacity = '1';
-            }, 10);
+        // Enhanced Animation Functions
+        function initializeMiningAnimation() {
+            const pepe = document.querySelector('.cyber-pepe');
+            pepe.style.animation = 'none';
+            pepe.offsetHeight; // Trigger reflow
+            pepe.style.animation = null;
+            pepe.classList.add('mining');
         }
 
-        function closeRegisterModal() {
-            const modal = document.getElementById('registerModal');
-            const modalContent = modal.querySelector('.pepe-card');
-            modalContent.style.transform = 'scale(0.95)';
-            modalContent.style.opacity = '0';
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.getElementById('registerEmail').value = '';
-                document.getElementById('registerPassword').value = '';
-            }, 300);
-        }
+        // Enhanced Toast System
+        function showToast(message, type = 'success', duration = 3000) {
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
 
-        // Enhanced Toast
-        function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `toast ${type === 'success' ? 'bg-green-900' : 'bg-red-900'}`;
             toast.innerHTML = `
@@ -599,406 +684,129 @@
                     <span class="text-2xl mr-2">${type === 'success' ? '✅' : '❌'}</span>
                     <span>${message}</span>
                 </div>
+                <div class="toast-progress"></div>
             `;
+
             document.body.appendChild(toast);
-            
+
+            // Add progress bar animation
+            const progress = document.createElement('style');
+            progress.innerHTML = `
+                @keyframes toast-progress {
+                    to { width: 0% }
+                }
+                .toast-progress {
+                    width: 100%;
+                    height: 3px;
+                    background: ${type === 'success' ? '#45D754' : '#ff4444'};
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    animation: toast-progress ${duration}ms linear;
+                }
+            `;
+            document.head.appendChild(progress);
+
             setTimeout(() => {
                 toast.style.animation = 'slideOut 0.3s ease-out forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+                setTimeout(() => {
+                    toast.remove();
+                    progress.remove();
+                }, 300);
+            }, duration);
         }
 
-        function showLoading() {
-            const loadingModal = document.getElementById('loadingModal');
-            loadingModal.classList.remove('hidden');
-        }
+        // Enhanced Admin Functions
+        async function updateAdminDashboard() {
+            if (!isAdmin) return;
 
-        function hideLoading() {
-            const loadingModal = document.getElementById('loadingModal');
-            loadingModal.classList.add('hidden');
-        }
-
-        // Enhanced Authentication
-        async function register() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-
-            if (!email || !password) {
-                showToast('Lütfen tüm alanları doldurun!', 'error');
-                return;
-            }
-
-            if (!email.includes('@')) {
-                showToast('Geçerli bir email adresi girin!', 'error');
-                return;
-            }
-
-            if (password.length < 6) {
-                showToast('Şifre en az 6 karakter olmalıdır!', 'error');
-                return;
-            }
-
-            showLoading();
             try {
                 const data = await getData();
-                if (!data) throw new Error('Veri okunamadı');
-
-                if (data.users.some(u => u.email === email)) {
-                    showToast('Bu email zaten kayıtlı!', 'error');
-                    return;
-                }
-
-                const hashedPassword = CryptoJS.SHA256(password).toString();
-                data.users.push({
-                    email,
-                    password: hashedPassword,
-                    registeredAt: new Date().toISOString()
-                });
-
-                data.balances[email] = 0;
-                data.miningTimes[email] = 0;
-                data.stats.totalUsers++;
-
-                const success = await saveData(data);
-                if (success) {
-                    showToast('Kayıt başarılı! Giriş yapabilirsiniz.');
-                    closeRegisterModal();
-                    setTimeout(showLoginModal, 500);
-                } else {
-                    throw new Error('Kayıt işlemi başarısız');
-                }
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function login() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-
-    // İşte buraya admin kontrolünü ekliyoruz
-    if (email === "pepe_admin_7734@secure-admin.pepe" && password === "PepeAdmin7734!@#$%") {
-        isAdmin = true;
-        isLoggedIn = true;
-        localStorage.setItem('currentUser', email);
-        updateUIState();
-        closeLoginModal();
-        showToast('Admin girişi başarılı!');
-        return;
-    }
-
-            if (!email || !password) {
-                showToast('Lütfen tüm alanları doldurun!', 'error');
-                return;
-            }
-
-            showLoading();
-            try {
-                const data = await getData();
-                if (!data) throw new Error('Veri okunamadı');
-
-                const hashedPassword = CryptoJS.SHA256(password).toString();
-                const user = data.users.find(u => u.email === email && u.password === hashedPassword);
-
-                if (!user) {
-                    showToast('Geçersiz email veya şifre!', 'error');
-                    return;
-                }
-
-                localStorage.setItem('currentUser', email);
-                isLoggedIn = true;
-                isAdmin = email === 'admin@example.com';
-                updateUIState();
-                closeLoginModal();
-                showToast('Giriş başarılı!');
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('currentUser');
-            isAdmin = false;
-            isLoggedIn = false;
-            updateUIState();
-            showToast('Çıkış yapıldı!');
-        }
-
-        // Enhanced Mining Operations
-        function canMine() {
-            return Date.now() - lastMiningTime >= 7 * 60 * 60 * 1000;
-        }
-
-        function updateMiningButton() {
-            const miningButton = document.getElementById('miningButton');
-            const canMineNow = canMine();
-            miningButton.disabled = !canMineNow;
-            miningButton.textContent = canMineNow ? 'Start Mining' : 'Mining Beklemede';
-            miningButton.className = `mining-button text-white px-8 py-4 rounded-xl text-xl mb-4 w-full ${canMineNow ? 'hover:shadow-neon' : ''}`;
-        }
-
-        async function startMining() {
-            if (!canMine()) return;
-
-            showLoading();
-            try {
-                const currentUser = localStorage.getItem('currentUser');
-                const data = await getData();
-                if (!data) throw new Error('Veri okunamadı');
-
-                const reward = Math.floor(Math.random() * 10) + 1;
-                data.balances[currentUser] = (data.balances[currentUser] || 0) + reward;
-                data.miningTimes[currentUser] = Date.now();
-                data.stats.totalTokens += reward;
-
-                const success = await saveData(data);
-                if (success) {
-                    lastMiningTime = Date.now();
-                    updateBalance(data.balances[currentUser]);
-                    updateMiningButton();
-                    startCountdown();
-                    showToast(`🎉 Tebrikler! ${reward} PEPE kazandınız! 🎉`);
-                } else {
-                    throw new Error('Mining işlemi başarısız');
-                }
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function startCountdown() {
-            const updateCountdown = () => {
-                const now = Date.now();
-                const timeLeft = Math.max(0, 7 * 60 * 60 * 1000 - (now - lastMiningTime));
                 
-                if (timeLeft > 0) {
-                    const hours = Math.floor(timeLeft / (60 * 60 * 1000));
-                    const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
-                    const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
-                    
-                    const formatNumber = (n) => n.toString().padStart(2, '0');
-                    document.getElementById('countdown').textContent = 
-                        `⏳ Sonraki mining: ${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(seconds)}`;
-                    setTimeout(updateCountdown, 1000);
-                } else {
-                    document.getElementById('countdown').textContent = '✅ Mining yapabilirsiniz!';
-                    updateMiningButton();
-                }
-            };
+                // Update stats with animations
+                updateStatWithAnimation('totalUsers', data.stats.totalUsers);
+                updateStatWithAnimation('activeMiners', getActiveMinerCount(data));
+                updateStatWithAnimation('totalTokens', data.stats.totalTokens);
 
-            updateCountdown();
-        }
+                // Update mining activity feed
+                updateMiningActivityFeed(data.miningHistory || []);
 
-        // Enhanced Coupon Operations
-        async function redeemCoupon() {
-            const code = document.getElementById('couponInput').value.trim().toUpperCase();
-            if (!code) {
-                showToast('Lütfen bir kupon kodu girin!', 'error');
-                return;
-            }
+                // Update user list with enhanced details
+                updateUserList(data);
 
-            showLoading();
-            try {
-                const currentUser = localStorage.getItem('currentUser');
-                const data = await getData();
-                if (!data) throw new Error('Veri okunamadı');
-
-                const coupon = data.coupons.find(c => c.code === code && !c.used);
-                if (!coupon) {
-                    showToast('Geçersiz veya kullanılmış kupon!', 'error');
-                    return;
-                }
-
-                coupon.used = true;
-                coupon.usedBy = currentUser;
-                coupon.usedAt = new Date().toISOString();
-                data.balances[currentUser] = (data.balances[currentUser] || 0) + coupon.amount;
-                data.stats.totalTokens += coupon.amount;
-
-                const success = await saveData(data);
-                if (success) {
-                    updateBalance(data.balances[currentUser]);
-                    document.getElementById('couponInput').value = '';
-                    showToast(`🎉 Tebrikler! ${coupon.amount} PEPE kazandınız! 🎉`);
-                } else {
-                    throw new Error('Kupon kullanımı başarısız');
-                }
             } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
+                showToast('Error updating dashboard', 'error');
             }
         }
 
-        // Enhanced Admin Operations
-        async function generateCoupons() {
-            const amount = parseInt(document.getElementById('couponAmount').value);
-            const count = parseInt(document.getElementById('couponCount').value);
+        function updateStatWithAnimation(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
 
-            if (!amount || !count) {
-                showToast('Lütfen geçerli değerler girin!', 'error');
-                return;
-            }
+            element.classList.add('updating');
+            element.textContent = value.toLocaleString();
 
-            if (amount <= 0 || count <= 0) {
-                showToast('Geçerli pozitif değerler girin!', 'error');
-                return;
-            }
+            setTimeout(() => {
+                element.classList.remove('updating');
+            }, 500);
+        }
 
-            showLoading();
-            try {
-                const data = await getData();
-                if (!data) throw new Error('Veri okunamadı');
+        function updateMiningActivityFeed(history) {
+            const activityFeed = document.getElementById('miningActivity');
+            if (!activityFeed) return;
 
-                const newCoupons = Array(count).fill().map(() => ({
-                    code: generateCouponCode(),
-                    amount,
-                    used: false,
-                    createdAt: new Date().toISOString()
-                }));
-
-                data.coupons.push(...newCoupons);
-                const success = await saveData(data);
-                
-                if (success) {
-                    document.getElementById('generatedCoupons').classList.remove('hidden');
-                    document.getElementById('couponList').innerHTML = newCoupons
-                        .map(c => `
-                            <div class="mb-2 p-2 bg-green-900 bg-opacity-20 rounded flex justify-between items-center">
-                                <span class="font-mono">${c.code}</span> 
-                                <span class="text-green-400">${c.amount} PEPE</span>
+            const recentActivity = history
+                .slice(-10)
+                .reverse()
+                .map(activity => `
+                    <div class="cyber-card p-3 transform hover:scale-[1.02] transition-all">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span class="text-green-400 mr-2">⛏️</span>
+                                <span>${activity.user}</span>
                             </div>
-                        `).join('');
-                    showToast(`✨ ${count} adet kupon oluşturuldu!`);
-                    
-                    // Form reset
-                    document.getElementById('couponAmount').value = '';
-                    document.getElementById('couponCount').value = '';
-                } else {
-                    throw new Error('Kupon oluşturma başarısız');
-                }
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
-            }
+                            <span class="stats-value">+${activity.reward} PEPE</span>
+                        </div>
+                        <small class="text-gray-400 block mt-1">
+                            ${new Date(activity.timestamp).toLocaleString()}
+                        </small>
+                    </div>
+                `)
+                .join('');
+
+            activityFeed.innerHTML = recentActivity || '<p class="text-gray-400">No mining activity yet</p>';
         }
 
-        function generateCouponCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = '';
-            for (let i = 0; i < 8; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return code;
-        }
+        function updateUserList(data) {
+            const userList = document.getElementById('userList');
+            if (!userList) return;
 
-        // UI Update Functions
-        function updateBalance(balance) {
-            const balanceElement = document.getElementById('userBalance');
-            const oldBalance = parseInt(balanceElement.textContent);
-            const newBalance = balance;
+            const userRows = data.users.map(user => {
+                const balance = data.balances[user.email] || 0;
+                const isMining = data.miningTimes[user.email] > Date.now() - MINING_DURATION;
 
-            if (oldBalance !== newBalance) {
-                balanceElement.classList.add('animate-pulse');
-                setTimeout(() => balanceElement.classList.remove('animate-pulse'), 1000);
-            }
-
-            balanceElement.textContent = `${balance} PEPE`;
-        }
-
-        async function updateUIState() {
-            const elements = {
-                userSection: document.getElementById('userSection'),
-                authButtons: document.getElementById('authButtons'),
-                adminPanel: document.getElementById('adminPanel'),
-                userContent: document.getElementById('userContent'),
-                miningSection: document.getElementById('miningSection'),
-                couponSection: document.getElementById('couponSection')
-            };
-
-            if (isLoggedIn) {
-                elements.userSection.classList.remove('hidden');
-                elements.authButtons.classList.add('hidden');
-                
-                if (isAdmin) {
-                    elements.adminPanel.classList.remove('hidden');
-                    elements.userContent.classList.add('hidden');
-                    await updateAdminStats();
-                } else {
-                    elements.adminPanel.classList.add('hidden');
-                    elements.userContent.classList.remove('hidden');
-                    elements.miningSection.classList.remove('hidden');
-                    elements.couponSection.classList.remove('hidden');
-                    
-                    const data = await getData();
-                    if (data) {
-                        const currentUser = localStorage.getItem('currentUser');
-                        updateBalance(data.balances[currentUser] || 0);
-                        lastMiningTime = data.miningTimes[currentUser] || 0;
-                        updateMiningButton();
-                        startCountdown();
-                    }
-                }
-            } else {
-                Object.values(elements).forEach(el => el.classList.add('hidden'));
-                elements.authButtons.classList.remove('hidden');
-            }
-        }
-
-        async function updateAdminStats() {
-            try {
-                const data = await getData();
-                if (!data) return;
-
-                // Animasyonlu istatistik güncellemesi
-                const updateWithAnimation = (elementId, value) => {
-                    const element = document.getElementById(elementId);
-                    element.classList.add('animate-pulse');
-                    element.textContent = value;
-                    setTimeout(() => element.classList.remove('animate-pulse'), 1000);
-                };
-
-                updateWithAnimation('totalUsers', data.stats.totalUsers);
-                updateWithAnimation('activeMining', 
-                    Object.values(data.balances).filter(b => b > 0).length);
-                updateWithAnimation('totalTokens', data.stats.totalTokens);
-
-                // Kullanıcı listesi güncellemesi
-                const userListHTML = data.users.map(user => `
+                return `
                     <tr class="border-b border-green-500 hover:bg-green-900 hover:bg-opacity-20 transition-all">
-                        <td class="p-2">${user.email}</td>
-                        <td class="p-2">${new Date(user.registeredAt).toLocaleString()}</td>
-                        <td class="p-2">${data.balances[user.email] || 0} PEPE</td>
-                        <td class="p-2">${data.miningTimes[user.email] ? 
-                            new Date(data.miningTimes[user.email]).toLocaleString() : 
-                            'Henüz mining yapılmadı'}</td>
+                        <td class="p-3">${user.email}</td>
+                        <td class="p-3">
+                            <span class="stats-value">${balance} PEPE</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded-full ${isMining ? 'bg-green-500' : 'bg-gray-500'}">
+                                ${isMining ? '🟢 Mining' : '⚫ Idle'}
+                            </span>
+                        </td>
+                        <td class="p-3">
+                            <button onclick="showUserDetails('${user.email}')" 
+                                    class="cyber-button p-2">
+                                View Details
+                            </button>
+                        </td>
                     </tr>
-                `).join('');
+                `;
+            }).join('');
 
-                const userList = document.getElementById('userList');
-                userList.innerHTML = userListHTML;
-                
-                // Satır animasyonları
-                userList.querySelectorAll('tr').forEach((row, index) => {
-                    row.style.opacity = '0';
-                    row.style.transform = 'translateY(20px)';
-                    setTimeout(() => {
-                        row.style.transition = 'all 0.3s ease-out';
-                        row.style.opacity = '1';
-                        row.style.transform = 'translateY(0)';
-                    }, index * 100);
-                });
-
-            } catch (error) {
-                showToast('İstatistikler güncellenirken hata oluştu!', 'error');
-            }
+            userList.innerHTML = userRows;
         }
 
         // Initialize
@@ -1006,51 +814,45 @@
             const currentUser = localStorage.getItem('currentUser');
             if (currentUser) {
                 isLoggedIn = true;
-                isAdmin = currentUser === 'admin@example.com';
-                const data = await getData();
-                if (data) {
-                    lastMiningTime = data.miningTimes[currentUser] || 0;
-                }
+                isAdmin = currentUser === ADMIN_EMAIL;
                 await updateUIState();
+
+                if (isAdmin) {
+                    // Start real-time updates for admin
+                    setInterval(updateAdminDashboard, 5000);
+                }
             }
 
-            // Admin panel otomatik güncelleme
-            if (isAdmin) {
-                setInterval(updateAdminStats, 30000);
-            }
+            // Add click handler for mining button
+            document.getElementById('miningButton')?.addEventListener('click', startMining);
         });
 
         // Event Listeners
-        document.getElementById('miningButton')?.addEventListener('click', startMining);
+        function setupEventListeners() {
+            // Input validation for coupon code
+            document.getElementById('couponInput')?.addEventListener('input', (e) => {
+                e.target.value = e.target.value.toUpperCase();
+            });
 
-        // Input validasyonları
-        document.getElementById('couponInput')?.addEventListener('input', (e) => {
-            e.target.value = e.target.value.toUpperCase();
-        });
-
-        document.getElementById('couponAmount')?.addEventListener('input', (e) => {
-            if (e.target.value < 0) e.target.value = 0;
-        });
-
-        document.getElementById('couponCount')?.addEventListener('input', (e) => {
-            if (e.target.value < 0) e.target.value = 0;
-        });
-
-        // Klavye kısayolları
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeLoginModal();
-                closeRegisterModal();
-            }
-            if (e.key === 'Enter') {
-                if (!document.getElementById('loginModal').classList.contains('hidden')) {
-                    login();
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeLoginModal();
+                    closeRegisterModal();
                 }
-                if (!document.getElementById('registerModal').classList.contains('hidden')) {
-                    register();
+                if (e.key === 'Enter') {
+                    if (!document.getElementById('loginModal').classList.contains('hidden')) {
+                        login();
+                    }
+                    if (!document.getElementById('registerModal').classList.contains('hidden')) {
+                        register();
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        // Initialize event listeners
+        setupEventListeners();
     </script>
 </body>
 </html>
