@@ -1,7 +1,7 @@
 // config.js
 const config = {
-    JSONBIN_API_KEY: 'YOUR_JSONBIN_API_KEY', // jsonbin.io API anahtarınız
-    JSONBIN_BIN_ID: 'YOUR_BIN_ID',           // jsonbin.io Bin ID'niz
+    JSONBIN_API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W', // jsonbin.io API anahtarınız
+    JSONBIN_BIN_ID: '6790041facd3cb34a8d0b6d0',           // jsonbin.io Bin ID'niz
     VERSION: '1.0.0'
 };
 
