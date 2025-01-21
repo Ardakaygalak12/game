@@ -3,14 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taraxa Faucet</title>
+    <title>Taraxa Faucet System</title>
 
-    <!-- CSS Frameworks ve Kütüphaneleri -->
+    <!-- External CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
     <style>
+        /* Ana Tema Renkleri */
+        :root {
+            --primary-color: #3B82F6;
+            --secondary-color: #10B981;
+            --accent-color: #6366F1;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+            --success-color: #10B981;
+            --info-color: #3B82F6;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+        }
+
+        /* Loading Spinner */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -18,230 +50,1041 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 9999;
+            backdrop-filter: blur(5px);
         }
-        
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
+
+        .spinner {
             position: absolute;
             top: 50%;
             left: 50%;
-            margin-top: -25px;
-            margin-left: -25px;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
+        /* Animasyonlar */
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        .notification {
+        @keyframes slideDown {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Toast Notifications */
+        .toast {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 15px;
+            padding: 15px 25px;
             border-radius: 5px;
-            display: none;
+            color: white;
             z-index: 1000;
-            animation: slideIn 0.5s ease-out;
+            animation: slideDown 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+        .toast.success { background-color: var(--success-color); }
+        .toast.error { background-color: var(--danger-color); }
+        .toast.warning { background-color: var(--warning-color); }
+        .toast.info { background-color: var(--info-color); }
+
+        /* Card Hover Effects */
+        .hover-card {
+            transition: all 0.3s ease;
         }
 
-        .claim-button {
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Button Effects */
+        .btn-effect {
             position: relative;
             overflow: hidden;
         }
 
-        .claim-button::after {
+        .btn-effect:after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease-out, height 0.6s ease-out;
+        }
+
+        .btn-effect:hover:after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Custom Checkboxes */
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox:checked {
+            background: var(--primary-color);
+        }
+
+        .custom-checkbox:checked:after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Table Styles */
+        .custom-table {
             width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .custom-table th,
+        .custom-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Form Styles */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: -0.5rem;
+            left: 0.75rem;
+            padding: 0 0.25rem;
+            background: white;
+            color: var(--primary-color);
+            font-size: 0.875rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
             height: 100%;
-            background: rgba(255,255,255,0.2);
-            transform: translateX(-100%);
+            background: var(--primary-color);
+            transition: width 0.5s ease;
         }
 
-        .claim-button:hover::after {
-            transform: translateX(100%);
-            transition: transform 0.5s ease-out;
+        /* Badge Styles */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
-        .stats-card {
-            transition: transform 0.3s ease;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
+        .badge-primary { background: #e0e7ff; color: #4f46e5; }
+        .badge-success { background: #dcfce7; color: #16a34a; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
     <!-- Loading Overlay -->
     <div class="loading-overlay">
-        <div class="loader"></div>
+        <div class="spinner"></div>
     </div>
 
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+    <!-- Main Content Container -->
+    <div class="min-h-screen">
+        <!-- Login/Register Section -->
+        <div id="authSection" class="flex min-h-screen">
+            <!-- Auth Forms -->
+            <div class="w-full md:w-1/2 flex items-center justify-center p-8">
+                <div class="w-full max-w-md">
+                    <!-- Form Toggle Buttons -->
+                    <div class="flex mb-8 bg-gray-100 rounded-lg p-1">
+                        <button onclick="toggleForm('login')" 
+                                id="loginTab" 
+                                class="flex-1 py-2 rounded-lg text-center font-medium transition-all active-tab">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Giriş
+                        </button>
+                        <button onclick="toggleForm('register')" 
+                                id="registerTab" 
+                                class="flex-1 py-2 rounded-lg text-center font-medium transition-all">
+                            <i class="fas fa-user-plus mr-2"></i>Kayıt
+                        </button>
+                    </div>
 
-    <!-- Ana İçerik -->
-    <div class="min-h-screen flex flex-col">
-        <!-- Auth Formu -->
-        <div id="authForm" class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-                <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-800">Taraxa Faucet</h1>
-                    <p class="text-gray-600 mt-2">TARA kazanmaya başlayın!</p>
+                    <!-- Login Form -->
+                    <form id="loginForm" class="space-y-6">
+                        <div class="input-group">
+                            <label for="loginEmail">Email Adresi</label>
+                            <input type="email" 
+                                   id="loginEmail" 
+                                   required 
+                                   placeholder="ornek@email.com"
+                                   class="form-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="loginPassword">Şifre</label>
+                            <input type="password" 
+                                   id="loginPassword" 
+                                   required
+                                   placeholder="••••••••"
+                                   class="form-input">
+                        </div>
+                        <button type="submit" class="btn-effect w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-lock mr-2"></i>Giriş Yap
+                        </button>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="registerForm" class="space-y-6 hidden">
+                        <div class="input-group">
+                            <label for="regEmail">Email Adresi</label>
+                            <input type="email" 
+                                   id="regEmail" 
+                                   required 
+                                   placeholder="ornek@email.com"
+                                   class="form-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="regFaucetEmail">FaucetPay Email</label>
+                            <input type="email" 
+                                   id="regFaucetEmail" 
+                                   required 
+                                   placeholder="faucetpay@email.com"
+                                   class="form-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="regPassword">Şifre</label>
+                            <input type="password" 
+                                   id="regPassword" 
+                                   required
+                                   placeholder="••••••••"
+                                   class="form-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="regPasswordConfirm">Şifre Tekrar</label>
+                            <input type="password" 
+                                   id="regPasswordConfirm" 
+                                   required
+                                   placeholder="••••••••"
+                                   class="form-input">
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" 
+                                   id="termsAccept" 
+                                   required
+                                   class="custom-checkbox">
+                            <label for="termsAccept" class="text-sm text-gray-600">
+                                Kullanım koşullarını kabul ediyorum
+                            </label>
+                        </div>
+                        <button type="submit" class="btn-effect w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-user-plus mr-2"></i>Kayıt Ol
+                        </button>
+                    </form>
                 </div>
+            </div>
 
-                <!-- Tab Butonları -->
-                <div class="flex mb-6">
-                    <button onclick="toggleForm('login')" 
-                            id="loginTab"
-                            class="flex-1 py-2 text-center border-b-2 border-blue-500 text-blue-500 font-medium">
-                        Giriş
-                    </button>
-                    <button onclick="toggleForm('register')" 
-                            id="registerTab"
-                            class="flex-1 py-2 text-center border-b-2 border-gray-200 text-gray-500 font-medium">
-                        Kayıt Ol
-                    </button>
+            <!-- Auth Info Section -->
+            <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-blue-600 to-purple-600 items-center justify-center p-8">
+                <div class="text-white text-center">
+                    <h1 class="text-4xl font-bold mb-4">Taraxa Faucet</h1>
+                    <p class="text-xl mb-8">TARA token'larınızı hemen kazanmaya başlayın!</p>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="hover-card bg-white bg-opacity-10 p-6 rounded-lg">
+                            <i class="fas fa-coins text-3xl mb-4"></i>
+                            <h3 class="text-lg font-semibold mb-2">Ücretsiz TARA</h3>
+                            <p class="text-sm">Her gün ücretsiz TARA token'ları kazanın</p>
+                        </div>
+                        <div class="hover-card bg-white bg-opacity-10 p-6 rounded-lg">
+                            <i class="fas fa-wallet text-3xl mb-4"></i>
+                            <h3 class="text-lg font-semibold mb-2">Anında Ödeme</h3>
+                            <p class="text-sm">FaucetPay ile anında ödemeler</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Giriş Formu -->
-                <form id="loginForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="loginEmail" required 
-                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Şifre</label>
-                        <input type="password" id="loginPassword" required 
-                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <button type="submit" 
-                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Giriş Yap
-                    </button>
-                </form>
-
-                <!-- Kayıt Formu -->
-                <form id="registerForm" class="space-y-4 hidden">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="regEmail" required 
-                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">FaucetPay Email</label>
-                        <input type="email" id="regFaucetEmail" required 
-                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Şifre</label>
-                        <input type="password" id="regPassword" required 
-                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <button type="submit" 
-                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        Kayıt Ol
-                    </button>
-                </form>
             </div>
         </div>
 
-        <!-- Faucet Sayfası -->
-        <div id="faucetPage" class="hidden flex-1">
-            <!-- Navbar -->
-            <nav class="bg-white shadow">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- User Dashboard Section -->
+        <div id="userDashboard" class="hidden min-h-screen">
+            <!-- Navigation -->
+            <nav class="bg-white shadow-lg">
+                <div class="max-w-7xl mx-auto px-4">
                     <div class="flex justify-between h-16">
                         <div class="flex items-center">
-                            <h1 class="text-2xl font-bold text-gray-800">Taraxa Faucet</h1>
+                            <a href="#" class="text-xl font-bold text-blue-600">
+                                <i class="fas fa-tint mr-2"></i>Taraxa Faucet
+                            </a>
                         </div>
                         <div class="flex items-center space-x-4">
-                            <span id="userEmail" class="text-gray-600"></span>
-                            <button onclick="logout()" 
-                                class="text-red-600 hover:text-red-800">
-                                <i class="fas fa-sign-out-alt"></i> Çıkış
+                            <span id="userEmailDisplay" class="text-gray-600"></span>
+                            <button onclick="logout()" class="text-red-600 hover:text-red-700">
+                                <i class="fas fa-sign-out-alt mr-1"></i>Çıkış
                             </button>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            <!-- Ana İçerik -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <!-- Bakiye Kartı -->
-                <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="stats-card bg-blue-50 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-medium text-gray-800">Toplam Bakiye</h3>
-                                <p id="balance" class="text-2xl font-bold text-blue-600">0.00000000 TARA</p>
+            <!-- Main Dashboard Content -->
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Balance Card -->
+                    <div class="hover-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Bakiye</h3>
+                            <i class="fas fa-coins text-blue-600 text-2xl"></i>
+                        </div>
+                        <p id="userBalance" class="text-3xl font-bold text-blue-600">0.00000000</p>
+                        <p class="text-sm text-gray-600">TARA</p>
+                    </div>
+
+                    <!-- Claim Amount Card -->
+                    <div class="hover-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Her Claim</h3>
+                            <i class="fas fa-hand-holding-usd text-green-600 text-2xl"></i>
+                        </div>
+                        <p id="claimAmount" class="text-3xl font-bold text-green-600">0.01000000</p>
+                        <p class="text-sm text-gray-600">TARA</p>
+                    </div>
+
+                    <!-- Next Claim Card -->
+                    <div class="hover-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Sonraki Claim</h3>
+                            <i class="fas fa-clock text-purple-600 text-2xl"></i>
+                        </div>
+                        <p id="nextClaimTimer" class="text-3xl font-bold text-purple-600">00:00</p>
+                        <p class="text-sm text-gray-600">Kalan Süre</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Claim Button -->
+                    <button onclick="claim()" id="claimButton" 
+                            class="btn-effect bg-green-600 text-white rounded-lg p-6 text-center hover:bg-green-700 transition-colors">
+                        <i class="fas fa-hand-holding-usd text-3xl mb-2"></i>
+                        <h3 class="text-xl font-bold">Claim Yap</h3>
+                        <p class="text-sm">TARA kazanmak için tıklayın</p>
+                    </button>
+
+                    <!-- Withdraw Button -->
+                    <button onclick="withdraw()" id="withdrawButton"
+                            class="btn-effect bg-blue-600 text-white rounded-lg p-6 text-center hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-wallet text-3xl mb-2"></i>
+                        <h3 class="text-xl font-bold">FaucetPay'e Çek</h3>
+                        <p class="text-sm">Minimum: 0.1 TARA</p>
+                    </button>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            <i class="fas fa-history mr-2"></i>İşlem Geçmişi
+                        </h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="custom-table">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left">Tarih</th>
+                                    <th class="text-left">İşlem</th>
+                                    <th class="text-right">Miktar</th>
+                                    <th class="text-center">Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionHistory">
+                                <!-- Transactions will be added here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="hidden min-h-screen bg-gray-100">
+            <!-- Admin Navigation -->
+            <nav class="bg-gray-800 text-white">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="flex justify-between h-16">
+                        <div class="flex items-center">
+                            <span class="text-xl font-bold">
+                                <i class="fas fa-shield-alt mr-2"></i>Admin Panel
+                            </span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span id="adminEmail" class="text-gray-300"></span>
+                            <button onclick="logout()" class="text-red-400 hover:text-red-300">
+                                <i class="fas fa-sign-out-alt mr-1"></i>Çıkış
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Admin Content -->
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <!-- Total Users -->
+                    <div class="hover-card bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600">Toplam Kullanıcı</p>
+                                <h3 id="totalUsers" class="text-2xl font-bold text-gray-800">0</h3>
                             </div>
-                            <div class="stats-card bg-green-50 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-medium text-gray-800">Her Claim</h3>
-                                <p id="claimAmount" class="text-2xl font-bold text-green-600">0.01000000 TARA</p>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-users text-blue-600"></i>
                             </div>
-                            <div class="stats-card bg-purple-50 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-medium text-gray-800">Minimum Çekim</h3>
-                                <p id="minWithdrawal" class="text-2xl font-bold text-purple-600">0.10000000 TARA</p>
+                        </div>
+                        <div class="mt-4">
+                            <span id="newUsers" class="text-green-600 text-sm">
+                                <i class="fas fa-arrow-up"></i> 0 yeni (bugün)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Total Claims -->
+                    <div class="hover-card bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600">Toplam Claim</p>
+                                <h3 id="totalClaims" class="text-2xl font-bold text-gray-800">0</h3>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-hand-holding-usd text-green-600"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span id="todayClaims" class="text-green-600 text-sm">
+                                <i class="fas fa-arrow-up"></i> 0 claim (bugün)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Total Withdrawals -->
+                    <div class="hover-card bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600">Toplam Çekim</p>
+                                <h3 id="totalWithdrawals" class="text-2xl font-bold text-gray-800">0</h3>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <i class="fas fa-wallet text-purple-600"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span id="todayWithdrawals" class="text-green-600 text-sm">
+                                <i class="fas fa-arrow-up"></i> 0 çekim (bugün)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Total TARA Distributed -->
+                    <div class="hover-card bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600">Dağıtılan TARA</p>
+                                <h3 id="totalTara" class="text-2xl font-bold text-gray-800">0</h3>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <i class="fas fa-coins text-yellow-600"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span id="todayTara" class="text-green-600 text-sm">
+                                <i class="fas fa-arrow-up"></i> 0 TARA (bugün)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Controls -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Faucet Settings -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Faucet Ayarları</h3>
+                        <form id="faucetSettingsForm" class="space-y-4">
+                            <div class="input-group">
+                                <label for="claimAmount">Claim Miktarı (TARA)</label>
+                                <input type="number" id="setClaimAmount" step="0.00000001" class="form-input">
+                            </div>
+                            <div class="input-group">
+                                <label for="minWithdraw">Minimum Çekim (TARA)</label>
+                                <input type="number" id="setMinWithdraw" step="0.00000001" class="form-input">
+                            </div>
+                            <div class="input-group">
+                                <label for="cooldown">Bekleme Süresi (Saniye)</label>
+                                <input type="number" id="setCooldown" class="form-input">
+                            </div>
+                            <button type="submit" class="btn-effect bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-save mr-2"></i>Ayarları Kaydet
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- User Management -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Kullanıcı Yönetimi</h3>
+                        <div class="space-y-4">
+                            <div class="input-group">
+                                <input type="text" id="userSearch" placeholder="Email ile kullanıcı ara..." class="form-input">
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="banUser()" class="btn-effect bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                                    <i class="fas fa-ban mr-2"></i>Kullanıcıyı Banla
+                                </button>
+                                <button onclick="resetUserClaims()" class="btn-effect bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">
+                                    <i class="fas fa-redo mr-2"></i>Claimleri Sıfırla
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Butonlar -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <button id="claimButton" onclick="claim()" 
-                        class="claim-button w-full py-4 text-xl font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <i class="fas fa-hand-holding-usd mr-2"></i> Claim Yap
-                        <span id="claimTimer" class="block text-sm font-normal"></span>
-                    </button>
-                    
-                    <button id="withdrawButton" onclick="withdraw()" 
-                        class="w-full py-4 text-xl font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <i class="fas fa-wallet mr-2"></i> FaucetPay'e Çek
-                    </button>
-                </div>
-
-                <!-- İşlem Geçmişi -->
+                <!-- User List -->
                 <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-medium text-gray-800">
-                            <i class="fas fa-history mr-2"></i> Son İşlemler
-                        </h3>
+                    <div class="p-6 border-b">
+                        <h3 class="text-lg font-semibold">Kullanıcı Listesi</h3>
                     </div>
-                    <div class="divide-y divide-gray-200" id="transactions">
-                        <!-- İşlemler buraya eklenecek -->
+                    <div class="overflow-x-auto">
+                        <table class="custom-table">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left">Email</th>
+                                    <th class="text-left">FaucetPay</th>
+                                    <th class="text-right">Bakiye</th>
+                                    <th class="text-center">Son Claim</th>
+                                    <th class="text-center">Durum</th>
+                                    <th class="text-center">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userList">
+                                <!-- Users will be added here dynamically -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Admin Panel -->
-        <div id="adminPanel" class="hidden">
-            <!-- Admin panel içeriği buraya gelecek -->
-        </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- External Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="config.js"></script>
-    <script src="faucetpay.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom Scripts -->
+    <script>
+        // Global Variables
+        let currentUser = null;
+        let isAdmin = false;
+        let timer = null;
+
+        // API Configuration
+        const API_CONFIG = {
+            JSONBIN_API_KEY: 'YOUR_JSONBIN_API_KEY',
+            JSONBIN_BIN_ID: 'YOUR_JSONBIN_BIN_ID',
+            FAUCETPAY_API_KEY: 'YOUR_FAUCETPAY_API_KEY',
+            CURRENCY: 'TARA'
+        };
+
+        // Database Structure
+        const defaultData = {
+            settings: {
+                claim_amount: 0.01000000,
+                min_withdrawal: 0.10000000,
+                cooldown_time: 3600,
+                admin: {
+                    email: 'admin@example.com',
+                    password: 'admin123'
+                }
+            },
+            users: [],
+            statistics: {
+                total_users: 0,
+                total_claims: 0,
+                total_withdrawals: 0,
+                total_amount_claimed: 0,
+                total_amount_withdrawn: 0
+            }
+        };
+
+        // Utility Functions
+        function showLoading() {
+            document.querySelector('.loading-overlay').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.querySelector('.loading-overlay').style.display = 'none';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                ${message}
+            `;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Auth Functions
+        async function login(email, password) {
+            showLoading();
+            try {
+                const response = await getData();
+                const data = response.data.record;
+
+                // Admin check
+                if (email === data.settings.admin.email && password === data.settings.admin.password) {
+                    currentUser = { email, isAdmin: true };
+                    isAdmin = true;
+                    showAdminPanel();
+                    return;
+                }
+
+                // Regular user check
+                const user = data.users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    currentUser = user;
+                    showDashboard();
+                } else {
+                    throw new Error('Hatalı email veya şifre!');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function register(email, faucetpayEmail, password) {
+            showLoading();
+            try {
+                const response = await getData();
+                const data = response.data.record;
+
+                // Check if email exists
+                if (data.users.some(u => u.email === email)) {
+                    throw new Error('Bu email zaten kayıtlı!');
+                }
+
+                // Validate FaucetPay email
+                const faucetpayValidation = await validateFaucetPayAddress(faucetpayEmail);
+                if (!faucetpayValidation) {
+                    throw new Error('Geçersiz FaucetPay email!');
+                }
+
+                // Create new user
+                const newUser = {
+                    id: data.users.length + 1,
+                    email,
+                    password,
+                    faucetpay_email: faucetpayEmail,
+                    balance: 0,
+                    last_claim: null,
+                    created_at: new Date().toISOString(),
+                    transactions: []
+                };
+
+                data.users.push(newUser);
+                data.statistics.total_users++;
+
+                await updateData(data);
+                currentUser = newUser;
+                showDashboard();
+                showToast('Kayıt başarılı!');
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Faucet Functions
+        async function claim() {
+            if (!currentUser || isAdmin) return;
+            showLoading();
+            
+            try {
+                const data = await getData();
+                const userIndex = data.users.findIndex(u => u.email === currentUser.email);
+                if (userIndex === -1) throw new Error('Kullanıcı bulunamadı!');
+
+                const user = data.users[userIndex];
+                const now = new Date();
+                const lastClaim = user.last_claim ? new Date(user.last_claim) : new Date(0);
+                const timeDiff = now - lastClaim;
+
+                if (timeDiff < data.settings.cooldown_time * 1000) {
+                    throw new Error(`Lütfen ${Math.ceil((data.settings.cooldown_time * 1000 - timeDiff) / 1000)} saniye bekleyin.`);
+                }
+
+                // Add claim amount
+                user.balance += data.settings.claim_amount;
+                user.last_claim = now.toISOString();
+                user.transactions.unshift({
+                    type: 'claim',
+                    amount: data.settings.claim_amount,
+                    timestamp: now.toISOString(),
+                    status: 'success'
+                });
+
+                // Update statistics
+                data.statistics.total_claims++;
+                data.statistics.total_amount_claimed += data.settings.claim_amount;
+
+                await updateData(data);
+                currentUser = user;
+                updateDashboard();
+                showToast(`${data.settings.claim_amount} TARA başarıyla claim edildi!`);
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function withdraw() {
+            if (!currentUser || isAdmin) return;
+            showLoading();
+
+            try {
+                const data = await getData();
+                const userIndex = data.users.findIndex(u => u.email === currentUser.email);
+                if (userIndex === -1) throw new Error('Kullanıcı bulunamadı!');
+
+                const user = data.users[userIndex];
+                if (user.balance < data.settings.min_withdrawal) {
+                    throw new Error(`Minimum çekim miktarı: ${data.settings.min_withdrawal} TARA`);
+                }
+
+                // Send to FaucetPay
+                const withdrawalResult = await sendToFaucetPay(
+                    user.faucetpay_email,
+                    user.balance
+                );
+
+                if (withdrawalResult.success) {
+                    user.transactions.unshift({
+                        type: 'withdraw',
+                        amount: user.balance,
+                        timestamp: new Date().toISOString(),
+                        status: 'success',
+                        txid: withdrawalResult.txid
+                    });
+
+                    // Update statistics
+                    data.statistics.total_withdrawals++;
+                    data.statistics.total_amount_withdrawn += user.balance;
+
+                    // Reset balance
+                    user.balance = 0;
+
+                    await updateData(data);
+                    currentUser = user;
+                    updateDashboard();
+                    showToast('Çekim başarılı!');
+                } else {
+                    throw new Error('FaucetPay ödemesi başarısız: ' + withdrawalResult.error);
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Admin Functions
+        async function updateFaucetSettings(settings) {
+            if (!isAdmin) return;
+            showLoading();
+
+            try {
+                const data = await getData();
+                data.settings = { ...data.settings, ...settings };
+                await updateData(data);
+                showToast('Ayarlar güncellendi!');
+                updateAdminPanel();
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function banUser(userId) {
+            if (!isAdmin) return;
+            showLoading();
+
+            try {
+                const data = await getData();
+                const userIndex = data.users.findIndex(u => u.id === userId);
+                if (userIndex === -1) throw new Error('Kullanıcı bulunamadı!');
+
+                data.users[userIndex].banned = true;
+                await updateData(data);
+                showToast('Kullanıcı banlandı!');
+                updateAdminPanel();
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function resetUserClaims(userId) {
+            if (!isAdmin) return;
+            showLoading();
+
+            try {
+                const data = await getData();
+                const userIndex = data.users.findIndex(u => u.id === userId);
+                if (userIndex === -1) throw new Error('Kullanıcı bulunamadı!');
+
+                data.users[userIndex].last_claim = null;
+                await updateData(data);
+                showToast('Kullanıcı claimleri sıfırlandı!');
+                updateAdminPanel();
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // FaucetPay API Functions
+        async function validateFaucetPayAddress(address) {
+            try {
+                const response = await axios.post('https://faucetpay.io/api/v1/checkaddress', {
+                    api_key: API_CONFIG.FAUCETPAY_API_KEY,
+                    address: address,
+                    currency: API_CONFIG.CURRENCY
+                }, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+
+                return response.data.status === 200;
+            } catch (error) {
+                console.error('FaucetPay validation error:', error);
+                return false;
+            }
+        }
+
+        async function sendToFaucetPay(address, amount) {
+            try {
+                const response = await axios.post('https://faucetpay.io/api/v1/send', {
+                    api_key: API_CONFIG.FAUCETPAY_API_KEY,
+                    amount: Math.floor(amount * 100000000), // Convert to Satoshi
+                    to: address,
+                    currency: API_CONFIG.CURRENCY
+                }, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+
+                if (response.data.status === 200) {
+                    return {
+                        success: true,
+                        txid: response.data.payout_id
+                    };
+                } else {
+                    throw new Error(response.data.message);
+                }
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        // UI Update Functions
+        function updateDashboard() {
+            if (!currentUser) return;
+
+            document.getElementById('userEmailDisplay').textContent = currentUser.email;
+            document.getElementById('userBalance').textContent = currentUser.balance.toFixed(8);
+            
+            // Update transaction history
+            const transactionHistory = document.getElementById('transactionHistory');
+            transactionHistory.innerHTML = currentUser.transactions.map(tx => `
+                <tr>
+                    <td>${new Date(tx.timestamp).toLocaleString()}</td>
+                    <td>${tx.type === 'claim' ? 'Claim' : 'Çekim'}</td>
+                    <td class="text-right">${tx.amount.toFixed(8)} TARA</td>
+                    <td class="text-center">
+                        <span class="badge badge-${tx.status === 'success' ? 'success' : 'warning'}">
+                            ${tx.status === 'success' ? 'Başarılı' : 'Bekliyor'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Update timer
+            updateClaimTimer();
+        }
+
+        function updateAdminPanel() {
+            if (!isAdmin) return;
+
+            // Update stats
+            document.getElementById('adminEmail').textContent = currentUser.email;
+            
+            // Update user list
+            updateUserList();
+            
+            // Update settings form
+            const data = getData();
+            document.getElementById('setClaimAmount').value = data.settings.claim_amount;
+            document.getElementById('setMinWithdraw').value = data.settings.min_withdrawal;
+            document.getElementById('setCooldown').value = data.settings.cooldown_time;
+        }
+
+        function updateUserList() {
+            if (!isAdmin) return;
+
+            const userList = document.getElementById('userList');
+            getData().then(response => {
+                const users = response.data.record.users;
+                userList.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>${user.faucetpay_email}</td>
+                        <td class="text-right">${user.balance.toFixed(8)}</td>
+                        <td class="text-center">${user.last_claim ? new Date(user.last_claim).toLocaleString() : 'Hiç'}</td>
+                        <td class="text-center">
+                            <span class="badge badge-${user.banned ? 'danger' : 'success'}">
+                                ${user.banned ? 'Banlı' : 'Aktif'}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <button onclick="banUser(${user.id})" class="text-red-600 hover:text-red-800 mr-2">
+                                <i class="fas fa-ban"></i>
+                            </button>
+                            <button onclick="resetUserClaims(${user.id})" class="text-yellow-600 hover:text-yellow-800">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        // Initialize timer
+        let timerInterval;
+        function updateClaimTimer() {
+            if (!currentUser || !currentUser.last_claim) return;
+
+            clearInterval(timerInterval);
+            const lastClaim = new Date(currentUser.last_claim);
+            const cooldown = getData().settings.cooldown_time * 1000;
+            const nextClaim = new Date(lastClaim.getTime() + cooldown);
+
+            timerInterval = setInterval(() => {
+                const now = new Date();
+                const diff = nextClaim - now;
+
+                if (diff <= 0) {
+                    document.getElementById('nextClaimTimer').textContent = 'Hazır!';
+                    document.getElementById('claimButton').disabled = false;
+                    clearInterval(timerInterval);
+                } else {
+                    const minutes = Math.floor(diff / 60000);
+                    const seconds = Math.floor((diff % 60000) / 1000);
+                    document.getElementById('nextClaimTimer').textContent = 
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    document.getElementById('claimButton').disabled = true;
+                }
+            }, 1000);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Form submit handlers
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('faucetSettingsForm').addEventListener('submit', handleSettingsUpdate);
+
+            // Check for logged in user
+            checkAuth();
+        });
+
+        // Initialize the application
+        checkAuth();
+    </script>
 </body>
 </html>
