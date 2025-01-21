@@ -3,92 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Taraxa Faucet</title>
+    <title>Taraxa Faucet</title>
+
+    <!-- CSS Frameworks ve Kütüphaneleri -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+        
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -25px;
+            margin-left: -25px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .claim-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .claim-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-100%);
+        }
+
+        .claim-button:hover::after {
+            transform: translateX(100%);
+            transition: transform 0.5s ease-out;
+        }
+
+        .stats-card {
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <!-- Login/Register Form -->
-    <div id="authForm" class="flex items-center justify-center min-h-screen">
-        <div class="bg-white p-8 rounded-lg shadow-md w-96">
-            <h1 class="text-2xl font-bold mb-6 text-center">Taraxa Faucet</h1>
-            
-            <div class="mb-4">
-                <button onclick="toggleForm('login')" class="px-4 py-2 bg-blue-500 text-white rounded">Giriş</button>
-                <button onclick="toggleForm('register')" class="px-4 py-2 bg-green-500 text-white rounded">Kayıt</button>
-            </div>
-
-            <form id="loginForm" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="loginEmail" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Şifre</label>
-                    <input type="password" id="loginPassword" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
-                </div>
-                <button type="submit" class="w-full bg-blue-500 text-white rounded-md py-2 px-4">Giriş Yap</button>
-            </form>
-
-            <form id="registerForm" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="regEmail" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">FaucetPay Email</label>
-                    <input type="email" id="regFaucetEmail" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Şifre</label>
-                    <input type="password" id="regPassword" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
-                </div>
-                <button type="submit" class="w-full bg-green-500 text-white rounded-md py-2 px-4">Kayıt Ol</button>
-            </form>
-        </div>
+<body class="bg-gray-100">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="loader"></div>
     </div>
 
-    <!-- Main Faucet Page -->
-    <div id="faucetPage" class="hidden p-8">
-        <div class="max-w-2xl mx-auto">
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold">Taraxa Faucet</h1>
-                    <div class="text-sm text-gray-600">
-                        <span id="userEmail"></span>
-                        <button onclick="logout()" class="ml-4 text-red-500 hover:text-red-600">Çıkış Yap</button>
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Ana İçerik -->
+    <div class="min-h-screen flex flex-col">
+        <!-- Auth Formu -->
+        <div id="authForm" class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800">Taraxa Faucet</h1>
+                    <p class="text-gray-600 mt-2">TARA kazanmaya başlayın!</p>
+                </div>
+
+                <!-- Tab Butonları -->
+                <div class="flex mb-6">
+                    <button onclick="toggleForm('login')" 
+                            id="loginTab"
+                            class="flex-1 py-2 text-center border-b-2 border-blue-500 text-blue-500 font-medium">
+                        Giriş
+                    </button>
+                    <button onclick="toggleForm('register')" 
+                            id="registerTab"
+                            class="flex-1 py-2 text-center border-b-2 border-gray-200 text-gray-500 font-medium">
+                        Kayıt Ol
+                    </button>
+                </div>
+
+                <!-- Giriş Formu -->
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="loginEmail" required 
+                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Şifre</label>
+                        <input type="password" id="loginPassword" required 
+                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <button type="submit" 
+                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Giriş Yap
+                    </button>
+                </form>
+
+                <!-- Kayıt Formu -->
+                <form id="registerForm" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="regEmail" required 
+                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">FaucetPay Email</label>
+                        <input type="email" id="regFaucetEmail" required 
+                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Şifre</label>
+                        <input type="password" id="regPassword" required 
+                            class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <button type="submit" 
+                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Kayıt Ol
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Faucet Sayfası -->
+        <div id="faucetPage" class="hidden flex-1">
+            <!-- Navbar -->
+            <nav class="bg-white shadow">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                        <div class="flex items-center">
+                            <h1 class="text-2xl font-bold text-gray-800">Taraxa Faucet</h1>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span id="userEmail" class="text-gray-600"></span>
+                            <button onclick="logout()" 
+                                class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-sign-out-alt"></i> Çıkış
+                            </button>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="bg-blue-50 p-4 rounded-lg mb-6">
-                    <h2 class="text-lg font-semibold mb-2">Toplam Bakiye: <span id="balance">0.00000000</span> TARA</h2>
-                    <p class="text-sm text-gray-600">Her claim: 0.01000000 TARA</p>
-                    <p class="text-sm text-gray-600">Minimum çekim: 0.10000000 TARA</p>
+            </nav>
+
+            <!-- Ana İçerik -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Bakiye Kartı -->
+                <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="stats-card bg-blue-50 p-4 rounded-lg text-center">
+                                <h3 class="text-lg font-medium text-gray-800">Toplam Bakiye</h3>
+                                <p id="balance" class="text-2xl font-bold text-blue-600">0.00000000 TARA</p>
+                            </div>
+                            <div class="stats-card bg-green-50 p-4 rounded-lg text-center">
+                                <h3 class="text-lg font-medium text-gray-800">Her Claim</h3>
+                                <p id="claimAmount" class="text-2xl font-bold text-green-600">0.01000000 TARA</p>
+                            </div>
+                            <div class="stats-card bg-purple-50 p-4 rounded-lg text-center">
+                                <h3 class="text-lg font-medium text-gray-800">Minimum Çekim</h3>
+                                <p id="minWithdrawal" class="text-2xl font-bold text-purple-600">0.10000000 TARA</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <button onclick="claim()" class="bg-green-500 text-white rounded-md py-3 px-4">
-                        Claim Yap
+
+                <!-- Butonlar -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <button id="claimButton" onclick="claim()" 
+                        class="claim-button w-full py-4 text-xl font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <i class="fas fa-hand-holding-usd mr-2"></i> Claim Yap
+                        <span id="claimTimer" class="block text-sm font-normal"></span>
                     </button>
                     
-                    <button onclick="withdraw()" class="bg-blue-500 text-white rounded-md py-3 px-4">
-                        Çekim Yap
+                    <button id="withdrawButton" onclick="withdraw()" 
+                        class="w-full py-4 text-xl font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-wallet mr-2"></i> FaucetPay'e Çek
                     </button>
                 </div>
-                
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Son İşlemler</h3>
-                    <div id="transactions" class="space-y-2">
+
+                <!-- İşlem Geçmişi -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-800">
+                            <i class="fas fa-history mr-2"></i> Son İşlemler
+                        </h3>
+                    </div>
+                    <div class="divide-y divide-gray-200" id="transactions">
                         <!-- İşlemler buraya eklenecek -->
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="hidden">
+            <!-- Admin panel içeriği buraya gelecek -->
+        </div>
     </div>
 
-    <!-- Admin Panel -->
-    <div id="adminPanel" class="hidden p-8">
-        <!-- Admin panel içeriği -->
-    </div>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="config.js"></script>
+    <script src="faucetpay.js"></script>
 </body>
 </html>
