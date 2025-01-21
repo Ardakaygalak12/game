@@ -3,845 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐸 Pepe Coin Faucet</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <style>
-        :root {
-            --pepe-green: #45D754;
-            --pepe-dark: #1E4620;
-        }
-        
-        body {
-            background-color: #0F1F11;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
-            background-image: 
-                radial-gradient(circle at 100% 100%, rgba(69, 215, 84, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 0% 0%, rgba(69, 215, 84, 0.1) 0%, transparent 50%);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Temel Animation Stilleri */
-        .hover\:shadow-neon:hover {
-            box-shadow: 0 0 15px var(--pepe-green);
-        }
-
-        .pepe-gradient {
-            background: linear-gradient(135deg, var(--pepe-green), var(--pepe-dark));
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pepe-button {
-            background-color: var(--pepe-green);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pepe-button:hover {
-            background-color: #3AC847;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 4px 15px rgba(69, 215, 84, 0.3);
-        }
-
-        .pepe-card {
-            background: rgba(30, 70, 32, 0.9);
-            border: 1px solid var(--pepe-green);
-            backdrop-filter: blur(5px);
-            transition: transform 0.3s ease-out;
-        }
-
-        .pepe-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(69, 215, 84, 0.2);
-        }
-
-        /* Mining Section Stilleri */
-        .mining-button {
-            transition: all 0.3s;
-            background: var(--pepe-green);
-            box-shadow: 0 4px 15px rgba(69, 215, 84, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mining-button:not(:disabled):hover {
-            animation: pulse 2s infinite;
-        }
-
-        .mining-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            animation: none;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        /* Mining Progress Bar */
-        .progress-bar {
-            width: 100%;
-            height: 25px;
-            background: rgba(30, 70, 32, 0.3);
-            border: 2px solid var(--pepe-green);
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, 
-                var(--pepe-green), 
-                #2FFF35);
-            transition: width 0.3s linear;
-        }
-
-        /* Toast Notifications */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            background: var(--pepe-dark);
-            border: 1px solid var(--pepe-green);
-            color: white;
-            z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid var(--pepe-dark);
-            border-radius: 50%;
-            border-top-color: var(--pepe-green);
-            animation: spin 1s infinite linear;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+    <title>HTML Taraxa Faucet</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="pepe-gradient p-4 shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center">
-                <span class="text-4xl mr-3">🐸</span>
-                <h1 class="text-2xl font-bold">Pepe Faucet</h1>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Login/Register Form -->
+    <div id="authForm" class="flex items-center justify-center min-h-screen">
+        <div class="bg-white p-8 rounded-lg shadow-md w-96">
+            <h1 class="text-2xl font-bold mb-6 text-center">Taraxa Faucet</h1>
+            
+            <div class="mb-4">
+                <button onclick="toggleForm('login')" class="px-4 py-2 bg-blue-500 text-white rounded">Giriş</button>
+                <button onclick="toggleForm('register')" class="px-4 py-2 bg-green-500 text-white rounded">Kayıt</button>
             </div>
-            <div id="userSection" class="hidden">
-                <div class="flex items-center space-x-4">
-                    <span class="px-4 py-2 rounded-lg bg-green-900 border border-green-500">
-                        <span class="text-green-300">Balance:</span>
-                        <span id="userBalance" class="font-bold">0 PEPE</span>
-                    </span>
-                    <button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition-all">
-                        Logout
+
+            <form id="loginForm" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="loginEmail" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Şifre</label>
+                    <input type="password" id="loginPassword" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
+                </div>
+                <button type="submit" class="w-full bg-blue-500 text-white rounded-md py-2 px-4">Giriş Yap</button>
+            </form>
+
+            <form id="registerForm" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="regEmail" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">FaucetPay Email</label>
+                    <input type="email" id="regFaucetEmail" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Şifre</label>
+                    <input type="password" id="regPassword" required class="mt-1 block w-full rounded-md border border-gray-300 p-2">
+                </div>
+                <button type="submit" class="w-full bg-green-500 text-white rounded-md py-2 px-4">Kayıt Ol</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Faucet Page -->
+    <div id="faucetPage" class="hidden p-8">
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold">Taraxa Faucet</h1>
+                    <div class="text-sm text-gray-600">
+                        <span id="userEmail"></span>
+                        <button onclick="logout()" class="ml-4 text-red-500 hover:text-red-600">Çıkış Yap</button>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                    <h2 class="text-lg font-semibold mb-2">Toplam Bakiye: <span id="balance">0.00000000</span> TARA</h2>
+                    <p class="text-sm text-gray-600">Her claim: 0.01000000 TARA</p>
+                    <p class="text-sm text-gray-600">Minimum çekim: 0.10000000 TARA</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <button onclick="claim()" class="bg-green-500 text-white rounded-md py-3 px-4">
+                        Claim Yap
+                    </button>
+                    
+                    <button onclick="withdraw()" class="bg-blue-500 text-white rounded-md py-3 px-4">
+                        Çekim Yap
                     </button>
                 </div>
-            </div>
-            <div id="authButtons" class="space-x-4">
-                <button onclick="showLoginModal()" class="pepe-button px-4 py-2 rounded-lg text-white">
-                    Login
-                </button>
-                <button onclick="showRegisterModal()" class="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-gray-100">
-                    Register
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container mx-auto mt-8 px-4">
-        <!-- Welcome Banner -->
-        <div class="pepe-card p-8 rounded-xl mb-8 text-center">
-            <h2 class="text-4xl font-bold mb-4">🐸 Pepe Coin Mining Platform</h2>
-            <p class="text-xl mb-6">Mine PEPE tokens and earn rewards!</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
-                    <div class="text-4xl mb-4">⛏️</div>
-                    <h3 class="text-xl font-bold mb-2">Active Mining</h3>
-                    <p>Mine continuously for 7 hours to maximize earnings!</p>
-                </div>
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
-                    <div class="text-4xl mb-4">🎟️</div>
-                    <h3 class="text-xl font-bold mb-2">Bonus Codes</h3>
-                    <p>Use bonus codes to get extra tokens!</p>
-                </div>
-                <div class="p-6 bg-green-900 bg-opacity-50 rounded-xl">
-                    <div class="text-4xl mb-4">💰</div>
-                    <h3 class="text-xl font-bold mb-2">Rewards</h3>
-                    <p>Convert your PEPE tokens to real value!</p>
-                </div>
-            </div>
-        </div>
-        <!-- User Content -->
-        <div id="userContent" class="grid md:grid-cols-2 gap-8">
-            <!-- Mining Section -->
-            <div id="miningSection" class="hidden">
-                <div class="pepe-card p-6 rounded-xl">
-                    <h2 class="text-2xl font-bold mb-4 flex items-center">
-                        <span class="text-3xl mr-2">⛏️</span>
-                        Active Mining
-                    </h2>
-                    
-                    <!-- Mining Progress -->
-                    <div class="mb-6">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="miningProgress"></div>
-                        </div>
-                        <div class="flex justify-between mt-2">
-                            <span id="progressText" class="text-sm">0%</span>
-                            <span id="timeLeft" class="text-sm">7:00:00</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Mining Rate -->
-                    <div class="bg-green-900 bg-opacity-50 p-4 rounded-lg mb-4">
-                        <div class="text-center">
-                            <span class="text-green-400">Mining Rate:</span>
-                            <span id="miningRate" class="font-bold">0.00 PEPE/s</span>
-                        </div>
-                    </div>
-                    
-                    <button id="miningButton" 
-                            onclick="startMining()" 
-                            class="mining-button text-white px-8 py-4 rounded-xl text-xl w-full">
-                        Start Mining
-                    </button>
-                </div>
-            </div>
-
-            <!-- Coupon Section -->
-            <div id="couponSection" class="hidden">
-                <div class="pepe-card p-6 rounded-xl">
-                    <h2 class="text-2xl font-bold mb-4 flex items-center">
-                        <span class="text-3xl mr-2">🎟️</span>
-                        Bonus Code
-                    </h2>
-                    <div class="flex flex-col gap-4">
-                        <input type="text" id="couponInput" 
-                               class="bg-green-900 bg-opacity-50 p-3 rounded-lg border border-green-500 text-white uppercase" 
-                               placeholder="Enter bonus code">
-                        <button onclick="redeemCoupon()" 
-                                class="pepe-button px-6 py-3 rounded-lg text-white">
-                            Redeem Code
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div id="adminPanel" class="hidden mt-8">
-            <div class="pepe-card p-6 rounded-xl">
-                <h2 class="text-2xl font-bold mb-6 flex items-center">
-                    <span class="text-3xl mr-2">👑</span>
-                    Admin Panel
-                </h2>
                 
-                <!-- Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div class="bg-green-900 bg-opacity-50 p-4 rounded-xl">
-                        <h4 class="font-bold">Total Users</h4>
-                        <p id="totalUsers" class="text-2xl">0</p>
-                    </div>
-                    <div class="bg-green-900 bg-opacity-50 p-4 rounded-xl">
-                        <h4 class="font-bold">Active Mining</h4>
-                        <p id="activeMining" class="text-2xl">0</p>
-                    </div>
-                    <div class="bg-green-900 bg-opacity-50 p-4 rounded-xl">
-                        <h4 class="font-bold">Total PEPE</h4>
-                        <p id="totalTokens" class="text-2xl">0</p>
-                    </div>
-                </div>
-                
-                <!-- User List -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold mb-4">User List</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-green-500">
-                                    <th class="p-2 text-left">Email</th>
-                                    <th class="p-2 text-left">Balance</th>
-                                    <th class="p-2 text-left">Mining Status</th>
-                                    <th class="p-2 text-left">Last Mining</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userList">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Coupon Generation -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold mb-4">Generate Bonus Codes</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="number" id="couponAmount" 
-                               class="bg-green-900 bg-opacity-50 p-3 rounded-lg border border-green-500" 
-                               placeholder="Amount">
-                        <input type="number" id="couponCount" 
-                               class="bg-green-900 bg-opacity-50 p-3 rounded-lg border border-green-500" 
-                               placeholder="Count">
-                        <button onclick="generateCoupons()" 
-                                class="pepe-button px-6 py-3 rounded-lg text-white">
-                            Generate
-                        </button>
-                    </div>
-                    <div id="generatedCoupons" class="mt-4 p-4 bg-green-900 bg-opacity-50 rounded-xl hidden">
-                        <h4 class="font-bold mb-2">Generated Codes:</h4>
-                        <div id="couponList" class="break-all"></div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Son İşlemler</h3>
+                    <div id="transactions" class="space-y-2">
+                        <!-- İşlemler buraya eklenecek -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <!-- Login Modal -->
-    <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="pepe-card p-8 rounded-xl w-96">
-            <h2 class="text-2xl font-bold mb-4">
-                <span class="text-3xl mr-2">🔑</span>
-                Login
-            </h2>
-            <input type="email" id="loginEmail" 
-                   class="bg-green-900 bg-opacity-50 w-full p-3 mb-4 rounded-lg border border-green-500" 
-                   placeholder="Email">
-            <input type="password" id="loginPassword" 
-                   class="bg-green-900 bg-opacity-50 w-full p-3 mb-4 rounded-lg border border-green-500" 
-                   placeholder="Password">
-            <div class="flex justify-end space-x-4">
-                <button onclick="closeLoginModal()" 
-                        class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                    Cancel
-                </button>
-                <button onclick="login()" 
-                        class="pepe-button text-white px-4 py-2 rounded-lg">
-                    Login
-                </button>
-            </div>
-        </div>
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden p-8">
+        <!-- Admin panel içeriği -->
     </div>
-
-    <!-- Register Modal -->
-    <div id="registerModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="pepe-card p-8 rounded-xl w-96">
-            <h2 class="text-2xl font-bold mb-4">
-                <span class="text-3xl mr-2">📝</span>
-                Register
-            </h2>
-            <input type="email" id="registerEmail" 
-                   class="bg-green-900 bg-opacity-50 w-full p-3 mb-4 rounded-lg border border-green-500" 
-                   placeholder="Email">
-            <input type="password" id="registerPassword" 
-                   class="bg-green-900 bg-opacity-50 w-full p-3 mb-4 rounded-lg border border-green-500" 
-                   placeholder="Password">
-            <div class="flex justify-end space-x-4">
-                <button onclick="closeRegisterModal()" 
-                        class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                    Cancel
-                </button>
-                <button onclick="register()" 
-                        class="pepe-button text-white px-4 py-2 rounded-lg">
-                    Register
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Modal -->
-    <div id="loadingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <script>
-        // JSONBin.io Configuration
-        const BIN_ID = '678d525ae41b4d34e47ad3b8';
-        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-        const MASTER_KEY = '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W';
-
-        const ADMIN_EMAIL = "pepe_admin_7734@secure-admin.pepe";
-        const ADMIN_PASSWORD = "PepeAdmin7734!@#$%";
-
-        // State Management
-        let isAdmin = false;
-        let isLoggedIn = false;
-        let miningInterval = null;
-        let miningStartTime = 0;
-
-        // Database Operations
-        async function getData() {
-            try {
-                const response = await fetch(API_URL, {
-                    headers: {
-                        'X-Master-Key': MASTER_KEY
-                    }
-                });
-                const data = await response.json();
-                return data.record;
-            } catch (error) {
-                console.error('Data read error:', error);
-                showToast('Error reading data!', 'error');
-                return null;
-            }
-        }
-
-        async function saveData(data) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': MASTER_KEY
-                    },
-                    body: JSON.stringify(data)
-                });
-                return response.ok;
-            } catch (error) {
-                console.error('Data write error:', error);
-                showToast('Error saving data!', 'error');
-                return false;
-            }
-        }
-
-        // Modal Functions
-        function showLoginModal() {
-            document.getElementById('loginModal').classList.remove('hidden');
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').classList.add('hidden');
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-        }
-
-        function showRegisterModal() {
-            document.getElementById('registerModal').classList.remove('hidden');
-        }
-
-        function closeRegisterModal() {
-            document.getElementById('registerModal').classList.add('hidden');
-            document.getElementById('registerEmail').value = '';
-            document.getElementById('registerPassword').value = '';
-        }
-
-        // Authentication Functions
-        async function register() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-
-            if (!email || !password) {
-                showToast('Please fill all fields!', 'error');
-                return;
-            }
-
-            showLoading();
-            try {
-                const data = await getData();
-                if (!data) throw new Error('Could not read data');
-
-                if (data.users.some(u => u.email === email)) {
-                    showToast('Email already registered!', 'error');
-                    return;
-                }
-
-                const hashedPassword = CryptoJS.SHA256(password).toString();
-                data.users.push({
-                    email,
-                    password: hashedPassword,
-                    registeredAt: new Date().toISOString()
-                });
-
-                data.balances[email] = 0;
-                data.miningTimes[email] = 0;
-                data.stats.totalUsers++;
-
-                const success = await saveData(data);
-                if (success) {
-                    showToast('Registration successful! Please login.');
-                    closeRegisterModal();
-                    setTimeout(showLoginModal, 500);
-                } else {
-                    throw new Error('Registration failed');
-                }
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                isAdmin = true;
-                isLoggedIn = true;
-                localStorage.setItem('currentUser', email);
-                updateUIState();
-                closeLoginModal();
-                showToast('Admin login successful!');
-                return;
-            }
-
-            showLoading();
-            try {
-                const data = await getData();
-                if (!data) throw new Error('Could not read data');
-
-                const hashedPassword = CryptoJS.SHA256(password).toString();
-                const user = data.users.find(u => u.email === email && u.password === hashedPassword);
-
-                if (!user) {
-                    showToast('Invalid email or password!', 'error');
-                    return;
-                }
-
-                localStorage.setItem('currentUser', email);
-                isLoggedIn = true;
-                updateUIState();
-                closeLoginModal();
-                showToast('Login successful!');
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('currentUser');
-            isAdmin = false;
-            isLoggedIn = false;
-            updateUIState();
-            showToast('Logged out successfully!');
-        }
-
-        // Mining Functions
-        function startMining() {
-            if (miningInterval) return;
-            
-            miningStartTime = Date.now();
-            updateMiningButton(true);
-            
-            miningInterval = setInterval(updateMining, 1000);
-            showToast('Mining started!');
-        }
-
-        function updateMining() {
-            const now = Date.now();
-            const elapsed = now - miningStartTime;
-            const progress = Math.min((elapsed / (7 * 60 * 60 * 1000)) * 100, 100);
-            
-            document.getElementById('miningProgress').style.width = `${progress}%`;
-            document.getElementById('progressText').textContent = `${Math.floor(progress)}%`;
-            
-            const miningRate = 0.1 * (1 + (progress / 100));
-            document.getElementById('miningRate').textContent = `${miningRate.toFixed(3)} PEPE/s`;
-            Fixed(3)} PEPE/s`;
-            
-            const timeLeft = 7 * 60 * 60 * 1000 - elapsed;
-            if (timeLeft <= 0) {
-                completeMining();
-            } else {
-                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
-                const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
-                const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
-                document.getElementById('timeLeft').textContent = 
-                    `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-        }
-
-        async function completeMining() {
-            clearInterval(miningInterval);
-            miningInterval = null;
-            
-            const currentUser = localStorage.getItem('currentUser');
-            const miningDuration = Date.now() - miningStartTime;
-            const reward = Math.floor(miningDuration / 1000 * 0.1);
-            
-            try {
-                const data = await getData();
-                if (!data) throw new Error('Could not read data');
-                
-                data.balances[currentUser] = (data.balances[currentUser] || 0) + reward;
-                data.miningTimes[currentUser] = Date.now();
-                data.stats.totalTokens += reward;
-                
-                // Add to mining history
-                data.miningHistory.push({
-                    user: currentUser,
-                    reward: reward,
-                    timestamp: new Date().toISOString()
-                });
-                
-                const success = await saveData(data);
-                if (success) {
-                    showToast(`Mining completed! Earned ${reward} PEPE!`);
-                    updateBalance(data.balances[currentUser]);
-                    resetMiningUI();
-                } else {
-                    throw new Error('Could not save mining rewards');
-                }
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
-        }
-
-        function resetMiningUI() {
-            document.getElementById('miningProgress').style.width = '0%';
-            document.getElementById('progressText').textContent = '0%';
-            document.getElementById('timeLeft').textContent = '7:00:00';
-            document.getElementById('miningRate').textContent = '0.00 PEPE/s';
-            updateMiningButton(false);
-        }
-
-        function updateMiningButton(isMining) {
-            const button = document.getElementById('miningButton');
-            button.textContent = isMining ? 'Mining in Progress...' : 'Start Mining';
-            button.disabled = isMining;
-            button.classList.toggle('opacity-50', isMining);
-        }
-
-        // Coupon Functions
-        async function redeemCoupon() {
-            const code = document.getElementById('couponInput').value.trim().toUpperCase();
-            if (!code) {
-                showToast('Please enter a code!', 'error');
-                return;
-            }
-
-            showLoading();
-            try {
-                const currentUser = localStorage.getItem('currentUser');
-                const data = await getData();
-                if (!data) throw new Error('Could not read data');
-
-                const coupon = data.coupons.find(c => c.code === code && !c.used);
-                if (!coupon) {
-                    showToast('Invalid or used code!', 'error');
-                    return;
-                }
-
-                coupon.used = true;
-                coupon.usedBy = currentUser;
-                coupon.usedAt = new Date().toISOString();
-                data.balances[currentUser] = (data.balances[currentUser] || 0) + coupon.amount;
-                data.stats.totalTokens += coupon.amount;
-
-                const success = await saveData(data);
-                if (success) {
-                    updateBalance(data.balances[currentUser]);
-                    document.getElementById('couponInput').value = '';
-                    showToast(`Success! Received ${coupon.amount} PEPE!`);
-                } else {
-                    throw new Error('Could not redeem code');
-                }
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Admin Functions
-        async function generateCoupons() {
-            if (!isAdmin) return;
-
-            const amount = parseInt(document.getElementById('couponAmount').value);
-            const count = parseInt(document.getElementById('couponCount').value);
-
-            if (!amount || !count) {
-                showToast('Please enter valid values!', 'error');
-                return;
-            }
-
-            showLoading();
-            try {
-                const data = await getData();
-                if (!data) throw new Error('Could not read data');
-
-                const newCoupons = Array(count).fill().map(() => ({
-                    code: generateCouponCode(),
-                    amount,
-                    used: false,
-                    createdAt: new Date().toISOString()
-                }));
-
-                data.coupons.push(...newCoupons);
-                const success = await saveData(data);
-                
-                if (success) {
-                    document.getElementById('generatedCoupons').classList.remove('hidden');
-                    document.getElementById('couponList').innerHTML = newCoupons
-                        .map(c => `
-                            <div class="mb-2 p-2 bg-green-900 bg-opacity-20 rounded flex justify-between">
-                                <span class="font-mono">${c.code}</span> 
-                                <span class="text-green-400">${c.amount} PEPE</span>
-                            </div>
-                        `).join('');
-                    showToast(`Generated ${count} codes successfully!`);
-                    
-                    document.getElementById('couponAmount').value = '';
-                    document.getElementById('couponCount').value = '';
-                } else {
-                    throw new Error('Could not generate codes');
-                }
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function generateCouponCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = '';
-            for (let i = 0; i < 8; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return code;
-        }
-
-        // UI Update Functions
-        function updateBalance(balance) {
-            document.getElementById('userBalance').textContent = `${balance} PEPE`;
-        }
-
-        async function updateUIState() {
-            const elements = {
-                userSection: document.getElementById('userSection'),
-                authButtons: document.getElementById('authButtons'),
-                adminPanel: document.getElementById('adminPanel'),
-                userContent: document.getElementById('userContent'),
-                miningSection: document.getElementById('miningSection'),
-                couponSection: document.getElementById('couponSection')
-            };
-
-            if (isLoggedIn) {
-                elements.userSection.classList.remove('hidden');
-                elements.authButtons.classList.add('hidden');
-                
-                if (isAdmin) {
-                    elements.adminPanel.classList.remove('hidden');
-                    elements.userContent.classList.add('hidden');
-                    await updateAdminStats();
-                } else {
-                    elements.adminPanel.classList.add('hidden');
-                    elements.userContent.classList.remove('hidden');
-                    elements.miningSection.classList.remove('hidden');
-                    elements.couponSection.classList.remove('hidden');
-                    
-                    const data = await getData();
-                    if (data) {
-                        const currentUser = localStorage.getItem('currentUser');
-                        updateBalance(data.balances[currentUser] || 0);
-                    }
-                }
-            } else {
-                Object.values(elements).forEach(el => el.classList.add('hidden'));
-                elements.authButtons.classList.remove('hidden');
-            }
-        }
-
-        async function updateAdminStats() {
-            try {
-                const data = await getData();
-                if (!data) return;
-
-                document.getElementById('totalUsers').textContent = data.stats.totalUsers;
-                document.getElementById('activeMining').textContent = 
-                    Object.values(data.miningTimes || {})
-                        .filter(time => Date.now() - time < 7 * 60 * 60 * 1000).length;
-                document.getElementById('totalTokens').textContent = data.stats.totalTokens;
-
-                const userListHTML = data.users.map(user => `
-                    <tr class="border-b border-green-500">
-                        <td class="p-2">${user.email}</td>
-                        <td class="p-2">${data.balances[user.email] || 0} PEPE</td>
-                        <td class="p-2">${isMining(data.miningTimes[user.email]) ? '🟢 Mining' : '⚫ Idle'}</td>
-                        <td class="p-2">${formatLastMining(data.miningTimes[user.email])}</td>
-                    </tr>
-                `).join('');
-
-                document.getElementById('userList').innerHTML = userListHTML;
-
-            } catch (error) {
-                showToast('Error updating stats!', 'error');
-            }
-        }
-
-        function isMining(lastMiningTime) {
-            return Date.now() - lastMiningTime < 7 * 60 * 60 * 1000;
-        }
-
-        function formatLastMining(timestamp) {
-            if (!timestamp) return 'Never';
-            return new Date(timestamp).toLocaleString();
-        }
-
-        // Utility Functions
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type === 'success' ? 'bg-green-900' : 'bg-red-900'}`;
-            toast.innerHTML = `
-                <div class="flex items-center">
-                    <span class="text-2xl mr-2">${type === 'success' ? '✅' : '❌'}</span>
-                    <span>${message}</span>
-                </div>
-            `;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease-out forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function showLoading() {
-            document.getElementById('loadingModal').classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingModal').classList.add('hidden');
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', async () => {
-            const currentUser = localStorage.getItem('currentUser');
-            if (currentUser) {
-                isLoggedIn = true;
-                isAdmin = currentUser === ADMIN_EMAIL;
-                await updateUIState();
-            }
-
-            // Admin panel auto-update
-            if (isAdmin) {
-                setInterval(updateAdminStats, 30000);
-            }
-        });
-    </script>
 </body>
 </html>
