@@ -17,32 +17,136 @@
     </nav>
 
     <header class="hero">
-        <h1>Kripto Dünyasına Hoş Geldiniz</h1>
-        <p>En güncel oyun ve airdrop bilgileri</p>
+        <div class="hero-content">
+            <h1>Kripto Oyun Dünyasına Hoş Geldiniz</h1>
+            <p>En güncel GameFi projeleri ve airdrop fırsatları</p>
+            <div class="hero-buttons">
+                <a href="#featured-games" class="btn primary">Popüler Oyunlar</a>
+                <a href="#latest-airdrops" class="btn secondary">Son Airdroplar</a>
+            </div>
+        </div>
     </header>
 
     <main>
-        <section class="featured">
-            <h2>Öne Çıkan İçerikler</h2>
+        <section id="featured-games" class="featured">
+            <h2>Öne Çıkan Oyunlar</h2>
             <div class="card-container">
                 <div class="card">
+                    <div class="card-badge">Yeni</div>
+                    <img src="/api/placeholder/300/200" alt="YesCoin Game">
+                    <h3>YesCoin Game</h3>
+                    <p>DeFi entegreli P2E oyunu</p>
+                    <div class="card-stats">
+                        <span>TVL: $2.5M</span>
+                        <span>Kullanıcı: 50K+</span>
+                    </div>
+                    <a href="games.html#yescoin">Detaylar</a>
+                </div>
+                
+                <div class="card">
+                    <div class="card-badge hot">Popüler</div>
+                    <img src="/api/placeholder/300/200" alt="MemeFi">
+                    <h3>MemeFi Universe</h3>
+                    <p>Meme ekonomi platformu</p>
+                    <div class="card-stats">
+                        <span>TVL: $1.8M</span>
+                        <span>Kullanıcı: 35K+</span>
+                    </div>
+                    <a href="games.html#memefi">Detaylar</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-badge">Beta</div>
                     <img src="/api/placeholder/300/200" alt="Hamster Combat">
                     <h3>Hamster Combat</h3>
-                    <p>Play-to-earn savaş oyunu</p>
+                    <p>PvP savaş oyunu</p>
+                    <div class="card-stats">
+                        <span>TVL: $1.2M</span>
+                        <span>Kullanıcı: 25K+</span>
+                    </div>
                     <a href="games.html#hamster">Detaylar</a>
                 </div>
-                <div class="card">
-                    <img src="/api/placeholder/300/200" alt="Catizen">
-                    <h3>Catizen</h3>
-                    <p>NFT tabanlı kedi metaverse</p>
-                    <a href="games.html#catizen">Detaylar</a>
+            </div>
+        </section>
+
+        <section id="latest-airdrops" class="airdrops-preview">
+            <h2>Aktif Airdroplar</h2>
+            <div class="airdrop-grid">
+                <div class="airdrop-preview-card">
+                    <div class="countdown" data-deadline="2025-02-15">
+                        <span class="days">00</span>g
+                        <span class="hours">00</span>s
+                        <span class="minutes">00</span>d
+                    </div>
+                    <h3>YesCoin Airdrop</h3>
+                    <ul>
+                        <li>Ödül: 250-1000 $YES</li>
+                        <li>NFT Whitelist</li>
+                    </ul>
+                    <a href="airdrops.html" class="btn">Katıl</a>
+                </div>
+
+                <div class="airdrop-preview-card">
+                    <div class="countdown" data-deadline="2025-03-01">
+                        <span class="days">00</span>g
+                        <span class="hours">00</span>s
+                        <span class="minutes">00</span>d
+                    </div>
+                    <h3>MemeFi Airdrop</h3>
+                    <ul>
+                        <li>Ödül: 500-2000 $MEME</li>
+                        <li>DAO Hakları</li>
+                    </ul>
+                    <a href="airdrops.html" class="btn">Katıl</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>Neden Biz?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Güncel Bilgiler</h3>
+                    <p>En son GameFi projelerini ve airdrop fırsatlarını sizin için araştırıyoruz</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Detaylı İnceleme</h3>
+                    <p>Her projeyi tokenomiks ve risk açısından detaylıca değerlendiriyoruz</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3>Oyun Rehberleri</h3>
+                    <p>Başarılı olmak için gereken tüm stratejileri ve ipuçlarını sunuyoruz</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Hızlı Erişim</h3>
+                    <p>Yeni fırsatlardan ilk siz haberdar olun</p>
                 </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>Not: Bu sitedeki bilgiler sadece bilgilendirme amaçlıdır. Yatırım tavsiyesi değildir.</p>
+        <div class="footer-content">
+            <div class="disclaimer">
+                <h3>Risk Bildirimi</h3>
+                <p>Kripto para birimleri ve NFT'ler yüksek risk içeren dijital varlıklardır. Bu sitedeki bilgiler sadece eğitim ve bilgilendirme amaçlıdır. Yatırım tavsiyesi değildir. Yatırım yapmadan önce detaylı araştırma yapmanız önerilir.</p>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-btn">Twitter</a>
+                <a href="#" class="social-btn">Discord</a>
+                <a href="#" class="social-btn">Telegram</a>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2025 CryptoGuide. Tüm hakları saklıdır.
+        </div>
     </footer>
 
     <script src="script.js"></script>
