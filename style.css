@@ -5,7 +5,55 @@
     --background: #F9F9F9;
 }
 
-/* Airdrop Styles */
+/* Extended Airdrop Styles */
+.status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status.active {
+    background: #4CAF50;
+    color: white;
+}
+
+.status.upcoming {
+    background: #2196F3;
+    color: white;
+}
+
+.status.completed {
+    background: #9E9E9E;
+    color: white;
+}
+
+.airdrop-card.upcoming {
+    border: 2px dashed var(--primary);
+    background: rgba(255,255,255,0.9);
+}
+
+.airdrop-card.completed {
+    opacity: 0.8;
+}
+
+.rewards {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(255,101,132,0.1));
+    border-radius: 10px;
+}
+
+.launch-estimate, .distribution-info {
+    margin-top: 1.5rem;
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.05);
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Main Airdrop Styles */
 .airdrop-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
