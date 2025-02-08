@@ -304,6 +304,69 @@
         </div>
     </div>
 
+    <div class="card" style="margin-top: 20px;">
+    <h3>
+        <i class="fas fa-wallet"></i>
+        Para Çekme
+    </h3>
+    
+    <div class="stats-grid" style="margin-top: 20px;">
+        <div class="stat-card">
+            <i class="fas fa-coins fa-2x"></i>
+            <div class="stat-value" id="userBalance">0</div>
+            <div>Toplam Bakiye</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-clock fa-2x"></i>
+            <div class="stat-value" id="lastWithdraw">-</div>
+            <div>Son Çekim</div>
+        </div>
+    </div>
+
+    <form id="withdrawForm" style="margin-top: 20px;">
+        <div class="form-group">
+            <label>
+                <i class="fas fa-envelope"></i>
+                FaucetPay E-posta
+            </label>
+            <div class="input-wrapper">
+                <i class="fas fa-at"></i>
+                <input type="email" id="withdrawEmail" required placeholder="FaucetPay E-posta Adresiniz">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>
+                <i class="fas fa-money-bill-wave"></i>
+                Çekilecek Miktar
+            </label>
+            <div class="input-wrapper">
+                <i class="fas fa-coins"></i>
+                <input type="number" id="withdrawAmount" required min="1000" step="100" placeholder="Minimum: 1000 PEPE">
+            </div>
+            <small style="color: #666; margin-top: 5px; display: block;">
+                * Minimum çekim miktarı: 1000 PEPE
+            </small>
+        </div>
+
+        <button type="submit" class="claim-btn" id="withdrawButton">
+            <i class="fas fa-paper-plane"></i>
+            Çekim Yap
+            <span class="loading" style="display: none;"></span>
+        </button>
+
+        <div id="withdrawMessage"></div>
+    </form>
+
+    <div class="recent-claims" style="margin-top: 20px;">
+        <h4 style="margin-bottom: 10px;">
+            <i class="fas fa-history"></i>
+            Çekim Geçmişi
+        </h4>
+        <div id="withdrawHistory"></div>
+    </div>
+</div>
+
     <script>
         // Konfigürasyon
         const config = {
@@ -315,7 +378,187 @@
                 apiKey: 'a5a15c7cc4b4d4c6a0cab0cb5d2b2ce3388070028e2c5cf37284f627975cb9ed'
             }
         };
+        class WithdrawSystem {
+    constructor() {
+        this.setupEventListeners();
+        this.loadUserData();
+    }
 
+    setupEventListeners() {
+        $('#withdrawForm').on('submit', async (e) => {
+            e.preventDefault();
+            await this.handleWithdraw();
+        });
+
+        // E-posta otomatik doldurma
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+            $('#withdrawEmail').val(savedEmail);
+        }
+
+        // Miktar değişikliğinde kontrol
+        $('#withdrawAmount').on('input', () => {
+            this.validateAmount();
+        });
+    }
+
+    validateAmount() {
+        const amount = parseInt($('#withdrawAmount').val());
+        const balance = parseInt($('#userBalance').text().replace(/,/g, ''));
+        const minAmount = 1000;
+
+        if (amount < minAmount) {
+            showError('Minimum çekim miktarı 1000 PEPE\'dir', 'withdrawMessage');
+            $('#withdrawButton').prop('disabled', true);
+            return false;
+        }
+
+        if (amount > balance) {
+            showError('Yetersiz bakiye', 'withdrawMessage');
+            $('#withdrawButton').prop('disabled', true);
+            return false;
+        }
+
+        $('#withdrawButton').prop('disabled', false);
+        $('#withdrawMessage').empty();
+        return true;
+    }
+
+    async loadUserData() {
+        try {
+            const data = await Database.getData();
+            const email = localStorage.getItem('userEmail');
+
+            if (email && data.users && data.users[email]) {
+                const userData = data.users[email];
+                $('#userBalance').text(userData.totalClaimed?.toLocaleString() || '0');
+                
+                if (userData.lastWithdraw) {
+                    $('#lastWithdraw').text(moment(userData.lastWithdraw).fromNow());
+                }
+
+                this.updateWithdrawHistory(data.withdrawals?.filter(w => w.email === email) || []);
+            }
+        } catch (error) {
+            console.error('Kullanıcı verisi yüklenirken hata:', error);
+        }
+    }
+
+    async handleWithdraw() {
+        const email = $('#withdrawEmail').val();
+        const amount = parseInt($('#withdrawAmount').val());
+
+        if (!this.validateAmount()) return;
+
+        setLoading(true, 'withdrawButton');
+        try {
+            const data = await Database.getData();
+            
+            // Kullanıcı kontrolü
+            if (!data.users?.[email]) {
+                throw new Error('Kullanıcı bulunamadı');
+            }
+
+            // Bakiye kontrolü
+            const balance = data.users[email].totalClaimed || 0;
+            if (balance < amount) {
+                throw new Error('Yetersiz bakiye');
+            }
+
+            // Çekim işlemi
+            const withdrawal = {
+                id: Date.now().toString(),
+                email: email,
+                amount: amount,
+                timestamp: new Date().toISOString(),
+                status: 'pending'
+            };
+
+            // Veritabanını güncelle
+            if (!data.withdrawals) data.withdrawals = [];
+            data.withdrawals.unshift(withdrawal);
+            
+            // Kullanıcı bakiyesini güncelle
+            data.users[email].totalClaimed -= amount;
+            data.users[email].lastWithdraw = new Date().toISOString();
+
+            await Database.updateData(data);
+
+            // Başarılı mesaj
+            showSuccess('Çekim talebiniz alındı! İşleminiz en kısa sürede gerçekleştirilecek.', 'withdrawMessage');
+            
+            // UI güncelle
+            this.loadUserData();
+            
+            // Form temizle
+            $('#withdrawAmount').val('');
+
+        } catch (error) {
+            console.error('Çekim hatası:', error);
+            showError(error.message, 'withdrawMessage');
+        } finally {
+            setLoading(false, 'withdrawButton');
+        }
+    }
+
+    updateWithdrawHistory(withdrawals) {
+        const historyHtml = withdrawals
+            .slice(0, 5)
+            .map(w => `
+                <div class="claim-item">
+                    <div>
+                        <span>${moment(w.timestamp).format('DD/MM/YYYY HH:mm')}</span>
+                        <small style="color: ${w.status === 'completed' ? 'var(--primary)' : '#ffa500'};">
+                            ${w.status === 'completed' ? '✓ Tamamlandı' : '⏳ Beklemede'}
+                        </small>
+                    </div>
+                    <div style="color: var(--primary);">
+                        ${w.amount.toLocaleString()} PEPE
+                    </div>
+                </div>
+            `)
+            .join('');
+
+        $('#withdrawHistory').html(historyHtml || '<p>Henüz çekim yapılmamış.</p>');
+    }
+}
+
+// Withdraw sistemini başlat
+const withdrawSystem = new WithdrawSystem();
+
+// Helper fonksiyonlar
+function setLoading(loading, buttonId) {
+    const btn = $(`#${buttonId}`);
+    const loader = btn.find('.loading');
+    
+    btn.prop('disabled', loading);
+    if (loading) {
+        loader.show();
+        btn.find('i.fas').hide();
+    } else {
+        loader.hide();
+        btn.find('i.fas').show();
+    }
+}
+
+function showError(message, elementId) {
+    $(`#${elementId}`).html(`
+        <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            ${message}
+        </div>
+    `);
+}
+
+function showSuccess(message, elementId) {
+    $(`#${elementId}`).html(`
+        <div class="success-message">
+            <i class="fas fa-check-circle"></i>
+            ${message}
+        </div>
+    `);
+}
+        
         class Database {
             static async getData() {
                 try {
