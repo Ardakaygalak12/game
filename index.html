@@ -563,6 +563,65 @@
                     toastr.error('Sistem başlatılırken hata oluştu');
                 }
             }
+            // PepeFaucet sınıfına eklenecek fonksiyon
+async handleWithdraw() {
+    const email = $('#withdrawEmail').val();
+    const amount = parseInt($('#withdrawAmount').val());
+
+    if (!email) {
+        toastr.error('Lütfen e-posta adresinizi girin');
+        return;
+    }
+
+    if (!amount || amount < 1000) {
+        toastr.error('Minimum çekim miktarı 1000 PEPE');
+        return;
+    }
+
+    this.setLoading(true, 'withdrawButton');
+    try {
+        const data = await Database.getData();
+        if (!data) throw new Error('Veri yüklenemedi');
+
+        // Kullanıcı bakiyesi kontrolü
+        const userBalance = data.users?.[email]?.totalClaimed || 0;
+        if (userBalance < amount) {
+            toastr.error('Yetersiz bakiye');
+            return;
+        }
+
+        // Çekim işlemini kaydet
+        const withdrawal = {
+            id: Date.now().toString(),
+            email: email,
+            amount: amount,
+            timestamp: new Date().toISOString(),
+            status: 'pending'
+        };
+
+        // Veritabanını güncelle
+        if (!data.withdrawals) data.withdrawals = [];
+        data.withdrawals.unshift(withdrawal);
+        
+        // Kullanıcı bakiyesini güncelle
+        data.users[email].totalClaimed -= amount;
+
+        await Database.updateData(data);
+        
+        // Başarılı mesaj
+        toastr.success('Çekim talebiniz alındı! En kısa sürede işleme alınacak.');
+        
+        // UI güncelle
+        this.loadUserData(data);
+        $('#withdrawAmount').val('');
+
+    } catch (error) {
+        console.error('Çekim hatası:', error);
+        toastr.error('İşlem sırasında hata oluştu');
+    } finally {
+        this.setLoading(false, 'withdrawButton');
+    }
+}
 
             setupEventListeners() {
                 // Sayfa geçişleri
@@ -593,6 +652,8 @@
                     $('#referralLink').val(this.generateReferralLink(savedEmail));
                 }
             }
+
+            
 
             async handleClaim() {
                 const email = $('#email').val();
