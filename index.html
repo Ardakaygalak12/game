@@ -1,4 +1,444 @@
-<h2><i class="fas fa-users"></i> Referans Sistemi</h2>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐸 Modern Pepe Faucet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #9b59b6;
+            --background: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --hover-bg: rgba(51, 65, 85, 0.8);
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            background-image: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-item {
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--hover-bg);
+            transform: translateX(5px);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card {
+            background: var(--hover-bg);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-card:hover {
+            transform: scale(1.02);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            color: var(--primary);
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: var(--hover-bg);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .transaction-list {
+            margin-top: 20px;
+        }
+
+        .transaction-item {
+            background: var(--hover-bg);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s;
+        }
+
+        .transaction-item:hover {
+            transform: translateX(5px);
+        }
+
+        .transaction-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .transaction-amount {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-badge.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .status-badge.pending {
+            background: rgba(241, 196, 15, 0.2);
+            color: var(--warning);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .message.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--error);
+        }
+
+        .message.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .main-content {
+                padding: 10px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>🐸 Pepe Faucet</h1>
+            </div>
+            
+            <div class="nav-item active" data-page="home">
+                <i class="fas fa-home"></i>
+                Ana Sayfa
+            </div>
+            
+            <div class="nav-item" data-page="withdraw">
+                <i class="fas fa-wallet"></i>
+                Para Çekme
+            </div>
+            
+            <div class="nav-item" data-page="referral">
+                <i class="fas fa-users"></i>
+                Referans
+            </div>
+            
+            <div class="nav-item" data-page="leaderboard">
+                <i class="fas fa-trophy"></i>
+                Lider Tablosu
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
+        <div class="main-content">
+            <!-- Ana Sayfa -->
+            <div id="home" class="page active">
+                <div class="content-grid">
+                    <div class="card">
+                        <h2><i class="fas fa-coins"></i> Claim PEPE</h2>
+                        <div class="stats-grid" style="margin: 20px 0;">
+                            <div class="stat-card">
+                                <i class="fas fa-gift fa-2x"></i>
+                                <div class="stat-value">800-2000</div>
+                                <div>Her Claim</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-users fa-2x"></i>
+                                <div class="stat-value" id="totalUsers">0</div>
+                                <div>Toplam Kullanıcı</div>
+                            </div>
+                        </div>
+
+                        <form id="claimForm">
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-envelope"></i>
+                                    FaucetPay E-posta
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-at"></i>
+                                    <input type="email" id="email" required placeholder="örnek@mail.com">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="action-btn" id="claimButton">
+                                <i class="fas fa-gift"></i>
+                                PEPE KAZAN!
+                                <span class="loading" style="display: none;"></span>
+                            </button>
+
+                            <div id="message"></div>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h2><i class="fas fa-history"></i> Son İşlemler</h2>
+                        <div class="transaction-list" id="recentClaims"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Para Çekme -->
+            <div id="withdraw" class="page">
+                <div class="content-grid">
+                    <div class="card">
+                        <h2><i class="fas fa-wallet"></i> Para Çekme</h2>
+                        <div class="stats-grid" style="margin: 20px 0;">
+                            <div class="stat-card">
+                                <i class="fas fa-coins fa-2x"></i>
+                                <div class="stat-value" id="userBalance">0</div>
+                                <div>Bakiyeniz</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-money-bill-wave fa-2x"></i>
+                                <div class="stat-value">1000</div>
+                                <div>Min. Çekim</div>
+                            </div>
+                        </div>
+
+                        <form id="withdrawForm">
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-envelope"></i>
+                                    FaucetPay E-posta
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-at"></i>
+                                    <input type="email" id="withdrawEmail" required placeholder="FaucetPay E-posta">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Çekilecek Miktar
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-coins"></i>
+                                    <input type="number" id="withdrawAmount" required min="1000" step="100" placeholder="Min: 1000 PEPE">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="action-btn" id="withdrawButton">
+                                <i class="fas fa-paper-plane"></i>
+                                Çekim Yap
+                                <span class="loading" style="display: none;"></span>
+                            </button>
+
+                            <div id="withdrawMessage"></div>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h2><i class="fas fa-history"></i> Çekim Geçmişi</h2>
+                        <div class="transaction-list" id="withdrawHistory"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referans -->
+            <div id="referral" class="page">
+                <div class="content-grid">
+                    <div class="card">
+                        <h2><i class="fas fa-users"></i> Referans Sistemi</h2>
                         <div class="stats-grid" style="margin: 20px 0;">
                             <div class="stat-card">
                                 <i class="fas fa-user-plus fa-2x"></i>
