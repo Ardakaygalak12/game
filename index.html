@@ -324,35 +324,6 @@
                             'X-Master-Key': config.jsonbin.apiKey
                         }
                     });
-
-        // Toast bildirim ayarları
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-bottom-right",
-            "timeOut": "3000"
-        };
-
-        // Sayfa yüklendiğinde referral kontrolü
-        function checkReferral() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const ref = urlParams.get('ref');
-            if (ref) {
-                try {
-                    const referrerEmail = atob(ref);
-                    localStorage.setItem('referrer', referrerEmail);
-                    toastr.info('Referans kodu başarıyla uygulandı!');
-                } catch (e) {
-                    console.error('Geçersiz referans kodu:', e);
-                }
-            }
-        }
-
-        // Sayfa yüklendiğinde çalıştır
-        checkReferral();
-    </script>
-</body>
-</html>
                     
                     if (!response.ok) {
                         throw new Error('Veritabanı bağlantı hatası');
@@ -440,7 +411,6 @@
             }
         }
 
-        // Ana uygulama
         class PepeFaucet {
             constructor() {
                 this.initialize();
@@ -560,6 +530,12 @@
                     amount *= 2;
                 }
                 
+                // Referans bonusu kontrolü
+                const referrer = localStorage.getItem('referrer');
+                if (referrer) {
+                    amount = Math.floor(amount * 1.1); // %10 bonus
+                }
+                
                 return amount;
             }
 
@@ -655,71 +631,13 @@
                 }
             };
 
-            // Kopyalama fonksiyonu
-            window.copyReferralLink = async () => {
-                const link = $('#referralLink').val();
-                try {
-                    await navigator.clipboard.writeText(link);
-                    toastr.success('✨ Referans linkiniz kopyalandı!');
-                } catch (err) {
-                    toastr.error('❌ Kopyalama başarısız oldu.');
-                    console.error('Kopyalama hatası:', err);
-                }
-            };
-
-            // Tema değiştirme
-            let isDarkMode = true;
-            window.toggleTheme = () => {
-                isDarkMode = !isDarkMode;
-                const root = document.documentElement;
-                if (isDarkMode) {
-                    root.style.setProperty('--background', '#0a0a0a');
-                    root.style.setProperty('--card-bg', '#1a1a1a');
-                    root.style.setProperty('--hover-bg', '#262626');
-                } else {
-                    root.style.setProperty('--background', '#f0f2f5');
-                    root.style.setProperty('--card-bg', '#ffffff');
-                    root.style.setProperty('--hover-bg', '#f8f9fa');
-                }
-                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-            };
-
-            // Sayfa yüklendiğinde tema kontrolü
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                toggleTheme();
-            }
-
-            // Animasyon efektleri
-            $('.stat-card').hover(
-                function() { $(this).addClass('pepe-animation'); },
-                function() { $(this).removeClass('pepe-animation'); }
-            );
-
-            // Mobil menü kontrolü
-            $('.menu-toggle').click(() => {
-                $('.sidebar').toggleClass('active');
-            });
-
-            // Otomatik güncelleme
+            checkReferral();
+            
+            // Her dakika verileri güncelle
             setInterval(() => {
                 app.initialize();
-            }, 60000); // Her 1 dakikada bir güncelle
-
-            // Referral kontrolünü çalıştır
-            checkReferral();
+            }, 60000);
         });
-
-        // Service Worker kaydı
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(registration => {
-                    console.log('ServiceWorker başarıyla kaydedildi:', registration.scope);
-                }).catch(err => {
-                    console.log('ServiceWorker kaydı başarısız oldu:', err);
-                });
-            });
-        }
     </script>
 </body>
 </html>
