@@ -1,371 +1,43 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐸 Ultimate Pepe Faucet v2.1</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <style>
-        :root {
-            --primary: #1db954;
-            --primary-dark: #169c46;
-            --background: #0a0a0a;
-            --card-bg: #1a1a1a;
-            --hover-bg: #262626;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: var(--background);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: linear-gradient(145deg, var(--card-bg), var(--hover-bg));
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 255, 0, 0.1);
-            border: 1px solid var(--primary);
-        }
-
-        .title {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--hover-bg);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid var(--primary);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-value {
-            font-size: 1.8em;
-            color: var(--primary);
-            margin: 10px 0;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 500;
-            color: var(--primary);
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-        }
-
-        input {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            background: var(--hover-bg);
-            border: 2px solid var(--primary);
-            border-radius: 12px;
-            font-size: 16px;
-            color: #fff;
-            transition: all 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 15px rgba(29, 185, 84, 0.3);
-        }
-
-        .claim-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .claim-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .claim-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .referral-box {
-            margin-top: 30px;
-            padding: 20px;
-            background: var(--hover-bg);
-            border-radius: 12px;
-            border: 1px solid var(--primary);
-        }
-
-        .recent-claims {
-            margin-top: 20px;
-        }
-
-        .claim-item {
-            background: var(--hover-bg);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.3s;
-        }
-
-        .claim-item:hover {
-            transform: translateX(5px);
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--primary);
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error-message {
-            color: #ff4444;
-            background: rgba(255, 68, 68, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            text-align: center;
-        }
-
-        .success-message {
-            color: var(--primary);
-            background: rgba(29, 185, 84, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="main-content">
-            <div class="card">
-                <h1 class="title">
-                    <span>🐸</span>
-                    Pepe Faucet
-                    <span>💰</span>
-                </h1>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <i class="fas fa-coins fa-2x"></i>
-                        <div class="stat-value" id="minPayout">800</div>
-                        <div>Minimum PEPE</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-gift fa-2x"></i>
-                        <div class="stat-value" id="maxPayout">2000</div>
-                        <div>Maximum PEPE</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-users fa-2x"></i>
-                        <div class="stat-value" id="totalUsers">0</div>
-                        <div>Toplam Kullanıcı</div>
-                    </div>
-                </div>
-
-                <form id="claimForm">
-                    <div class="form-group">
-                        <label>
-                            <i class="fas fa-envelope"></i>
-                            FaucetPay E-posta Adresiniz
-                        </label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-at"></i>
-                            <input type="email" id="email" required placeholder="örnek@mail.com">
+<h2><i class="fas fa-users"></i> Referans Sistemi</h2>
+                        <div class="stats-grid" style="margin: 20px 0;">
+                            <div class="stat-card">
+                                <i class="fas fa-user-plus fa-2x"></i>
+                                <div class="stat-value" id="totalReferrals">0</div>
+                                <div>Toplam Referans</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-percentage fa-2x"></i>
+                                <div class="stat-value">10%</div>
+                                <div>Bonus</div>
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="submit" class="claim-btn" id="claimButton">
-                        <i class="fas fa-gift"></i>
-                        PEPE KAZAN!
-                        <span class="loading" style="display: none;"></span>
-                    </button>
+                        <div class="form-group">
+                            <label>Referans Linkiniz</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-link"></i>
+                                <input type="text" id="referralLink" readonly>
+                            </div>
+                            <button class="action-btn" style="margin-top: 10px;" onclick="copyReferralLink()">
+                                <i class="fas fa-copy"></i>
+                                Kopyala
+                            </button>
+                        </div>
 
-                    <div id="message"></div>
-                </form>
-
-                <div class="referral-box">
-                    <h3>
-                        <i class="fas fa-users"></i>
-                        Referans Sistemi
-                    </h3>
-                    <p>Referans linkiniz (Her referans için +%10):</p>
-                    <div class="input-wrapper" style="margin-top: 10px;">
-                        <input type="text" id="referralLink" readonly>
-                        <button class="claim-btn" style="width: auto; padding: 8px 15px; margin-top: 10px;" onclick="copyReferralLink()">
-                            <i class="fas fa-copy"></i>
-                            Kopyala
-                        </button>
+                        <div class="transaction-list" id="referralHistory"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="card" style="margin-top: 20px;">
-                <h3>
-                    <i class="fas fa-history"></i>
-                    Son Ödemeler
-                </h3>
-                <div class="recent-claims" id="recentClaims"></div>
-            </div>
-        </div>
-
-        <div class="sidebar">
-            <div class="card">
-                <h3>
-                    <i class="fas fa-trophy"></i>
-                    Lider Tablosu
-                </h3>
-                <div id="leaderboard"></div>
+            <!-- Lider Tablosu -->
+            <div id="leaderboard" class="page">
+                <div class="card">
+                    <h2><i class="fas fa-trophy"></i> Lider Tablosu</h2>
+                    <div class="transaction-list" id="leaderboardList"></div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="card" style="margin-top: 20px;">
-    <h3>
-        <i class="fas fa-wallet"></i>
-        Para Çekme
-    </h3>
-    
-    <div class="stats-grid" style="margin-top: 20px;">
-        <div class="stat-card">
-            <i class="fas fa-coins fa-2x"></i>
-            <div class="stat-value" id="userBalance">0</div>
-            <div>Toplam Bakiye</div>
-        </div>
-        <div class="stat-card">
-            <i class="fas fa-clock fa-2x"></i>
-            <div class="stat-value" id="lastWithdraw">-</div>
-            <div>Son Çekim</div>
-        </div>
-    </div>
-
-    <form id="withdrawForm" style="margin-top: 20px;">
-        <div class="form-group">
-            <label>
-                <i class="fas fa-envelope"></i>
-                FaucetPay E-posta
-            </label>
-            <div class="input-wrapper">
-                <i class="fas fa-at"></i>
-                <input type="email" id="withdrawEmail" required placeholder="FaucetPay E-posta Adresiniz">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>
-                <i class="fas fa-money-bill-wave"></i>
-                Çekilecek Miktar
-            </label>
-            <div class="input-wrapper">
-                <i class="fas fa-coins"></i>
-                <input type="number" id="withdrawAmount" required min="1000" step="100" placeholder="Minimum: 1000 PEPE">
-            </div>
-            <small style="color: #666; margin-top: 5px; display: block;">
-                * Minimum çekim miktarı: 1000 PEPE
-            </small>
-        </div>
-
-        <button type="submit" class="claim-btn" id="withdrawButton">
-            <i class="fas fa-paper-plane"></i>
-            Çekim Yap
-            <span class="loading" style="display: none;"></span>
-        </button>
-
-        <div id="withdrawMessage"></div>
-    </form>
-
-    <div class="recent-claims" style="margin-top: 20px;">
-        <h4 style="margin-bottom: 10px;">
-            <i class="fas fa-history"></i>
-            Çekim Geçmişi
-        </h4>
-        <div id="withdrawHistory"></div>
-    </div>
-</div>
 
     <script>
         // Konfigürasyon
@@ -378,187 +50,16 @@
                 apiKey: 'a5a15c7cc4b4d4c6a0cab0cb5d2b2ce3388070028e2c5cf37284f627975cb9ed'
             }
         };
-        class WithdrawSystem {
-    constructor() {
-        this.setupEventListeners();
-        this.loadUserData();
-    }
 
-    setupEventListeners() {
-        $('#withdrawForm').on('submit', async (e) => {
-            e.preventDefault();
-            await this.handleWithdraw();
-        });
+        // Toast ayarları
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right",
+            "timeOut": "3000"
+        };
 
-        // E-posta otomatik doldurma
-        const savedEmail = localStorage.getItem('userEmail');
-        if (savedEmail) {
-            $('#withdrawEmail').val(savedEmail);
-        }
-
-        // Miktar değişikliğinde kontrol
-        $('#withdrawAmount').on('input', () => {
-            this.validateAmount();
-        });
-    }
-
-    validateAmount() {
-        const amount = parseInt($('#withdrawAmount').val());
-        const balance = parseInt($('#userBalance').text().replace(/,/g, ''));
-        const minAmount = 1000;
-
-        if (amount < minAmount) {
-            showError('Minimum çekim miktarı 1000 PEPE\'dir', 'withdrawMessage');
-            $('#withdrawButton').prop('disabled', true);
-            return false;
-        }
-
-        if (amount > balance) {
-            showError('Yetersiz bakiye', 'withdrawMessage');
-            $('#withdrawButton').prop('disabled', true);
-            return false;
-        }
-
-        $('#withdrawButton').prop('disabled', false);
-        $('#withdrawMessage').empty();
-        return true;
-    }
-
-    async loadUserData() {
-        try {
-            const data = await Database.getData();
-            const email = localStorage.getItem('userEmail');
-
-            if (email && data.users && data.users[email]) {
-                const userData = data.users[email];
-                $('#userBalance').text(userData.totalClaimed?.toLocaleString() || '0');
-                
-                if (userData.lastWithdraw) {
-                    $('#lastWithdraw').text(moment(userData.lastWithdraw).fromNow());
-                }
-
-                this.updateWithdrawHistory(data.withdrawals?.filter(w => w.email === email) || []);
-            }
-        } catch (error) {
-            console.error('Kullanıcı verisi yüklenirken hata:', error);
-        }
-    }
-
-    async handleWithdraw() {
-        const email = $('#withdrawEmail').val();
-        const amount = parseInt($('#withdrawAmount').val());
-
-        if (!this.validateAmount()) return;
-
-        setLoading(true, 'withdrawButton');
-        try {
-            const data = await Database.getData();
-            
-            // Kullanıcı kontrolü
-            if (!data.users?.[email]) {
-                throw new Error('Kullanıcı bulunamadı');
-            }
-
-            // Bakiye kontrolü
-            const balance = data.users[email].totalClaimed || 0;
-            if (balance < amount) {
-                throw new Error('Yetersiz bakiye');
-            }
-
-            // Çekim işlemi
-            const withdrawal = {
-                id: Date.now().toString(),
-                email: email,
-                amount: amount,
-                timestamp: new Date().toISOString(),
-                status: 'pending'
-            };
-
-            // Veritabanını güncelle
-            if (!data.withdrawals) data.withdrawals = [];
-            data.withdrawals.unshift(withdrawal);
-            
-            // Kullanıcı bakiyesini güncelle
-            data.users[email].totalClaimed -= amount;
-            data.users[email].lastWithdraw = new Date().toISOString();
-
-            await Database.updateData(data);
-
-            // Başarılı mesaj
-            showSuccess('Çekim talebiniz alındı! İşleminiz en kısa sürede gerçekleştirilecek.', 'withdrawMessage');
-            
-            // UI güncelle
-            this.loadUserData();
-            
-            // Form temizle
-            $('#withdrawAmount').val('');
-
-        } catch (error) {
-            console.error('Çekim hatası:', error);
-            showError(error.message, 'withdrawMessage');
-        } finally {
-            setLoading(false, 'withdrawButton');
-        }
-    }
-
-    updateWithdrawHistory(withdrawals) {
-        const historyHtml = withdrawals
-            .slice(0, 5)
-            .map(w => `
-                <div class="claim-item">
-                    <div>
-                        <span>${moment(w.timestamp).format('DD/MM/YYYY HH:mm')}</span>
-                        <small style="color: ${w.status === 'completed' ? 'var(--primary)' : '#ffa500'};">
-                            ${w.status === 'completed' ? '✓ Tamamlandı' : '⏳ Beklemede'}
-                        </small>
-                    </div>
-                    <div style="color: var(--primary);">
-                        ${w.amount.toLocaleString()} PEPE
-                    </div>
-                </div>
-            `)
-            .join('');
-
-        $('#withdrawHistory').html(historyHtml || '<p>Henüz çekim yapılmamış.</p>');
-    }
-}
-
-// Withdraw sistemini başlat
-const withdrawSystem = new WithdrawSystem();
-
-// Helper fonksiyonlar
-function setLoading(loading, buttonId) {
-    const btn = $(`#${buttonId}`);
-    const loader = btn.find('.loading');
-    
-    btn.prop('disabled', loading);
-    if (loading) {
-        loader.show();
-        btn.find('i.fas').hide();
-    } else {
-        loader.hide();
-        btn.find('i.fas').show();
-    }
-}
-
-function showError(message, elementId) {
-    $(`#${elementId}`).html(`
-        <div class="error-message">
-            <i class="fas fa-exclamation-circle"></i>
-            ${message}
-        </div>
-    `);
-}
-
-function showSuccess(message, elementId) {
-    $(`#${elementId}`).html(`
-        <div class="success-message">
-            <i class="fas fa-check-circle"></i>
-            ${message}
-        </div>
-    `);
-}
-        
+        // Veritabanı işlemleri
         class Database {
             static async getData() {
                 try {
@@ -568,15 +69,13 @@ function showSuccess(message, elementId) {
                         }
                     });
                     
-                    if (!response.ok) {
-                        throw new Error('Veritabanı bağlantı hatası');
-                    }
+                    if (!response.ok) throw new Error('Veritabanı bağlantı hatası');
                     
                     const data = await response.json();
                     return data.record;
                 } catch (error) {
                     console.error('Veri çekme hatası:', error);
-                    showError('Veritabanına bağlanılamadı. Lütfen daha sonra tekrar deneyin.');
+                    toastr.error('Veritabanına bağlanılamadı');
                     return null;
                 }
             }
@@ -592,68 +91,18 @@ function showSuccess(message, elementId) {
                         body: JSON.stringify(newData)
                     });
                     
-                    if (!response.ok) {
-                        throw new Error('Veri güncelleme hatası');
-                    }
+                    if (!response.ok) throw new Error('Veri güncelleme hatası');
                     
                     return await response.json();
                 } catch (error) {
                     console.error('Veri güncelleme hatası:', error);
-                    showError('Veriler güncellenirken bir hata oluştu.');
+                    toastr.error('Veriler güncellenirken hata oluştu');
                     return null;
                 }
             }
         }
 
-        // Yardımcı fonksiyonlar
-        function showError(message) {
-            $('#message').html(`
-                <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i>
-                    ${message}
-                </div>
-            `);
-        }
-
-        function showSuccess(message) {
-            $('#message').html(`
-                <div class="success-message">
-                    <i class="fas fa-check-circle"></i>
-                    ${message}
-                </div>
-            `);
-        }
-
-        function setLoading(loading) {
-            const btn = $('#claimButton');
-            const loader = btn.find('.loading');
-            
-            btn.prop('disabled', loading);
-            if (loading) {
-                loader.show();
-                btn.find('i.fas').hide();
-            } else {
-                loader.hide();
-                btn.find('i.fas').show();
-            }
-        }
-
-        function generateReferralLink(email) {
-            const baseUrl = 'https://pepe-free.netlify.app/';
-            const encodedEmail = btoa(email);
-            return `${baseUrl}?ref=${encodedEmail}`;
-        }
-
-        async function copyReferralLink() {
-            const link = $('#referralLink').val();
-            try {
-                await navigator.clipboard.writeText(link);
-                toastr.success('Referans linki kopyalandı!');
-            } catch (err) {
-                toastr.error('Kopyalama başarısız oldu.');
-            }
-        }
-
+        // Ana uygulama
         class PepeFaucet {
             constructor() {
                 this.initialize();
@@ -665,52 +114,57 @@ function showSuccess(message, elementId) {
                     const data = await Database.getData();
                     if (data) {
                         this.updateStats(data);
-                        this.updateRecentClaims(data.transactions || []);
+                        this.updateTransactions(data.transactions || []);
                         this.updateLeaderboard(data.users || {});
+                        this.loadUserData(data);
                     }
                 } catch (error) {
                     console.error('Başlatma hatası:', error);
-                    showError('Sistem başlatılırken bir hata oluştu.');
+                    toastr.error('Sistem başlatılırken hata oluştu');
                 }
             }
 
             setupEventListeners() {
+                // Sayfa geçişleri
+                $('.nav-item').click(function() {
+                    $('.nav-item').removeClass('active');
+                    $(this).addClass('active');
+                    
+                    const page = $(this).data('page');
+                    $('.page').removeClass('active').hide();
+                    $(`#${page}`).addClass('active').show();
+                });
+
+                // Form işlemleri
                 $('#claimForm').on('submit', async (e) => {
                     e.preventDefault();
                     await this.handleClaim();
                 });
 
-                const email = localStorage.getItem('userEmail');
-                if (email) {
-                    $('#email').val(email);
-                    $('#referralLink').val(generateReferralLink(email));
+                $('#withdrawForm').on('submit', async (e) => {
+                    e.preventDefault();
+                    await this.handleWithdraw();
+                });
+
+                // E-posta otomatik doldurma
+                const savedEmail = localStorage.getItem('userEmail');
+                if (savedEmail) {
+                    $('#email, #withdrawEmail').val(savedEmail);
+                    $('#referralLink').val(this.generateReferralLink(savedEmail));
                 }
             }
 
             async handleClaim() {
                 const email = $('#email').val();
                 if (!email) {
-                    showError('Lütfen FaucetPay e-posta adresinizi girin.');
+                    toastr.error('Lütfen e-posta adresinizi girin');
                     return;
                 }
 
-                setLoading(true);
+                this.setLoading(true, 'claimButton');
                 try {
                     const data = await Database.getData();
                     if (!data) throw new Error('Veri yüklenemedi');
-
-                    // Kullanıcının son işlemini kontrol et
-                    const userLastClaim = data.users?.[email]?.lastClaim;
-                    if (userLastClaim) {
-                        const lastClaimTime = new Date(userLastClaim);
-                        const timeDiff = Date.now() - lastClaimTime.getTime();
-                        const minutesDiff = Math.floor(timeDiff / 1000 / 60);
-                        
-                        if (minutesDiff < 60) { // 1 saat bekleme süresi
-                            showError(`Lütfen ${60 - minutesDiff} dakika daha bekleyin.`);
-                            return;
-                        }
-                    }
 
                     // Ödeme miktarını hesapla
                     const amount = this.calculatePayout();
@@ -733,50 +187,48 @@ function showSuccess(message, elementId) {
                     if (!data.users[email]) {
                         data.users[email] = {
                             totalClaimed: amount,
-                            claimCount: 1,
-                            lastClaim: new Date().toISOString()
+                            claimCount: 1
                         };
                     } else {
                         data.users[email].totalClaimed += amount;
                         data.users[email].claimCount += 1;
-                        data.users[email].lastClaim = new Date().toISOString();
                     }
 
                     await Database.updateData(data);
                     
-                    // Başarılı mesajı göster
-                    showSuccess(`🎉 Tebrikler! ${amount} PEPE kazandınız!`);
+                    // Başarılı mesaj
+                    toastr.success(`🎉 Tebrikler! ${amount} PEPE kazandınız!`);
                     
-                    // UI'ı güncelle
+                    // UI güncelle
                     this.updateStats(data);
-                    this.updateRecentClaims(data.transactions);
+                    this.updateTransactions(data.transactions);
                     this.updateLeaderboard(data.users);
                     
                     // Kullanıcı bilgilerini kaydet
                     localStorage.setItem('userEmail', email);
-                    $('#referralLink').val(generateReferralLink(email));
+                    $('#referralLink').val(this.generateReferralLink(email));
 
                 } catch (error) {
                     console.error('İşlem hatası:', error);
-                    showError('İşlem sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+                    toastr.error('İşlem sırasında hata oluştu');
                 } finally {
-                    setLoading(false);
+                    this.setLoading(false, 'claimButton');
                 }
             }
 
             calculatePayout() {
-                // Temel ödeme: 800-2000 PEPE arası
                 let amount = Math.floor(Math.random() * (2000 - 800 + 1)) + 800;
                 
-                // Şans faktörü: %5 ihtimalle 2x bonus
+                // %5 şansla 2x bonus
                 if (Math.random() < 0.05) {
                     amount *= 2;
+                    toastr.info('🎉 2x Bonus kazandınız!');
                 }
                 
-                // Referans bonusu kontrolü
+                // Referans bonusu
                 const referrer = localStorage.getItem('referrer');
                 if (referrer) {
-                    amount = Math.floor(amount * 1.1); // %10 bonus
+                    amount = Math.floor(amount * 1.1);
                 }
                 
                 return amount;
@@ -791,25 +243,23 @@ function showSuccess(message, elementId) {
                 $('#totalPaid').text(totalPaid.toLocaleString());
             }
 
-            updateRecentClaims(transactions = []) {
+            updateTransactions(transactions) {
                 const claimsHtml = transactions
                     .slice(0, 10)
                     .map(tx => `
-                        <div class="claim-item">
-                            <div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
                                 <span>${this.maskEmail(tx.email)}</span>
-                                <small style="color: #666;">
-                                    ${moment(tx.timestamp).fromNow()}
-                                </small>
+                                <small>${moment(tx.timestamp).fromNow()}</small>
                             </div>
-                            <div style="color: var(--primary);">
-                                +${tx.amount} PEPE
+                            <div class="transaction-amount">
+                                +${tx.amount.toLocaleString()} PEPE
                             </div>
                         </div>
                     `)
                     .join('');
                 
-                $('#recentClaims').html(claimsHtml || '<p>Henüz ödeme yapılmamış.</p>');
+                $('#recentClaims').html(claimsHtml || '<p>Henüz işlem yok</p>');
             }
 
             updateLeaderboard(users) {
@@ -819,26 +269,53 @@ function showSuccess(message, elementId) {
                         total: data.totalClaimed || 0
                     }))
                     .sort((a, b) => b.total - a.total)
-                    .slice(0, 5)
+                    .slice(0, 10)
                     .map((user, index) => `
-                        <div class="claim-item">
-                            <div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
                                 <strong>#${index + 1}</strong>
-                                ${this.maskEmail(user.email)}
+                                <span>${this.maskEmail(user.email)}</span>
                             </div>
-                            <div style="color: var(--primary);">
+                            <div class="transaction-amount">
                                 ${user.total.toLocaleString()} PEPE
                             </div>
                         </div>
                     `)
                     .join('');
                 
-                $('#leaderboard').html(leaderboard || '<p>Henüz lider yok.</p>');
+                $('#leaderboardList').html(leaderboard || '<p>Henüz kullanıcı yok</p>');
+            }
+
+            loadUserData(data) {
+                const email = localStorage.getItem('userEmail');
+                if (email && data.users && data.users[email]) {
+                    const userData = data.users[email];
+                    $('#userBalance').text(userData.totalClaimed?.toLocaleString() || '0');
+                    $('#totalReferrals').text(userData.referralCount || '0');
+                }
+            }
+
+            generateReferralLink(email) {
+                return `https://pepe-free.netlify.app/?ref=${btoa(email)}`;
             }
 
             maskEmail(email) {
                 const [name, domain] = email.split('@');
                 return `${name.substring(0, 3)}***@${domain}`;
+            }
+
+            setLoading(loading, buttonId) {
+                const btn = $(`#${buttonId}`);
+                const loader = btn.find('.loading');
+                
+                btn.prop('disabled', loading);
+                if (loading) {
+                    loader.show();
+                    btn.find('i.fas').hide();
+                } else {
+                    loader.hide();
+                    btn.find('i.fas').show();
+                }
             }
         }
 
@@ -846,19 +323,6 @@ function showSuccess(message, elementId) {
         $(document).ready(() => {
             const app = new PepeFaucet();
             
-            // Toast bildirim ayarları
-            toastr.options = {
-                "closeButton": true,
-                "progressBar": true,
-                "positionClass": "toast-bottom-right",
-                "preventDuplicates": true,
-                "timeOut": "3000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            };
-
             // Sayfa yüklendiğinde referral kontrolü
             const checkReferral = () => {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -867,19 +331,24 @@ function showSuccess(message, elementId) {
                     try {
                         const referrerEmail = atob(ref);
                         localStorage.setItem('referrer', referrerEmail);
-                        toastr.info('🎉 Referans kodu başarıyla uygulandı! Ekstra bonus kazanacaksınız!');
+                        toastr.info('🎉 Referans kodu uygulandı! Ekstra bonus alacaksınız!');
                     } catch (e) {
                         console.error('Geçersiz referans kodu:', e);
                     }
                 }
             };
 
+            window.copyReferralLink = async () => {
+                const link = $('#referralLink').val();
+                try {
+                    await navigator.clipboard.writeText(link);
+                    toastr.success('✨ Referans linki kopyalandı!');
+                } catch (err) {
+                    toastr.error('Kopyalama başarısız oldu');
+                }
+            };
+
             checkReferral();
-            
-            // Her dakika verileri güncelle
-            setInterval(() => {
-                app.initialize();
-            }, 60000);
         });
     </script>
 </body>
