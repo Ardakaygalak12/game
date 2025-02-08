@@ -623,6 +623,28 @@ async handleWithdraw() {
     }
 }
 
+            updateWithdrawHistory(withdrawals) {
+    const historyHtml = withdrawals
+        .filter(w => w.email === localStorage.getItem('userEmail'))
+        .slice(0, 5)
+        .map(w => `
+            <div class="transaction-item">
+                <div class="transaction-info">
+                    <span>${moment(w.timestamp).format('DD/MM/YYYY HH:mm')}</span>
+                    <small class="status-badge ${w.status === 'completed' ? 'success' : 'pending'}">
+                        ${w.status === 'completed' ? '✓ Tamamlandı' : '⏳ Beklemede'}
+                    </small>
+                </div>
+                <div class="transaction-amount">
+                    ${w.amount.toLocaleString()} PEPE
+                </div>
+            </div>
+        `)
+        .join('');
+    
+    $('#withdrawHistory').html(historyHtml || '<p>Henüz çekim yapılmamış</p>');
+}
+
             setupEventListeners() {
                 // Sayfa geçişleri
                 $('.nav-item').click(function() {
