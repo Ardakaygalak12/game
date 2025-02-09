@@ -384,408 +384,419 @@
     </button>
 
     <script>
-// Konfigürasyon
-const config = {
-    jsonbin: {
-        binId: '67a7a415e41b4d34e4867ffe',
-        apiKey: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W'
-    },
-    faucetpay: {
-        apiKey: 'a5a15c7cc4b4d4c6a0cab0cb5d2b2ce3388070028e2c5cf37284f627975cb9ed'
-    },
-    tasks: {
-        daily: [
-            {
-                id: 'daily_claim',
-                title: 'Günlük Claim',
-                description: 'Bugün 5 kez claim yap',
-                target: 5,
-                reward: 1000,
-                type: 'claim'
+        // Ana konfigürasyon
+        const config = {
+            jsonbin: {
+                binId: '67a7a415e41b4d34e4867ffe',
+                apiKey: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W'
             },
-            {
-                id: 'refer_friend',
-                title: 'Arkadaşını Davet Et',
-                description: 'Bir arkadaşını davet et',
-                target: 1,
-                reward: 500,
-                type: 'referral'
+            faucetpay: {
+                apiKey: 'a5a15c7cc4b4d4c6a0cab0cb5d2b2ce3388070028e2c5cf37284f627975cb9ed'
+            },
+            tasks: {
+                daily: [
+                    {
+                        id: 'daily_claim',
+                        title: 'Günlük Claim',
+                        description: 'Bugün 5 kez claim yap',
+                        target: 5,
+                        reward: 1000,
+                        type: 'claim'
+                    },
+                    {
+                        id: 'refer_friend',
+                        title: 'Arkadaşını Davet Et',
+                        description: 'Bir arkadaşını davet et',
+                        target: 1,
+                        reward: 500,
+                        type: 'referral'
+                    }
+                ]
+            },
+            levels: {
+                xpPerLevel: 1000,
+                bonusPerLevel: 100
             }
-        ]
-    },
-    levels: {
-        xpPerLevel: 1000,
-        bonusPerLevel: 100
-    }
-};
-
-// Oturum kontrolü
-function checkAuth() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const userEmail = localStorage.getItem('userEmail');
-    
-    if (!isLoggedIn || !userEmail) {
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    return userEmail;
-}
-
-// Ana uygulama
-class PepeFaucet {
-    constructor() {
-        this.userEmail = checkAuth();
-        if (!this.userEmail) return;
-
-        this.achievementSystem = new AchievementSystem();
-        this.taskSystem = new TaskSystem();
-        this.initialize();
-        this.setupEventListeners();
-        this.setupTheme();
-    }
-
-    async initialize() {
-        try {
-            const data = await Database.getData();
-            if (data) {
-                this.updateUI(data);
-                this.initializeCounters(data);
-                await this.taskSystem.loadTasks();
-                await this.achievementSystem.checkAchievements(data.users[this.userEmail]);
-            }
-        } catch (error) {
-            console.error('Başlatma hatası:', error);
-            toastr.error('Sistem başlatılırken hata oluştu');
-        }
-    }
-
-    setupEventListeners() {
-        // Sayfa geçişleri
-        $('.nav-item').click(function() {
-            if ($(this).hasClass('disabled')) return;
-            
-            $('.nav-item').removeClass('active');
-            $(this).addClass('active');
-            
-            const page = $(this).data('page');
-            $('.page').hide();
-            $(`#${page}`).fadeIn();
-        });
-
-        // Claim butonu
-        $('#claimButton').click(async (e) => {
-            e.preventDefault();
-            await this.handleClaim();
-        });
-
-        // Tema değiştirme
-        $('#themeToggle').click(() => this.toggleTheme());
-    }
-
-    async handleClaim() {
-        try {
-            this.setLoading(true);
-            const data = await Database.getData();
-            if (!data) throw new Error('Veri yüklenemedi');
-
-            const amount = this.calculatePayout();
-            const transaction = {
-                id: Date.now().toString(),
-                email: this.userEmail,
-                amount: amount,
-                timestamp: new Date().toISOString(),
-                status: 'success'
-            };
-
-            // Veritabanını güncelle
-            if (!data.transactions) data.transactions = [];
-            if (!data.users) data.users = {};
-            
-            data.transactions.unshift(transaction);
-            
-            if (!data.users[this.userEmail]) {
-                data.users[this.userEmail] = {
-                    totalClaimed: amount,
-                    claimCount: 1,
-                    lastClaim: new Date().toISOString()
-                };
-            } else {
-                data.users[this.userEmail].totalClaimed += amount;
-                data.users[this.userEmail].claimCount += 1;
-                data.users[this.userEmail].lastClaim = new Date().toISOString();
-            }
-
-            await Database.updateData(data);
-            
-            // Görev ve başarım kontrolü
-            await this.taskSystem.updateProgress('claim');
-            await this.achievementSystem.checkAchievements(data.users[this.userEmail]);
-            
-            // Animasyonlu bildirim
-            this.showClaimAnimation(amount);
-            
-            // UI güncelle
-            this.updateUI(data);
-
-        } catch (error) {
-            console.error('Claim hatası:', error);
-            toastr.error('İşlem sırasında hata oluştu');
-        } finally {
-            this.setLoading(false);
-        }
-    }
-
-    calculatePayout() {
-        let base = Math.floor(Math.random() * (2000 - 800 + 1) + 800);
+        };
         
-        // Level bonusu
-        const level = parseInt(localStorage.getItem('userLevel') || '1');
-        const bonus = (level - 1) * config.levels.bonusPerLevel;
-        
-        // Şans faktörü
-        if (Math.random() < 0.05) {
-            base *= 2;
-            this.showLuckyAnimation();
-        }
-        
-        return base + bonus;
-    }
-
-    showClaimAnimation(amount) {
-        const popup = $('<div>')
-            .addClass('claim-popup')
-            .html(`
-                <div class="claim-amount">+${amount}</div>
-                <div class="claim-text">PEPE</div>
-            `)
-            .appendTo('body');
-
-        setTimeout(() => popup.remove(), 2000);
-    }
-
-    showLuckyAnimation() {
-        $('body').append('<div class="lucky-effect">2X BONUS!</div>');
-        setTimeout(() => $('.lucky-effect').remove(), 2000);
-    }
-
-    updateUI(data) {
-        const userData = data.users[this.userEmail] || {};
-        
-        // Animasyonlu sayaçlar
-        new CountUp('totalEarned', 0, userData.totalClaimed || 0, 0, 2.5, {
-            useEasing: true,
-            useGrouping: true
-        }).start();
-
-        // Son claim zamanı
-        if (userData.lastClaim) {
-            $('#lastClaim').text(moment(userData.lastClaim).fromNow());
-        }
-
-        // Referans sayısı
-        $('#referralCount').text(userData.referralCount || 0);
-
-        // İşlem geçmişi
-        this.updateTransactionHistory(data.transactions);
-
-        // Lider tablosu
-        this.updateLeaderboard(data.users);
-    }
-
-    updateTransactionHistory(transactions) {
-        const history = transactions
-            .filter(tx => tx.email === this.userEmail)
-            .slice(0, 10)
-            .map(tx => `
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-amount">+${tx.amount} PEPE</div>
-                        <div class="activity-time">${moment(tx.timestamp).fromNow()}</div>
-                    </div>
-                </div>
-            `)
-            .join('');
-
-        $('#recentClaims').html(history || '<p>Henüz işlem yok</p>');
-    }
-
-    updateLeaderboard(users) {
-        const leaderboard = Object.entries(users)
-            .sort((a, b) => b[1].totalClaimed - a[1].totalClaimed)
-            .slice(0, 5)
-            .map((user, index) => `
-                <div class="leaderboard-item ${user[0] === this.userEmail ? 'current-user' : ''}">
-                    <div class="rank">#${index + 1}</div>
-                    <div class="user-info">
-                        <div class="user-email">${this.maskEmail(user[0])}</div>
-                        <div class="user-total">${user[1].totalClaimed.toLocaleString()} PEPE</div>
-                    </div>
-                </div>
-            `)
-            .join('');
-
-        $('#leaderboard').html(leaderboard);
-    }
-
-    maskEmail(email) {
-        const [name, domain] = email.split('@');
-        return `${name.substring(0, 3)}***@${domain}`;
-    }
-
-    setLoading(isLoading) {
-        const button = $('#claimButton');
-        if (isLoading) {
-            button.prop('disabled', true).addClass('loading');
-        } else {
-            button.prop('disabled', false).removeClass('loading');
-        }
-    }
-
-    setupTheme() {
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-
-    toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        
-        const icon = $('#themeToggle i');
-        icon.toggleClass('fa-moon fa-sun');
-    }
-}
-
-// Görev sistemi
-class TaskSystem {
-    constructor() {
-        this.tasks = {};
-        this.progress = JSON.parse(localStorage.getItem('taskProgress') || '{}');
-    }
-
-    async loadTasks() {
-        config.tasks.daily.forEach(task => {
-            if (!this.progress[task.id]) {
-                this.progress[task.id] = {
-                    current: 0,
-                    completed: false,
-                    lastReset: new Date().toISOString()
-                };
-            }
-        });
-
-        this.updateTaskUI();
-        this.checkDailyReset();
-    }
-
-    async updateProgress(type) {
-        const relevantTasks = config.tasks.daily.filter(task => task.type === type);
-        
-        relevantTasks.forEach(task => {
-            if (!this.progress[task.id].completed) {
-                this.progress[task.id].current++;
-                
-                if (this.progress[task.id].current >= task.target) {
-                    this.progress[task.id].completed = true;
-                    this.showTaskComplete(task);
+        // Database sınıfı
+        class Database {
+            static async getData() {
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${config.jsonbin.binId}/latest`, {
+                        headers: {
+                            'X-Master-Key': config.jsonbin.apiKey
+                        }
+                    });
+                    
+                    if (!response.ok) throw new Error('Veritabanı bağlantı hatası');
+                    
+                    const data = await response.json();
+                    return data.record;
+                } catch (error) {
+                    console.error('Veri çekme hatası:', error);
+                    toastr.error('Veritabanına bağlanılamadı');
+                    return null;
                 }
             }
-        });
-
-        localStorage.setItem('taskProgress', JSON.stringify(this.progress));
-        this.updateTaskUI();
-    }
-
-    updateTaskUI() {
-        const taskHtml = config.tasks.daily.map(task => {
-            const progress = this.progress[task.id];
-            const percent = (progress.current / task.target) * 100;
-            
-            return `
-                <div class="task-card ${progress.completed ? 'completed' : ''}">
-                    <div class="task-header">
-                        <div class="task-title">${task.title}</div>
-                        <div class="task-reward">+${task.reward} PEPE</div>
-                    </div>
-                    <div class="task-description">${task.description}</div>
-                    <div class="task-progress">
-                        <div class="task-progress-bar" style="width: ${percent}%"></div>
-                    </div>
-                    <div class="task-status">
-                        ${progress.current}/${task.target}
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        $('.task-list').html(taskHtml);
-    }
-
-    showTaskComplete(task) {
-        toastr.success(`
-            <div class="task-complete">
-                <div class="task-complete-title">Görev Tamamlandı!</div>
-                <div class="task-complete-reward">+${task.reward} PEPE kazandın!</div>
-            </div>
-        `);
-    }
-
-    checkDailyReset() {
-        Object.keys(this.progress).forEach(taskId => {
-            const lastReset = new Date(this.progress[taskId].lastReset);
-            const now = new Date();
-            
-            if (lastReset.getDate() !== now.getDate()) {
-                this.progress[taskId] = {
-                    current: 0,
-                    completed: false,
-                    lastReset: now.toISOString()
+        
+            static async updateData(newData) {
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${config.jsonbin.binId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': config.jsonbin.apiKey
+                        },
+                        body: JSON.stringify(newData)
+                    });
+                    
+                    if (!response.ok) throw new Error('Veri güncelleme hatası');
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('Veri güncelleme hatası:', error);
+                    toastr.error('Veriler güncellenirken hata oluştu');
+                    return null;
+                }
+            }
+        }
+        
+        // Başarım sistemi
+        class AchievementSystem {
+            constructor() {
+                this.achievements = {
+                    FIRST_CLAIM: {
+                        id: 'first_claim',
+                        title: 'İlk Ödül',
+                        description: 'İlk PEPE ödülünü kazandın!',
+                        icon: 'fa-gift',
+                        xp: 100
+                    },
+                    REFERRAL_MASTER: {
+                        id: 'referral_master',
+                        title: 'Referans Ustası',
+                        description: '5 arkadaşını davet ettin!',
+                        icon: 'fa-users',
+                        xp: 500
+                    },
+                    RICH_PEPE: {
+                        id: 'rich_pepe',
+                        title: 'Zengin Pepe',
+                        description: 'Toplam 10,000 PEPE kazandın!',
+                        icon: 'fa-coins',
+                        xp: 1000
+                    }
                 };
             }
+        
+            async checkAchievements(userData) {
+                const userAchievements = JSON.parse(localStorage.getItem('userAchievements') || '[]');
+                let newAchievements = [];
+        
+                if (!userAchievements.includes('first_claim') && userData.claimCount === 1) {
+                    newAchievements.push(this.achievements.FIRST_CLAIM);
+                }
+        
+                if (!userAchievements.includes('referral_master') && userData.referralCount >= 5) {
+                    newAchievements.push(this.achievements.REFERRAL_MASTER);
+                }
+        
+                if (!userAchievements.includes('rich_pepe') && userData.totalClaimed >= 10000) {
+                    newAchievements.push(this.achievements.RICH_PEPE);
+                }
+        
+                if (newAchievements.length > 0) {
+                    newAchievements.forEach(achievement => {
+                        userAchievements.push(achievement.id);
+                        this.showAchievementPopup(achievement);
+                    });
+                    localStorage.setItem('userAchievements', JSON.stringify(userAchievements));
+                }
+            }
+        
+            showAchievementPopup(achievement) {
+                toastr.success(`
+                    <div class="achievement-popup">
+                        <div class="achievement-icon">
+                            <i class="fas ${achievement.icon}"></i>
+                        </div>
+                        <div class="achievement-content">
+                            <div class="achievement-title">${achievement.title}</div>
+                            <div class="achievement-description">${achievement.description}</div>
+                            <div class="achievement-xp">+${achievement.xp} XP</div>
+                        </div>
+                    </div>
+                `, 'Yeni Başarım!', {
+                    timeOut: 5000,
+                    extendedTimeOut: 2000
+                });
+            }
+        }
+        
+        // Görev sistemi
+        class TaskSystem {
+            constructor() {
+                this.tasks = {};
+                this.progress = JSON.parse(localStorage.getItem('taskProgress') || '{}');
+            }
+        
+            async loadTasks() {
+                config.tasks.daily.forEach(task => {
+                    if (!this.progress[task.id]) {
+                        this.progress[task.id] = {
+                            current: 0,
+                            completed: false,
+                            lastReset: new Date().toISOString()
+                        };
+                    }
+                });
+        
+                this.updateTaskUI();
+                this.checkDailyReset();
+            }
+        
+            async updateProgress(type) {
+                const relevantTasks = config.tasks.daily.filter(task => task.type === type);
+                
+                relevantTasks.forEach(task => {
+                    if (!this.progress[task.id].completed) {
+                        this.progress[task.id].current++;
+                        
+                        if (this.progress[task.id].current >= task.target) {
+                            this.progress[task.id].completed = true;
+                            this.showTaskComplete(task);
+                        }
+                    }
+                });
+        
+                localStorage.setItem('taskProgress', JSON.stringify(this.progress));
+                this.updateTaskUI();
+            }
+        
+            updateTaskUI() {
+                const taskHtml = config.tasks.daily.map(task => {
+                    const progress = this.progress[task.id];
+                    const percent = (progress.current / task.target) * 100;
+                    
+                    return `
+                        <div class="task-card ${progress.completed ? 'completed' : ''}">
+                            <div class="task-header">
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-reward">+${task.reward} PEPE</div>
+                            </div>
+                            <div class="task-description">${task.description}</div>
+                            <div class="task-progress">
+                                <div class="task-progress-bar" style="width: ${percent}%"></div>
+                            </div>
+                            <div class="task-status">
+                                ${progress.current}/${task.target}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        
+                $('.task-list').html(taskHtml);
+            }
+        
+            showTaskComplete(task) {
+                toastr.success(`
+                    <div class="task-complete">
+                        <div class="task-complete-title">Görev Tamamlandı!</div>
+                        <div class="task-complete-reward">+${task.reward} PEPE kazandın!</div>
+                    </div>
+                `);
+            }
+        
+            checkDailyReset() {
+                Object.keys(this.progress).forEach(taskId => {
+                    const lastReset = new Date(this.progress[taskId].lastReset);
+                    const now = new Date();
+                    
+                    if (lastReset.getDate() !== now.getDate()) {
+                        this.progress[taskId] = {
+                            current: 0,
+                            completed: false,
+                            lastReset: now.toISOString()
+                        };
+                    }
+                });
+        
+                localStorage.setItem('taskProgress', JSON.stringify(this.progress));
+            }
+        }
+        
+        // Ana uygulama
+        class PepeFaucet {
+            constructor() {
+                this.userEmail = checkAuth();
+                if (!this.userEmail) return;
+        
+                this.achievementSystem = new AchievementSystem();
+                this.taskSystem = new TaskSystem();
+                this.initialize();
+                this.setupEventListeners();
+            }
+        
+            async initialize() {
+                try {
+                    const data = await Database.getData();
+                    if (data) {
+                        this.updateUI(data);
+                        await this.taskSystem.loadTasks();
+                        await this.achievementSystem.checkAchievements(data.users[this.userEmail]);
+                    }
+                } catch (error) {
+                    console.error('Başlatma hatası:', error);
+                    toastr.error('Sistem başlatılırken hata oluştu');
+                }
+            }
+        
+            setupEventListeners() {
+                $('.nav-item').click(function() {
+                    $('.nav-item').removeClass('active');
+                    $(this).addClass('active');
+                    
+                    const page = $(this).data('page');
+                    $('.page').hide();
+                    $(`#${page}`).fadeIn();
+                });
+        
+                $('#claimButton').click(async (e) => {
+                    e.preventDefault();
+                    await this.handleClaim();
+                });
+            }
+        
+            updateUI(data) {
+                const userData = data.users[this.userEmail] || {};
+                $('#totalEarned').text(userData.totalClaimed || 0);
+                $('#lastClaim').text(userData.lastClaim ? moment(userData.lastClaim).fromNow() : '-');
+                $('#referralCount').text(userData.referralCount || 0);
+                $('#totalUsers').text(Object.keys(data.users || {}).length);
+                this.updateTransactionHistory(data.transactions || []);
+            }
+        
+            updateTransactionHistory(transactions) {
+                const history = transactions
+                    .filter(tx => tx.email === this.userEmail)
+                    .slice(0, 10)
+                    .map(tx => `
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-amount">+${tx.amount} PEPE</div>
+                                <div class="activity-time">${moment(tx.timestamp).fromNow()}</div>
+                            </div>
+                        </div>
+                    `)
+                    .join('');
+        
+                $('#recentClaims').html(history || '<p>Henüz işlem yok</p>');
+            }
+        
+            async handleClaim() {
+                try {
+                    this.setLoading(true);
+                    const data = await Database.getData();
+                    if (!data) throw new Error('Veri yüklenemedi');
+        
+                    const amount = Math.floor(Math.random() * (2000 - 800 + 1) + 800);
+                    
+                    const transaction = {
+                        id: Date.now().toString(),
+                        email: this.userEmail,
+                        amount: amount,
+                        timestamp: new Date().toISOString(),
+                        status: 'success'
+                    };
+        
+                    if (!data.transactions) data.transactions = [];
+                    if (!data.users) data.users = {};
+                    
+                    data.transactions.unshift(transaction);
+                    
+                    if (!data.users[this.userEmail]) {
+                        data.users[this.userEmail] = {
+                            totalClaimed: amount,
+                            claimCount: 1,
+                            lastClaim: new Date().toISOString()
+                        };
+                    } else {
+                        data.users[this.userEmail].totalClaimed += amount;
+                        data.users[this.userEmail].claimCount += 1;
+                        data.users[this.userEmail].lastClaim = new Date().toISOString();
+                    }
+        
+                    await Database.updateData(data);
+                    
+                    toastr.success(`🎉 ${amount} PEPE kazandınız!`);
+                    
+                    await this.taskSystem.updateProgress('claim');
+                    await this.achievementSystem.checkAchievements(data.users[this.userEmail]);
+                    
+                    this.updateUI(data);
+        
+                } catch (error) {
+                    console.error('Claim hatası:', error);
+                    toastr.error('İşlem sırasında hata oluştu');
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+        
+            setLoading(isLoading) {
+                const button = $('#claimButton');
+                if (isLoading) {
+                    button.prop('disabled', true).addClass('loading');
+                } else {
+                    button.prop('disabled', false).removeClass('loading');
+                }
+            }
+        }
+        
+        // Oturum kontrolü
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userEmail = localStorage.getItem('userEmail');
+            
+            if (!isLoggedIn || !userEmail) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            return userEmail;
+        }
+        
+        // Çıkış fonksiyonu
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'login.html';
+        }
+        
+        // Toast ayarları
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right",
+            "timeOut": "3000",
+            "extendedTimeOut": "1000",
+            "preventDuplicates": true,
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        
+        // Uygulamayı başlat
+        $(document).ready(() => {
+            const userEmail = checkAuth();
+            if (!userEmail) return;
+            const app = new PepeFaucet();
         });
-
-        localStorage.setItem('taskProgress', JSON.stringify(this.progress));
-    }
-}
-
-// Başarım sistemi
-class AchievementSystem {
-    // Önceki achievement sistemi kodları
-}
-
-// Veritabanı işlemleri
-class Database {
-    // Önceki database kodları
-}
-
-// Toast bildirimleri
-toastr.options = {
-    "closeButton": true,
-    "progressBar": true,
-    "positionClass": "toast-bottom-right",
-    "preventDuplicates": true,
-    "timeOut": "3000",
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
-
-// Uygulamayı başlat
-$(document).ready(() => {
-    // Oturum kontrolü
-    const userEmail = checkAuth();
-    if (!userEmail) return;
-    
-    // Uygulamayı başlat
-    const app = new PepeFaucet();
-});
-</script>
+        </script>
 </body>
 </html>
