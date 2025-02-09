@@ -805,152 +805,290 @@
     </style>
 </head>
 <body>
-    <!-- Ana Container -->
-    <div class="app-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">
-                <h1>🐸 Pepe Faucet</h1>
-                <div class="user-level">Level <span id="userLevel">1</span></div>
-            </div>
-            
-            <div class="user-profile">
-                <div class="profile-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="user-email"></div>
-            </div>
-            
-            <div class="nav-item active" data-page="home">
-                <i class="fas fa-home"></i>
-                Ana Sayfa
-            </div>
-            
-            <div class="nav-item" data-page="daily-tasks">
-                <i class="fas fa-tasks"></i>
-                Günlük Görevler
-                <span class="notification-badge">3</span>
-            </div>
-            
-            <div class="nav-item" data-page="withdraw">
-                <i class="fas fa-wallet"></i>
-                Para Çekme
-            </div>
-            
-            <div class="nav-item" data-page="achievements">
-                <i class="fas fa-trophy"></i>
-                Başarımlar
-                <span class="achievement-count badge">0</span>
-            </div>
-
-            <div class="nav-item" data-page="stats">
-                <i class="fas fa-chart-line"></i>
-                İstatistikler
-            </div>
-            
-            <div class="nav-item" data-page="referral">
-                <i class="fas fa-users"></i>
-                Referans
-            </div>
-
-            <div class="nav-item" data-page="profile">
+   <div class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <h1>🐸 Pepe Faucet</h1>
+            <div class="user-level">Level <span id="userLevel">1</span></div>
+        </div>
+        
+        <div class="user-profile">
+            <div class="profile-avatar">
                 <i class="fas fa-user"></i>
-                Profil
             </div>
-            
-            <div class="nav-item" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                Çıkış Yap
+            <div class="user-email"></div>
+        </div>
+        
+        <div class="nav-item active" data-page="home">
+            <i class="fas fa-home"></i>
+            Ana Sayfa
+        </div>
+        
+        <div class="nav-item" data-page="daily-tasks">
+            <i class="fas fa-tasks"></i>
+            Günlük Görevler
+            <span class="notification-badge">3</span>
+        </div>
+        
+        <div class="nav-item" data-page="withdraw">
+            <i class="fas fa-wallet"></i>
+            Para Çekme
+        </div>
+        
+        <div class="nav-item" data-page="achievements">
+            <i class="fas fa-trophy"></i>
+            Başarımlar
+            <span class="achievement-count badge">0</span>
+        </div>
+
+        <div class="nav-item" data-page="stats">
+            <i class="fas fa-chart-line"></i>
+            İstatistikler
+        </div>
+        
+        <div class="nav-item" data-page="referral">
+            <i class="fas fa-users"></i>
+            Referans
+        </div>
+
+        <div class="nav-item" data-page="profile">
+            <i class="fas fa-user"></i>
+            Profil
+        </div>
+        
+        <div class="nav-item" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            Çıkış Yap
+        </div>
+    </div>
+
+    <!-- Ana İçerik -->
+    <div class="main-content">
+        <!-- Ana Sayfa -->
+        <div id="home" class="page active">
+            <!-- User Stats Panel -->
+            <div class="user-stats-panel">
+                <div class="stat-mini-card">
+                    <div class="stat-mini-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="stat-mini-value" id="totalEarned">0</div>
+                    <div class="stat-mini-label">Toplam Kazanç</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-mini-value" id="lastClaim">-</div>
+                    <div class="stat-mini-label">Son Claim</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-mini-value" id="referralCount">0</div>
+                    <div class="stat-mini-label">Referanslar</div>
+                </div>
+            </div>
+
+            <!-- Claim Card -->
+            <div class="card">
+                <h2><i class="fas fa-coins"></i> Claim PEPE</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="stat-value" id="claimAmount">800-2000</div>
+                        <div>Her Claim</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div>Toplam Kullanıcı</div>
+                    </div>
+                </div>
+
+                <button class="action-btn" id="claimButton">
+                    <i class="fas fa-gift"></i>
+                    PEPE KAZAN!
+                    <span class="loading" style="display: none;"></span>
+                </button>
+            </div>
+
+            <!-- Recent Claims -->
+            <div class="card mt-4">
+                <h2><i class="fas fa-history"></i> Son İşlemler</h2>
+                <div class="transaction-list" id="recentClaims"></div>
             </div>
         </div>
 
-        <!-- Ana İçerik -->
-        <div class="main-content">
-            <!-- Ana Sayfa -->
-            <div id="home" class="page active">
-                <!-- User Stats Panel -->
-                <div class="user-stats-panel">
-                    <div class="stat-mini-card">
-                        <div class="stat-mini-icon">
-                            <i class="fas fa-coins"></i>
-                        </div>
-                        <div class="stat-mini-value" id="totalEarned">0</div>
-                        <div class="stat-mini-label">Toplam Kazanç</div>
-                    </div>
-                    <div class="stat-mini-card">
-                        <div class="stat-mini-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-mini-value" id="lastClaim">-</div>
-                        <div class="stat-mini-label">Son Claim</div>
-                    </div>
-                    <div class="stat-mini-card">
-                        <div class="stat-mini-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-mini-value" id="referralCount">0</div>
-                        <div class="stat-mini-label">Referanslar</div>
-                    </div>
-                </div>
+        <!-- Günlük Görevler -->
+        <div id="daily-tasks" class="page">
+            <h2><i class="fas fa-tasks"></i> Günlük Görevler</h2>
+            
+            <div class="task-list">
+                <!-- Görevler dinamik olarak eklenecek -->
+            </div>
+        </div>
 
-                <!-- Claim Card -->
+        <!-- Para Çekme -->
+        <div id="withdraw" class="page">
+            <div class="content-grid">
                 <div class="card">
-                    <h2><i class="fas fa-coins"></i> Claim PEPE</h2>
+                    <h2><i class="fas fa-wallet"></i> Para Çekme</h2>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-icon">
-                                <i class="fas fa-gift"></i>
+                                <i class="fas fa-coins"></i>
                             </div>
-                            <div class="stat-value" id="claimAmount">800-2000</div>
-                            <div>Her Claim</div>
+                            <div class="stat-value" id="userBalance">0</div>
+                            <div>Bakiyeniz</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon">
-                                <i class="fas fa-users"></i>
+                                <i class="fas fa-money-bill-wave"></i>
                             </div>
-                            <div class="stat-value" id="totalUsers">0</div>
-                            <div>Toplam Kullanıcı</div>
+                            <div class="stat-value">1000</div>
+                            <div>Min. Çekim</div>
                         </div>
                     </div>
 
-                    <button class="action-btn" id="claimButton">
-                        <i class="fas fa-gift"></i>
-                        PEPE KAZAN!
-                        <span class="loading" style="display: none;"></span>
+                    <form id="withdrawForm">
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-envelope"></i>
+                                FaucetPay E-posta
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-at"></i>
+                                <input type="email" id="withdrawEmail" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-money-bill-wave"></i>
+                                Çekilecek Miktar
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-coins"></i>
+                                <input type="number" id="withdrawAmount" required min="1000" step="100">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="action-btn" id="withdrawButton">
+                            <i class="fas fa-paper-plane"></i>
+                            Çekim Yap
+                            <span class="loading" style="display: none;"></span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Çekim Geçmişi -->
+                <div class="card">
+                    <h2><i class="fas fa-history"></i> Çekim Geçmişi</h2>
+                    <div class="transaction-list" id="withdrawHistory"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Başarımlar -->
+        <div id="achievements" class="page">
+            <div class="card">
+                <h2><i class="fas fa-trophy"></i> Başarımlar</h2>
+                <div class="achievements-grid" id="achievementsList">
+                    <!-- Başarımlar JavaScript ile eklenecek -->
+                </div>
+            </div>
+        </div>
+
+        <!-- İstatistikler -->
+        <div id="stats" class="page">
+            <div class="stats-container">
+                <!-- Grafik ve istatistikler JavaScript ile eklenecek -->
+            </div>
+        </div>
+
+        <!-- Referans -->
+        <div id="referral" class="page">
+            <div class="card">
+                <h2><i class="fas fa-users"></i> Referans Sistemi</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="stat-value" id="totalReferrals">0</div>
+                        <div>Toplam Referans</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-value">10%</div>
+                        <div>Bonus</div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label>Referans Linkiniz</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-link"></i>
+                        <input type="text" id="referralLink" readonly>
+                    </div>
+                    <button class="action-btn mt-2" onclick="copyReferralLink()">
+                        <i class="fas fa-copy"></i>
+                        Kopyala
                     </button>
                 </div>
 
-                <!-- Recent Claims -->
-                <div class="card mt-4">
-                    <h2><i class="fas fa-history"></i> Son İşlemler</h2>
-                    <div class="transaction-list" id="recentClaims"></div>
+                <div class="transaction-list" id="referralHistory"></div>
+            </div>
+        </div>
+
+        <!-- Profil -->
+        <div id="profile" class="page">
+            <div class="card">
+                <h2><i class="fas fa-user"></i> Profil</h2>
+                <div class="profile-info">
+                    <!-- Profil bilgileri JavaScript ile eklenecek -->
                 </div>
             </div>
-
-            <!-- Günlük Görevler -->
-            <div id="daily-tasks" class="page">
-                <h2><i class="fas fa-tasks"></i> Günlük Görevler</h2>
-                
-                <div class="task-list">
-                    <!-- Görevler dinamik olarak eklenecek -->
-                </div>
-            </div>
-
-            <!-- Diğer sayfalar aynı kalacak -->
         </div>
     </div>
+</div>
 
-    <!-- Achievement Popup -->
-    <div class="achievement-popup" id="achievementPopup">
-        <h3>🏆 Yeni Başarım!</h3>
-        <div class="achievement-details"></div>
+<!-- Achievement Popup -->
+<div class="achievement-popup" id="achievementPopup">
+    <h3>🏆 Yeni Başarım!</h3>
+    <div class="achievement-details"></div>
+</div>
+
+<!-- Modal -->
+<div id="achievementModal" class="modal">
+    <div class="modal-content">
+        <h2>🎉 Yeni Başarım!</h2>
+        <div id="achievementDetails"></div>
+        <button class="action-btn mt-4" onclick="closeModal()">Tamam</button>
     </div>
+</div>
 
-    <!-- Tema değiştirme butonu -->
-    <button id="themeToggle" class="theme-toggle">
-        <i class="fas fa-moon"></i>
-    </button>
+<!-- Offline Modal -->
+<div id="offlineModal" class="modal">
+    <div class="modal-content">
+        <h2>📡 Bağlantı Hatası</h2>
+        <p>İnternet bağlantınız kesildi. Tekrar bağlanmayı deniyoruz...</p>
+    </div>
+</div>
 
+<!-- Tema değiştirme butonu -->
+<button id="themeToggle" class="theme-toggle">
+    <i class="fas fa-moon"></i>
+</button>
     <script>
         // Ana konfigürasyon
         const config = {
