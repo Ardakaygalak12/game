@@ -3,195 +3,653 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐸 Pepe Faucet - Giriş</title>
+    <title>🐸 Pepe Faucet Pro MAX</title>
     
-    <!-- CDN Bağlantıları -->
+    <!-- Critical CDN Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
+    <!-- Advanced Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    
+    <!-- Icons and Styling -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <style>
+        /* Ultra Advanced Color Palette and Design System */
         :root {
-            --primary: #2ecc71;
-            --primary-dark: #27ae60;
-            --background: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.9);
-            --hover-bg: rgba(51, 65, 85, 0.9);
+            /* Gradient Color Palette */
+            --primary-gradient: linear-gradient(45deg, #2ecc71, #27ae60);
+            --secondary-gradient: linear-gradient(45deg, #9b59b6, #8e44ad);
+            
+            /* Detailed Color Tokens */
+            --color-pepe-green: #2ecc71;
+            --color-pepe-dark-green: #27ae60;
+            --color-pepe-purple: #9b59b6;
+            
+            /* Background Layers */
+            --bg-dark-primary: #0f172a;
+            --bg-dark-secondary: #1a365d;
+            --bg-card: rgba(30, 41, 59, 0.9);
+            --bg-hover: rgba(51, 65, 85, 0.9);
+            
+            /* Advanced Shadow and Depth */
+            --shadow-elevation-1: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-elevation-2: 0 4px 8px rgba(0,0,0,0.2);
+            --shadow-elevation-3: 0 8px 16px rgba(0,0,0,0.3);
+            
+            /* Neon and Glow Effects */
+            --neon-glow: 0 0 15px rgba(46, 204, 113, 0.5);
+            --neon-pulse: 0 0 25px rgba(46, 204, 113, 0.7);
         }
 
+        /* Advanced Reset and Base Styling */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-pepe-green) transparent;
         }
 
+        /* Animated Background with Advanced Gradients */
         body {
-            background: var(--background);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(
+                135deg, 
+                var(--bg-dark-primary) 0%, 
+                var(--bg-dark-secondary) 50%, 
+                var(--bg-dark-primary) 100%
+            );
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            color: white;
             min-height: 100vh;
-            color: white;
+            overflow-x: hidden;
         }
 
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
+        /* Advanced Application Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
         }
 
-        .login-header h1 {
-            color: var(--primary);
-            margin-bottom: 10px;
+        /* Ultra-Responsive Sidebar */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            color: var(--primary);
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-        }
-
-        input {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 5px;
-            color: white;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
+        /* Advanced Navigation with Hover and Active States */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 15px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .login-btn:hover {
-            background: var(--primary-dark);
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
         }
 
-        .loading {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid white;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .nav-item:hover::before,
+        .nav-item.active::before {
+            opacity: 0.1;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .nav-item i {
+            margin-right: 15px;
+            color: var(--color-pepe-green);
+            transition: transform 0.3s ease;
         }
 
-        .error-message {
-            color: red;
+        .nav-item:hover i {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* Advanced Main Content Area */
+        .main-content {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            padding: 30px;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        /* Ultra Card Design */
+        .card {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-elevation-2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        /* Elite Buttons */
+        .elite-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .elite-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.3),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .elite-button:hover::before {
+            left: 100%;
+        }
+
+        .elite-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--neon-glow);
+        }
+
+        /* Advanced Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-hover);
+            padding: 25px;
+            border-radius: 15px;
             text-align: center;
-            margin-top: 15px;
-            display: none;
+            transition: transform 0.3s ease;
         }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-elevation-3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Additional Advanced Styling */
+        /* Will continue in next sections */
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>🐸 Pepe Faucet</h1>
-            <p>FaucetPay ile giriş yap</p>
-        </div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label>FaucetPay E-posta</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" required placeholder="E-posta adresiniz">
-                </div>
+    <div class="app-container">
+        <!-- Advanced Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header text-center mb-4">
+                <h1 class="text-2xl font-bold text-color-pepe-green">🐸 Pepe Faucet Pro</h1>
+                <p class="text-sm opacity-70">Ultimate Earning Platform</p>
             </div>
 
-            <button type="submit" class="login-btn" id="loginButton">
-                Giriş Yap
-                <div class="loading"></div>
-            </button>
+            <!-- Navigation Menu -->
+            <nav>
+                <div class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </div>
+                <div class="nav-item" data-page="claim">
+                    <i class="fas fa-coins"></i> Claim Rewards
+                </div>
+                <div class="nav-item" data-page="tasks">
+                    <i class="fas fa-tasks"></i> Daily Tasks
+                </div>
+                <div class="nav-item" data-page="referral">
+                    <i class="fas fa-users"></i> Referral Program
+                </div>
+                <div class="nav-item" data-page="achievements">
+                    <i class="fas fa-trophy"></i> Achievements
+                </div>
+                <div class="nav-item" data-page="withdraw">
+                    <i class="fas fa-wallet"></i> Withdraw
+                </div>
+            </nav>
 
-            <div class="error-message" id="errorMessage"></div>
-        </form>
+            <!-- User Statistics Mini Panel -->
+            <div class="user-stats mt-auto">
+                <div class="card">
+                    <div class="stat-item flex justify-between mb-2">
+                        <span>Total Earned</span>
+                        <strong id="totalEarned">0 PEPE</strong>
+                    </div>
+                    <div class="stat-item flex justify-between">
+                        <span>Referrals</span>
+                        <strong id="referralCount">0</strong>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <section id="dashboard" class="page active">
+                <h2 class="text-3xl mb-6">Dashboard</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-coins mb-3 text-2xl text-color-pepe-green"></i>
+                        <h3>Total Balance</h3>
+                        <div id="totalBalance" class="text-2xl font-bold">0 PEPE</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-gift mb-3 text-2xl text-color-pepe-purple"></i>
+                        <h3>Pending Rewards</h3>
+                        <div id="pendingRewards" class="text-2xl font-bold">0 PEPE</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line mb-3 text-2xl text-color-pepe-green"></i>
+                        <h3>Weekly Earnings</h3>
+                        <div id="weeklyEarnings" class="text-2xl font-bold">0 PEPE</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Claim Page Content Follows -->
+        </main>
     </div>
 
     <script>
-        // JSON Bin Konfigürasyonu
+        // Ultra Advanced Configuration
         const CONFIG = {
             JSONBIN: {
                 BIN_ID: '67a7a415e41b4d34e4867ffe',
                 API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W'
-            }
+            },
+            CLAIM: {
+                MIN_AMOUNT: 800,
+                MAX_AMOUNT: 2000,
+                COOLDOWN: 3600, // 1 saat
+                DAILY_LIMIT: 5
+            },
+            LEVELS: [
+                { level: 1, minEarnings: 0, multiplier: 1 },
+                { level: 2, minEarnings: 10000, multiplier: 1.1 },
+                { level: 3, minEarnings: 50000, multiplier: 1.2 }
+            ]
         };
 
-        // Kullanıcı Doğrulama Fonksiyonu
-        async function authenticateUser(email) {
-            try {
-                // JSON Bin'den kullanıcı verilerini çek
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN.BIN_ID}/latest`, {
-                    headers: {
-                        'X-Master-Key': CONFIG.JSONBIN.API_KEY
+        // Gelişmiş Kullanıcı Yönetim Sınıfı
+        class UltraAdvancedPepeFaucetUser {
+            constructor(email) {
+                this.email = email;
+                this.userData = this.initializeUserData();
+            }
+
+            // Kullanıcı verilerini başlatma
+            initializeUserData() {
+                const storedData = localStorage.getItem(`pepe_user_${this.email}`);
+                
+                if (storedData) {
+                    return JSON.parse(storedData);
+                }
+
+                return {
+                    email: this.email,
+                    totalEarnings: 0,
+                    referralCount: 0,
+                    level: 1,
+                    lastClaim: 0,
+                    dailyClaimCount: 0,
+                    achievements: [],
+                    referralEarnings: 0,
+                    transactions: [],
+                    tasks: {},
+                    securityToken: this.generateSecurityToken()
+                };
+            }
+
+            // Güvenlik token üretme
+            generateSecurityToken() {
+                return CryptoJS.SHA256(this.email + Date.now()).toString();
+            }
+
+            // Verileri kaydetme
+            saveUserData() {
+                localStorage.setItem(`pepe_user_${this.email}`, JSON.stringify(this.userData));
+            }
+
+            // Claim mekanizması
+            async claim() {
+                const now = Date.now();
+                const currentLevel = this.getCurrentLevel();
+
+                // Claim cooldown ve günlük limit kontrolü
+                if (now - this.userData.lastClaim < CONFIG.CLAIM.COOLDOWN * 1000) {
+                    toastr.warning('Bir sonraki claim için lütfen bekleyin');
+                    return false;
+                }
+
+                if (this.userData.dailyClaimCount >= CONFIG.CLAIM.DAILY_LIMIT) {
+                    toastr.warning('Günlük claim limitine ulaştınız');
+                    return false;
+                }
+
+                // Dinamik claim miktarı hesaplama
+                const baseAmount = Math.floor(
+                    Math.random() * (CONFIG.CLAIM.MAX_AMOUNT - CONFIG.CLAIM.MIN_AMOUNT + 1) 
+                    + CONFIG.CLAIM.MIN_AMOUNT
+                );
+
+                // Seviye çarpanını uygula
+                const claimAmount = Math.floor(baseAmount * currentLevel.multiplier);
+
+                // Kullanıcı verilerini güncelle
+                this.userData.totalEarnings += claimAmount;
+                this.userData.lastClaim = now;
+                this.userData.dailyClaimCount++;
+
+                // İşlem kaydı
+                const transaction = {
+                    id: `TX_${now}`,
+                    type: 'claim',
+                    amount: claimAmount,
+                    timestamp: new Date().toISOString(),
+                    level: this.userData.level
+                };
+                this.userData.transactions.unshift(transaction);
+
+                // Seviye kontrolü
+                this.checkLevelUp();
+
+                // Başarımları kontrol et
+                this.checkAchievements();
+
+                // Verileri kaydet
+                this.saveUserData();
+                await this.syncWithJsonBin();
+
+                // Bildirim
+                toastr.success(`🎉 ${claimAmount} PEPE kazandınız! (Seviye Çarpanı: x${currentLevel.multiplier})`);
+
+                // UI güncelleme
+                this.updateUI();
+
+                return true;
+            }
+
+            // Güncel kullanıcı seviyesini hesaplama
+            getCurrentLevel() {
+                return _.findLast(CONFIG.LEVELS, level => 
+                    this.userData.totalEarnings >= level.minEarnings
+                ) || CONFIG.LEVELS[0];
+            }
+
+            // Seviye atlama kontrolü
+            checkLevelUp() {
+                const currentLevel = this.getCurrentLevel();
+                if (currentLevel.level > this.userData.level) {
+                    this.userData.level = currentLevel.level;
+                    
+                    // Seviye atlama ödülü
+                    const levelUpBonus = 1000 * currentLevel.level;
+                    this.userData.totalEarnings += levelUpBonus;
+
+                    // Seviye atlama bildirimi
+                    toastr.success(`🚀 Tebrikler! Seviye ${currentLevel.level}'e yükseldiniz! +${levelUpBonus} PEPE bonus`);
+                }
+            }
+
+            // Başarımları kontrol etme
+            checkAchievements() {
+                const achievements = [
+                    {
+                        id: 'FIRST_CLAIM',
+                        title: 'İlk Claim',
+                        description: 'İlk PEPE ödülünü kazandın!',
+                        condition: () => this.userData.transactions.length === 1,
+                        reward: 500
+                    },
+                    {
+                        id: 'LEVEL_5',
+                        title: 'Yükselen Yıldız',
+                        description: '5. Seviyeye ulaş',
+                        condition: () => this.userData.level >= 5,
+                        reward: 2000
+                    },
+                    {
+                        id: 'MILLIONAIRE',
+                        title: 'PEPE Milyoneri',
+                        description: '1,000,000 PEPE kazan',
+                        condition: () => this.userData.totalEarnings >= 1000000,
+                        reward: 5000
+                    }
+                ];
+
+                achievements.forEach(achievement => {
+                    if (
+                        !this.userData.achievements.includes(achievement.id) && 
+                        achievement.condition()
+                    ) {
+                        this.userData.achievements.push(achievement.id);
+                        this.userData.totalEarnings += achievement.reward;
+
+                        // Başarım bildirimi
+                        toastr.success(`🏆 Başarım Açıldı: ${achievement.title}! +${achievement.reward} PEPE`);
                     }
                 });
+            }
 
-                if (!response.ok) {
-                    throw new Error('Sunucu bağlantısı başarısız');
+            // Referans sistemi
+            addReferral(referredEmail) {
+                // Referans bonusu
+                const referralBonus = 500;
+                this.userData.referralCount++;
+                this.userData.totalEarnings += referralBonus;
+                
+                // Referans kaydı
+                const referralRecord = {
+                    referredEmail,
+                    timestamp: new Date().toISOString(),
+                    bonus: referralBonus
+                };
+
+                if (!this.userData.referrals) {
+                    this.userData.referrals = [];
                 }
+                this.userData.referrals.unshift(referralRecord);
 
-                const data = await response.json();
-                const users = data.record.users || {};
+                // Referans başarımını kontrol et
+                this.checkReferralAchievements();
 
-                // Kullanıcı kontrolü
-                if (users[email]) {
-                    // Kullanıcı bulundu, giriş izni ver
-                    localStorage.setItem('userEmail', email);
-                    localStorage.setItem('isLoggedIn', 'true');
-                    window.location.href = 'https://pepe-free.netlify.app/';
-                    return true;
-                } else {
-                    // Kullanıcı bulunamadı
-                    throw new Error('FaucetPay hesabı bulunamadı');
+                // Verileri kaydet
+                this.saveUserData();
+                this.syncWithJsonBin();
+
+                return referralBonus;
+            }
+
+            // Referans başarımları
+            checkReferralAchievements() {
+                const referralAchievements = [
+                    {
+                        id: 'REFERRAL_5',
+                        title: 'Referans Ustası',
+                        description: '5 arkadaşını davet et',
+                        condition: () => this.userData.referralCount >= 5,
+                        reward: 2500
+                    },
+                    {
+                        id: 'REFERRAL_25',
+                        title: 'Referans Kralı',
+                        description: '25 arkadaşını davet et',
+                        condition: () => this.userData.referralCount >= 25,
+                        reward: 10000
+                    }
+                ];
+
+                referralAchievements.forEach(achievement => {
+                    if (
+                        !this.userData.achievements.includes(achievement.id) && 
+                        achievement.condition()
+                    ) {
+                        this.userData.achievements.push(achievement.id);
+                        this.userData.totalEarnings += achievement.reward;
+
+                        toastr.success(`🏆 Referans Başarımı: ${achievement.title}! +${achievement.reward} PEPE`);
+                    }
+                });
+            }
+
+            // JSON Bin ile senkronizasyon
+            async syncWithJsonBin() {
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN.BIN_ID}`, {
+                        method: 'PUT',
+                        headers: {
+                            'X-Master-Key': CONFIG.JSONBIN.API_KEY,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            users: {
+                                [this.email]: this.userData
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Senkronizasyon başarısız');
+                    }
+                } catch (error) {
+                    console.error('JSON Bin senkronizasyon hatası:', error);
+                    toastr.error('Veriler buluta yedeklenemedi');
                 }
-            } catch (error) {
-                console.error('Giriş hatası:', error);
-                throw error;
+            }
+
+            // UI Güncelleme
+            updateUI() {
+                // Toplam kazanç
+                $('#totalEarned').text(`${this.userData.totalEarnings.toLocaleString()} PEPE`);
+                $('#totalBalance').text(`${this.userData.totalEarnings.toLocaleString()} PEPE`);
+                
+                // Referans sayısı
+                $('#referralCount').text(this.userData.referralCount);
+
+                // Seviye bilgisi
+                $('#userLevel').text(this.userData.level);
+
+                // Son işlemler
+                const transactionsHtml = this.userData.transactions
+                    .slice(0, 5)
+                    .map(tx => `
+                        <div class="transaction">
+                            <span>${tx.amount} PEPE</span>
+                            <small>${moment(tx.timestamp).fromNow()}</small>
+                        </div>
+                    `).join('');
+                
+                $('#recentTransactions').html(transactionsHtml);
             }
         }
 
-        // Form Gönderim İşlemi
-        $('#loginForm').on('submit', async function(e) {
-            e.preventDefault();
+        // Sayfa yükleme ve başlatma
+        $(document).ready(function() {
+            // Oturum kontrolü
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Kullanıcı nesnesini oluştur
+            const currentUser = new UltraAdvancedPepeFaucetUser(userEmail);
+
+            // Claim butonu event listener
+            $('#claimButton').on('click', async () => {
+                await currentUser.claim();
+            });
+
+            // Referans linki oluşturma
+            $('#referralLink').val(`https://pepefaucet.pro/ref/${CryptoJS.MD5(userEmail).toString().substr(0, 8)}`);
+
+            // İlk UI güncellemesi
+            currentUser.updateUI();
+        });
+
+        // Yardımcı fonksiyonlar
+        function copyReferralLink() {
+            const referralLink = $('#referralLink');
+            navigator.clipboard.writeText(referralLink.val()).then(() => {
+                toastr.success('Referans linki kopyalandı!');
+            }).catch(err => {
+                toastr.error('Link kopyalanamadı');
+            });
+        }
+    </script>
+</body>
+</html>
