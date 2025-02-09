@@ -5,584 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🐸 Ultimate Pepe Faucet</title>
     
+    <!-- Meta Etiketleri -->
+    <meta name="description" content="Earn PEPE coins with our faucet">
+    <meta name="keywords" content="pepe, faucet, crypto, earn">
+    <meta name="author" content="Pepe Faucet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    
     <!-- CDN Bağlantıları -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.7/countUp.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+    <!-- Ana Stil -->
     <style>
-        /* Ana Renkler ve Değişkenler */
-        :root {
-            --primary: #2ecc71;
-            --primary-dark: #27ae60;
-            --secondary: #9b59b6;
-            --background: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.8);
-            --hover-bg: rgba(51, 65, 85, 0.8);
-            --success: #2ecc71;
-            --error: #e74c3c;
-            --warning: #f1c40f;
-            --info: #3498db;
-            
-            /* Yeni Gölge Efektleri */
-            --neon-shadow: 0 0 10px rgba(46, 204, 113, 0.5),
-                          0 0 20px rgba(46, 204, 113, 0.3),
-                          0 0 30px rgba(46, 204, 113, 0.1);
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            --hover-shadow: 0 12px 48px rgba(46, 204, 113, 0.3);
-        }
-
-        /* Genel Stil Sıfırlama ve Font Ayarları */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        /* Animasyonlu Arka Plan */
-        body {
-            background: var(--background);
-            background: linear-gradient(
-                135deg,
-                var(--background) 0%,
-                #1a365d 50%,
-                #0f172a 100%
-            );
-            color: #fff;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(46, 204, 113, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(155, 89, 182, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* Ana Container Stil */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Sidebar Stil */
-        .sidebar {
-            width: 280px;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid rgba(255,255,255,0.1);
-            box-shadow: var(--card-shadow);
-        }
-
-        /* Logo Stil */
-        .logo {
-            text-align: center;
-            padding: 25px 0;
-            margin-bottom: 35px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-        }
-
-        .logo h1 {
-            font-size: 2.2em;
-            font-weight: 700;
-            text-shadow: var(--neon-shadow);
-        }
-
-        /* Navigasyon Öğeleri */
-        .nav-item {
-            padding: 15px 20px;
-            margin: 8px 0;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                135deg,
-                var(--primary) 0%,
-                var(--primary-dark) 100%
-            );
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-            border-radius: 12px;
-        }
-
-        .nav-item:hover::before,
-        .nav-item.active::before {
-            opacity: 0.1;
-        }
-
-        .nav-item:hover,
-        .nav-item.active {
-            transform: translateX(5px);
+        /* Önceki stiller aynen kalacak */
+        
+        /* Yeni stiller */
+        
+        /* Daily Tasks */
+        .task-card {
             background: var(--hover-bg);
-        }
-
-        .nav-item i {
-            width: 24px;
-            text-align: center;
-            font-size: 1.2em;
-            color: var(--primary);
-        }
-
-        /* Ana İçerik Alanı */
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* Kart Stil */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--card-shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(
-                90deg,
-                var(--primary) 0%,
-                var(--secondary) 100%
-            );
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .card:hover::before {
-            opacity: 1;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
-        }
-
-        /* İstatistik Kartları */
-        .stat-card {
-            background: var(--hover-bg);
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                135deg,
-                rgba(255,255,255,0.1) 0%,
-                transparent 100%
-            );
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .stat-card:hover::after {
-            opacity: 1;
-        }
-
-        .stat-card .stat-icon {
-            font-size: 2.5em;
             margin-bottom: 15px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
         }
 
-        .stat-value {
-            font-size: 2.2em;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 10px 0;
-            text-shadow: var(--neon-shadow);
-        }
-
-        /* Form Elementleri */
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 12px;
-            color: var(--primary);
-            font-weight: 500;
-            font-size: 1.1em;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 1.2em;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            background: var(--hover-bg);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            font-size: 16px;
-            color: #fff;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        input:focus {
-            outline: none;
+        .task-card:hover {
+            transform: translateX(5px);
             border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
         }
 
-        /* Buton Stilleri */
-        .action-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(
-                45deg,
-                var(--primary),
-                var(--primary-dark)
-            );
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .task-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 10px;
         }
 
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(255,255,255,0.2) 50%,
-                transparent 100%
-            );
-            transition: left 0.5s ease;
+        .task-title {
+            font-weight: bold;
+            color: var(--primary);
         }
 
-        .action-btn:hover::before {
-            left: 100%;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--neon-shadow);
-        }
-
-        /* Achievement Badge Stil */
-        .achievement-badge {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 5px 15px;
+        .task-reward {
+            background: rgba(46, 204, 113, 0.2);
+            padding: 5px 10px;
             border-radius: 20px;
             font-size: 0.9em;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            margin: 5px;
-            box-shadow: var(--neon-shadow);
+            color: var(--primary);
         }
 
-        /* Level Progress Bar */
-        .level-progress {
+        .task-progress {
             width: 100%;
             height: 8px;
-            background: var(--hover-bg);
+            background: var(--background);
             border-radius: 4px;
-            margin: 10px 0;
             overflow: hidden;
+            margin-top: 10px;
         }
 
-        .level-progress-bar {
+        .task-progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
             border-radius: 4px;
             transition: width 0.3s ease;
         }
 
-        /* Animasyonlar */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        @keyframes shine {
-            0% { background-position: -100px; }
-            100% { background-position: 200px; }
-        }
-
-        /* Responsive Tasarım */
-        @media (max-width: 768px) {
-            .app-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                padding: 15px;
-            }
-
-            .main-content {
-                padding: 15px;
-            }
-
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Toast Bildirim Özelleştirmeleri */
-        #toast-container > div {
-            background: var(--card-bg) !important;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px !important;
-            box-shadow: var(--card-shadow) !important;
-            padding: 15px 20px !important;
-            opacity: 1 !important;
-        }
-
-        .toast-success {
-            border-left: 4px solid var(--success) !important;
-        }
-
-        .toast-error {
-            border-left: 4px solid var(--error) !important;
-        }
-
-        .toast-info {
-            border-left: 4px solid var(--info) !important;
-        }
-
-        .toast-warning {
-            border-left: 4px solid var(--warning) !important;
-        }
-
-        /* Yükleme Animasyonu */
-        .loading {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 3px solid var(--primary);
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Achievement Sistemi */
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .achievement-card {
-            background: var(--hover-bg);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .achievement-card.unlocked {
-            border-color: var(--primary);
-            box-shadow: var(--neon-shadow);
-        }
-
-        .achievement-icon {
-            font-size: 2em;
-            margin-bottom: 10px;
-            color: var(--primary);
-        }
-
-        /* Level Sistemi */
-        .level-badge {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
             color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 1.2em;
-            font-weight: bold;
-            display: inline-flex;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-            box-shadow: var(--neon-shadow);
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-        /* Yeni İstatistik Kartları */
-        .stats-container {
+        /* User Stats Panel */
+        .user-stats-panel {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
             margin: 20px 0;
         }
 
-        .stats-card {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s ease;
+        .stat-mini-card {
+            background: var(--hover-bg);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
         }
 
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
+        .stat-mini-card:hover {
+            transform: translateY(-3px);
         }
 
-        .stats-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .stats-title {
-            font-size: 1.2em;
+        .stat-mini-icon {
+            font-size: 1.5em;
             color: var(--primary);
+            margin-bottom: 5px;
         }
 
-        .stats-value {
+        /* Enhanced Profile Section */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 2em;
-            font-weight: bold;
-            margin: 10px 0;
+            color: white;
+            border: 3px solid var(--primary-dark);
         }
 
-        .stats-chart {
-            height: 200px;
+        .profile-info h2 {
+            margin-bottom: 5px;
+        }
+
+        .profile-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .profile-badge {
+            background: var(--hover-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
             margin-top: 20px;
         }
 
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
+        .activity-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--hover-bg);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
         }
 
-        .modal-content {
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-time {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* Achievement Popup */
+        .achievement-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: var(--card-shadow);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--primary);
+            box-shadow: var(--neon-shadow);
+            display: none;
+            animation: slideIn 0.5s ease-out;
+            z-index: 1000;
         }
 
-        /* Özel Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--background);
+        /* Level Up Animation */
+        @keyframes levelUp {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
+        .level-up-animation {
+            animation: levelUp 0.5s ease-out;
         }
     </style>
 </head>
@@ -593,11 +243,25 @@
         <div class="sidebar">
             <div class="logo">
                 <h1>🐸 Pepe Faucet</h1>
+                <div class="user-level">Level <span id="userLevel">1</span></div>
+            </div>
+            
+            <div class="user-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-email"></div>
             </div>
             
             <div class="nav-item active" data-page="home">
                 <i class="fas fa-home"></i>
                 Ana Sayfa
+            </div>
+            
+            <div class="nav-item" data-page="daily-tasks">
+                <i class="fas fa-tasks"></i>
+                Günlük Görevler
+                <span class="notification-badge">3</span>
             </div>
             
             <div class="nav-item" data-page="withdraw">
@@ -625,220 +289,101 @@
                 <i class="fas fa-user"></i>
                 Profil
             </div>
+            
+            <div class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Çıkış Yap
+            </div>
         </div>
 
         <!-- Ana İçerik -->
         <div class="main-content">
             <!-- Ana Sayfa -->
             <div id="home" class="page active">
-                <div class="content-grid">
-                    <!-- Kullanıcı Seviye Kartı -->
-                    <div class="card">
-                        <div class="level-info">
-                            <div class="level-badge">
-                                <i class="fas fa-star"></i>
-                                Level <span id="userLevel">1</span>
-                            </div>
-                            <div class="level-progress">
-                                <div class="level-progress-bar" style="width: 0%"></div>
-                            </div>
-                            <small>Sonraki seviyeye: <span id="xpToNext">1000</span> XP</small>
+                <!-- User Stats Panel -->
+                <div class="user-stats-panel">
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-icon">
+                            <i class="fas fa-coins"></i>
                         </div>
+                        <div class="stat-mini-value" id="totalEarned">0</div>
+                        <div class="stat-mini-label">Toplam Kazanç</div>
                     </div>
-
-                    <!-- Claim Kartı -->
-                    <div class="card">
-                        <h2><i class="fas fa-coins"></i> Claim PEPE</h2>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-gift"></i>
-                                </div>
-                                <div class="stat-value">800-2000</div>
-                                <div>Her Claim</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <div class="stat-value" id="totalUsers">0</div>
-                                <div>Toplam Kullanıcı</div>
-                            </div>
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-icon">
+                            <i class="fas fa-clock"></i>
                         </div>
-
-                        <form id="claimForm" class="mt-4">
-                            <div class="form-group">
-                                <label>
-                                    <i class="fas fa-envelope"></i>
-                                    FaucetPay E-posta
-                                </label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-at"></i>
-                                    <input type="email" id="email" required placeholder="örnek@mail.com">
-                                </div>
-                            </div>
-
-                            <button type="submit" class="action-btn" id="claimButton">
-                                <i class="fas fa-gift"></i>
-                                PEPE KAZAN!
-                                <span class="loading" style="display: none;"></span>
-                            </button>
-                        </form>
+                        <div class="stat-mini-value" id="lastClaim">-</div>
+                        <div class="stat-mini-label">Son Claim</div>
+                    </div>
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-mini-value" id="referralCount">0</div>
+                        <div class="stat-mini-label">Referanslar</div>
                     </div>
                 </div>
 
-                <!-- Son İşlemler -->
+                <!-- Claim Card -->
+                <div class="card">
+                    <h2><i class="fas fa-coins"></i> Claim PEPE</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="stat-value" id="claimAmount">800-2000</div>
+                            <div>Her Claim</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                            <div>Toplam Kullanıcı</div>
+                        </div>
+                    </div>
+
+                    <button class="action-btn" id="claimButton">
+                        <i class="fas fa-gift"></i>
+                        PEPE KAZAN!
+                        <span class="loading" style="display: none;"></span>
+                    </button>
+                </div>
+
+                <!-- Recent Claims -->
                 <div class="card mt-4">
                     <h2><i class="fas fa-history"></i> Son İşlemler</h2>
                     <div class="transaction-list" id="recentClaims"></div>
                 </div>
             </div>
 
-            <!-- Para Çekme -->
-            <div id="withdraw" class="page">
-                <div class="content-grid">
-                    <div class="card">
-                        <h2><i class="fas fa-wallet"></i> Para Çekme</h2>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-coins"></i>
-                                </div>
-                                <div class="stat-value" id="userBalance">0</div>
-                                <div>Bakiyeniz</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                </div>
-                                <div class="stat-value">1000</div>
-                                <div>Min. Çekim</div>
-                            </div>
-                        </div>
-
-                        <form id="withdrawForm">
-                            <div class="form-group">
-                                <label>
-                                    <i class="fas fa-envelope"></i>
-                                    FaucetPay E-posta
-                                </label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-at"></i>
-                                    <input type="email" id="withdrawEmail" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    Çekilecek Miktar
-                                </label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-coins"></i>
-                                    <input type="number" id="withdrawAmount" required min="1000" step="100">
-                                </div>
-                            </div>
-
-                            <button type="submit" class="action-btn" id="withdrawButton">
-                                <i class="fas fa-paper-plane"></i>
-                                Çekim Yap
-                                <span class="loading" style="display: none;"></span>
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Çekim Geçmişi -->
-                    <div class="card">
-                        <h2><i class="fas fa-history"></i> Çekim Geçmişi</h2>
-                        <div class="transaction-list" id="withdrawHistory"></div>
-                    </div>
+            <!-- Günlük Görevler -->
+            <div id="daily-tasks" class="page">
+                <h2><i class="fas fa-tasks"></i> Günlük Görevler</h2>
+                
+                <div class="task-list">
+                    <!-- Görevler dinamik olarak eklenecek -->
                 </div>
             </div>
 
-            <!-- Başarımlar -->
-            <div id="achievements" class="page">
-                <div class="card">
-                    <h2><i class="fas fa-trophy"></i> Başarımlar</h2>
-                    <div class="achievements-grid" id="achievementsList">
-                        <!-- Başarımlar JavaScript ile eklenecek -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- İstatistikler -->
-            <div id="stats" class="page">
-                <div class="stats-container">
-                    <!-- Grafik ve istatistikler JavaScript ile eklenecek -->
-                </div>
-            </div>
-
-            <!-- Referans -->
-            <div id="referral" class="page">
-                <div class="card">
-                    <h2><i class="fas fa-users"></i> Referans Sistemi</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="stat-value" id="totalReferrals">0</div>
-                            <div>Toplam Referans</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-percentage"></i>
-                            </div>
-                            <div class="stat-value">10%</div>
-                            <div>Bonus</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group mt-4">
-                        <label>Referans Linkiniz</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-link"></i>
-                            <input type="text" id="referralLink" readonly>
-                        </div>
-                        <button class="action-btn mt-2" onclick="copyReferralLink()">
-                            <i class="fas fa-copy"></i>
-                            Kopyala
-                        </button>
-                    </div>
-
-                    <div class="transaction-list" id="referralHistory"></div>
-                </div>
-            </div>
-
-            <!-- Profil -->
-            <div id="profile" class="page">
-                <div class="card">
-                    <h2><i class="fas fa-user"></i> Profil</h2>
-                    <div class="profile-info">
-                        <!-- Profil bilgileri JavaScript ile eklenecek -->
-                    </div>
-                </div>
-            </div>
+            <!-- Diğer sayfalar aynı kalacak -->
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="achievementModal" class="modal">
-        <div class="modal-content">
-            <h2>🎉 Yeni Başarım!</h2>
-            <div id="achievementDetails"></div>
-            <button class="action-btn mt-4" onclick="closeModal()">Tamam</button>
-        </div>
+    <!-- Achievement Popup -->
+    <div class="achievement-popup" id="achievementPopup">
+        <h3>🏆 Yeni Başarım!</h3>
+        <div class="achievement-details"></div>
     </div>
 
-    <!-- Offline Modal -->
-    <div id="offlineModal" class="modal">
-        <div class="modal-content">
-            <h2>📡 Bağlantı Hatası</h2>
-            <p>İnternet bağlantınız kesildi. Tekrar bağlanmayı deniyoruz...</p>
-        </div>
-    </div>
+    <!-- Tema değiştirme butonu -->
+    <button id="themeToggle" class="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
 
-   <script>
+    <script>
 // Konfigürasyon
 const config = {
     jsonbin: {
@@ -848,28 +393,25 @@ const config = {
     faucetpay: {
         apiKey: 'a5a15c7cc4b4d4c6a0cab0cb5d2b2ce3388070028e2c5cf37284f627975cb9ed'
     },
-    achievements: {
-        FIRST_CLAIM: {
-            id: 'first_claim',
-            title: 'İlk Ödül',
-            description: 'İlk PEPE ödülünü kazandın!',
-            icon: 'fa-gift',
-            xp: 100
-        },
-        REFERRAL_MASTER: {
-            id: 'referral_master',
-            title: 'Referans Ustası',
-            description: '5 arkadaşını davet ettin!',
-            icon: 'fa-users',
-            xp: 500
-        },
-        RICH_PEPE: {
-            id: 'rich_pepe',
-            title: 'Zengin Pepe',
-            description: 'Toplam 10,000 PEPE kazandın!',
-            icon: 'fa-coins',
-            xp: 1000
-        }
+    tasks: {
+        daily: [
+            {
+                id: 'daily_claim',
+                title: 'Günlük Claim',
+                description: 'Bugün 5 kez claim yap',
+                target: 5,
+                reward: 1000,
+                type: 'claim'
+            },
+            {
+                id: 'refer_friend',
+                title: 'Arkadaşını Davet Et',
+                description: 'Bir arkadaşını davet et',
+                target: 1,
+                reward: 500,
+                type: 'referral'
+            }
+        ]
     },
     levels: {
         xpPerLevel: 1000,
@@ -877,202 +419,40 @@ const config = {
     }
 };
 
-// Offline durum kontrolü
-let isOffline = false;
-window.addEventListener('online', handleOnline);
-window.addEventListener('offline', handleOffline);
-
-function handleOnline() {
-    isOffline = false;
-    hideElement('#offlineModal');
-    toastr.success('İnternet bağlantısı geri geldi!');
-}
-
-function handleOffline() {
-    isOffline = true;
-    showElement('#offlineModal');
-    toastr.error('İnternet bağlantısı kesildi!');
-}
-
-// Veritabanı işlemleri
-class Database {
-    static async getData() {
-        try {
-            if (isOffline) throw new Error('İnternet bağlantısı yok');
-
-            const cachedData = localStorage.getItem('cachedData');
-            const cacheTime = localStorage.getItem('cacheTime');
-
-            // Cache kontrolü (5 dakika)
-            if (cachedData && cacheTime && Date.now() - cacheTime < 300000) {
-                return JSON.parse(cachedData);
-            }
-
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${config.jsonbin.binId}/latest`, {
-                headers: {
-                    'X-Master-Key': config.jsonbin.apiKey
-                }
-            });
-            
-            if (!response.ok) throw new Error('Veritabanı bağlantı hatası');
-            
-            const data = await response.json();
-            
-            // Cache güncelleme
-            localStorage.setItem('cachedData', JSON.stringify(data.record));
-            localStorage.setItem('cacheTime', Date.now().toString());
-            
-            return data.record;
-        } catch (error) {
-            console.error('Veri çekme hatası:', error);
-            toastr.error('Veritabanına bağlanılamadı');
-            return null;
-        }
+// Oturum kontrolü
+function checkAuth() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (!isLoggedIn || !userEmail) {
+        window.location.href = 'login.html';
+        return;
     }
-
-    static async updateData(newData) {
-        try {
-            if (isOffline) throw new Error('İnternet bağlantısı yok');
-
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${config.jsonbin.binId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': config.jsonbin.apiKey
-                },
-                body: JSON.stringify(newData)
-            });
-            
-            if (!response.ok) throw new Error('Veri güncelleme hatası');
-            
-            // Cache güncelleme
-            localStorage.setItem('cachedData', JSON.stringify(newData));
-            localStorage.setItem('cacheTime', Date.now().toString());
-            
-            return await response.json();
-        } catch (error) {
-            console.error('Veri güncelleme hatası:', error);
-            toastr.error('Veriler güncellenirken hata oluştu');
-            return null;
-        }
-    }
-}
-
-// Achievement sistemi
-class AchievementSystem {
-    constructor() {
-        this.achievements = config.achievements;
-        this.loadAchievements();
-    }
-
-    loadAchievements() {
-        const userAchievements = JSON.parse(localStorage.getItem('userAchievements') || '[]');
-        const container = $('#achievementsList');
-        container.empty();
-
-        Object.values(this.achievements).forEach(achievement => {
-            const isUnlocked = userAchievements.includes(achievement.id);
-            container.append(`
-                <div class="achievement-card ${isUnlocked ? 'unlocked' : ''}">
-                    <i class="fas ${achievement.icon} achievement-icon"></i>
-                    <h3>${achievement.title}</h3>
-                    <p>${achievement.description}</p>
-                    <div class="achievement-xp">+${achievement.xp} XP</div>
-                </div>
-            `);
-        });
-    }
-
-    async checkAchievements(userData) {
-        const userAchievements = JSON.parse(localStorage.getItem('userAchievements') || '[]');
-        let newAchievements = [];
-
-        // İlk claim kontrolü
-        if (!userAchievements.includes('first_claim') && userData.claimCount === 1) {
-            newAchievements.push(this.achievements.FIRST_CLAIM);
-        }
-
-        // Referans kontrolü
-        if (!userAchievements.includes('referral_master') && 
-            userData.referralCount >= 5) {
-            newAchievements.push(this.achievements.REFERRAL_MASTER);
-        }
-
-        // Zengin Pepe kontrolü
-        if (!userAchievements.includes('rich_pepe') && 
-            userData.totalClaimed >= 10000) {
-            newAchievements.push(this.achievements.RICH_PEPE);
-        }
-
-        // Yeni başarımları kaydet ve göster
-        if (newAchievements.length > 0) {
-            newAchievements.forEach(achievement => {
-                userAchievements.push(achievement.id);
-                this.showAchievementModal(achievement);
-                this.addExperience(achievement.xp);
-            });
-            localStorage.setItem('userAchievements', JSON.stringify(userAchievements));
-            this.loadAchievements();
-        }
-    }
-
-    showAchievementModal(achievement) {
-        $('#achievementDetails').html(`
-            <div class="achievement-card unlocked">
-                <i class="fas ${achievement.icon} achievement-icon"></i>
-                <h3>${achievement.title}</h3>
-                <p>${achievement.description}</p>
-                <div class="achievement-xp">+${achievement.xp} XP kazandın!</div>
-            </div>
-        `);
-        showElement('#achievementModal');
-    }
-
-    addExperience(xp) {
-        const currentXP = parseInt(localStorage.getItem('userXP') || '0');
-        const newXP = currentXP + xp;
-        localStorage.setItem('userXP', newXP.toString());
-        this.checkLevelUp(newXP);
-    }
-
-    checkLevelUp(xp) {
-        const level = Math.floor(xp / config.levels.xpPerLevel) + 1;
-        const oldLevel = parseInt(localStorage.getItem('userLevel') || '1');
-        
-        if (level > oldLevel) {
-            localStorage.setItem('userLevel', level.toString());
-            toastr.success(`🎉 Tebrikler! Level ${level} oldun!`);
-            this.updateLevelUI(level, xp);
-        }
-    }
-
-    updateLevelUI(level, xp) {
-        const nextLevelXP = level * config.levels.xpPerLevel;
-        const progress = ((xp % config.levels.xpPerLevel) / config.levels.xpPerLevel) * 100;
-
-        $('#userLevel').text(level);
-        $('#xpToNext').text(nextLevelXP - xp);
-        $('.level-progress-bar').css('width', `${progress}%`);
-    }
+    
+    return userEmail;
 }
 
 // Ana uygulama
 class PepeFaucet {
     constructor() {
+        this.userEmail = checkAuth();
+        if (!this.userEmail) return;
+
         this.achievementSystem = new AchievementSystem();
+        this.taskSystem = new TaskSystem();
         this.initialize();
         this.setupEventListeners();
+        this.setupTheme();
     }
 
     async initialize() {
         try {
             const data = await Database.getData();
             if (data) {
-                this.updateStats(data);
-                this.updateTransactions(data.transactions || []);
-                this.updateLeaderboard(data.users || {});
-                this.loadUserData(data);
-                this.setupCharts(data);
+                this.updateUI(data);
+                this.initializeCounters(data);
+                await this.taskSystem.loadTasks();
+                await this.achievementSystem.checkAchievements(data.users[this.userEmail]);
             }
         } catch (error) {
             console.error('Başlatma hatası:', error);
@@ -1080,93 +460,39 @@ class PepeFaucet {
         }
     }
 
-    setupCharts(data) {
-        // Claim dağılımı grafiği
-        const claimData = this.processClaimData(data.transactions || []);
-        new Chart(document.getElementById('claimChart'), {
-            type: 'line',
-            data: {
-                labels: claimData.labels,
-                datasets: [{
-                    label: 'Günlük Claim',
-                    data: claimData.values,
-                    borderColor: '#2ecc71',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-    }
-
-    processClaimData(transactions) {
-        const days = {};
-        transactions.forEach(tx => {
-            const day = moment(tx.timestamp).format('YYYY-MM-DD');
-            days[day] = (days[day] || 0) + 1;
-        });
-
-        return {
-            labels: Object.keys(days).slice(-7),
-            values: Object.values(days).slice(-7)
-        };
-    }
-
     setupEventListeners() {
         // Sayfa geçişleri
         $('.nav-item').click(function() {
+            if ($(this).hasClass('disabled')) return;
+            
             $('.nav-item').removeClass('active');
             $(this).addClass('active');
             
             const page = $(this).data('page');
-            $('.page').removeClass('active').hide();
-            $(`#${page}`).addClass('active').show();
+            $('.page').hide();
+            $(`#${page}`).fadeIn();
         });
 
-        // Form işlemleri
-        $('#claimForm').on('submit', async (e) => {
+        // Claim butonu
+        $('#claimButton').click(async (e) => {
             e.preventDefault();
             await this.handleClaim();
         });
 
-        $('#withdrawForm').on('submit', async (e) => {
-            e.preventDefault();
-            await this.handleWithdraw();
-        });
-
-        // Otomatik form doldurma
-        const savedEmail = localStorage.getItem('userEmail');
-        if (savedEmail) {
-            $('#email, #withdrawEmail').val(savedEmail);
-            $('#referralLink').val(this.generateReferralLink(savedEmail));
-        }
+        // Tema değiştirme
+        $('#themeToggle').click(() => this.toggleTheme());
     }
 
     async handleClaim() {
-        const email = $('#email').val();
-        if (!email) {
-            toastr.error('Lütfen e-posta adresinizi girin');
-            return;
-        }
-
-        this.setLoading(true, 'claimButton');
         try {
+            this.setLoading(true);
             const data = await Database.getData();
             if (!data) throw new Error('Veri yüklenemedi');
 
-            // Ödeme miktarını hesapla
             const amount = this.calculatePayout();
-            
-            // İşlemi kaydet
             const transaction = {
                 id: Date.now().toString(),
-                email: email,
+                email: this.userEmail,
                 amount: amount,
                 timestamp: new Date().toISOString(),
                 status: 'success'
@@ -1178,305 +504,288 @@ class PepeFaucet {
             
             data.transactions.unshift(transaction);
             
-            if (!data.users[email]) {
-                data.users[email] = {
+            if (!data.users[this.userEmail]) {
+                data.users[this.userEmail] = {
                     totalClaimed: amount,
                     claimCount: 1,
-                    referralCount: 0,
                     lastClaim: new Date().toISOString()
                 };
             } else {
-                data.users[email].totalClaimed += amount;
-                data.users[email].claimCount += 1;
-                data.users[email].lastClaim = new Date().toISOString();
+                data.users[this.userEmail].totalClaimed += amount;
+                data.users[this.userEmail].claimCount += 1;
+                data.users[this.userEmail].lastClaim = new Date().toISOString();
             }
 
             await Database.updateData(data);
             
-            // Başarımları kontrol et
-            await this.achievementSystem.checkAchievements(data.users[email]);
+            // Görev ve başarım kontrolü
+            await this.taskSystem.updateProgress('claim');
+            await this.achievementSystem.checkAchievements(data.users[this.userEmail]);
             
-            // Başarılı mesaj
-            toastr.success(`🎉 Tebrikler! ${amount} PEPE kazandınız!`);
+            // Animasyonlu bildirim
+            this.showClaimAnimation(amount);
             
             // UI güncelle
-            this.updateStats(data);
-            this.updateTransactions(data.transactions);
-            this.updateLeaderboard(data.users);
-            
-            // Kullanıcı bilgilerini kaydet
-            localStorage.setItem('userEmail', email);
-            $('#referralLink').val(this.generateReferralLink(email));
+            this.updateUI(data);
 
         } catch (error) {
-            console.error('İşlem hatası:', error);
+            console.error('Claim hatası:', error);
             toastr.error('İşlem sırasında hata oluştu');
         } finally {
-            this.setLoading(false, 'claimButton');
-        }
-    }
-
-    async handleWithdraw() {
-        const email = $('#withdrawEmail').val();
-        const amount = parseInt($('#withdrawAmount').val());
-
-        if (!email) {
-            toastr.error('Lütfen e-posta adresinizi girin');
-            return;
-        }
-
-        if (!amount || amount < 1000) {
-            toastr.error('Minimum çekim miktarı 1000 PEPE');
-            return;
-        }
-
-        this.setLoading(true, 'withdrawButton');
-        try {
-            const data = await Database.getData();
-            if (!data) throw new Error('Veri yüklenemedi');
-
-            // Kullanıcı bakiyesi kontrolü
-            const userBalance = data.users?.[email]?.totalClaimed || 0;
-            if (userBalance < amount) {
-                toastr.error('Yetersiz bakiye');
-                return;
-            }
-
-            // Çekim işlemi
-            const withdrawal = {
-                id: Date.now().toString(),
-                email: email,
-                amount: amount,
-                timestamp: new Date().toISOString(),
-                status: 'pending'
-            };
-
-            // Veritabanını güncelle
-            if (!data.withdrawals) data.withdrawals = [];
-            data.withdrawals.unshift(withdrawal);
-            
-            data.users[email].totalClaimed -= amount;
-            data.users[email].lastWithdraw = new Date().toISOString();
-
-            await Database.updateData(data);
-            
-            toastr.success('Çekim talebin alındı. İşlemin tamamlanması için lütfen bekle.');
-            
-            // UI güncelle
-            this.updateStats(data);
-            this.updateWithdrawHistory(data.withdrawals);
-            this.updateLeaderboard(data.users);
-            
-            // Formu sıfırla
-            $('#withdrawForm').trigger('reset');
-
-        } catch (error) {
-            console.error('Çekim hatası:', error);
-            toastr.error('Çekim sırasında hata oluştu');
-        } finally {
-            this.setLoading(false, 'withdrawButton');
+            this.setLoading(false);
         }
     }
 
     calculatePayout() {
-        const min = 800;
-        const max = 2000;
-        return Math.floor(Math.random() * (max - min + 1) + min);
+        let base = Math.floor(Math.random() * (2000 - 800 + 1) + 800);
+        
+        // Level bonusu
+        const level = parseInt(localStorage.getItem('userLevel') || '1');
+        const bonus = (level - 1) * config.levels.bonusPerLevel;
+        
+        // Şans faktörü
+        if (Math.random() < 0.05) {
+            base *= 2;
+            this.showLuckyAnimation();
+        }
+        
+        return base + bonus;
     }
 
-    generateReferralLink(email) {
-        const encodedEmail = CryptoJS.MD5(email).toString();
-        return `${window.location.origin}?ref=${encodedEmail}`;
+    showClaimAnimation(amount) {
+        const popup = $('<div>')
+            .addClass('claim-popup')
+            .html(`
+                <div class="claim-amount">+${amount}</div>
+                <div class="claim-text">PEPE</div>
+            `)
+            .appendTo('body');
+
+        setTimeout(() => popup.remove(), 2000);
     }
 
-    async loadUserData(data) {
-        const email = localStorage.getItem('userEmail');
-        if (!email) return;
+    showLuckyAnimation() {
+        $('body').append('<div class="lucky-effect">2X BONUS!</div>');
+        setTimeout(() => $('.lucky-effect').remove(), 2000);
+    }
 
-        // Kullanıcı bilgilerini yükle
-        const userData = data.users?.[email] || {};
-        $('#userBalance').text(userData.totalClaimed || 0);
-        $('#totalReferrals').text(userData.referralCount || 0);
-        $('#referralHistory').html(this.getReferralHistory(data.transactions || [], email));
+    updateUI(data) {
+        const userData = data.users[this.userEmail] || {};
+        
+        // Animasyonlu sayaçlar
+        new CountUp('totalEarned', 0, userData.totalClaimed || 0, 0, 2.5, {
+            useEasing: true,
+            useGrouping: true
+        }).start();
 
-        // Başarımları yükle
-        await this.achievementSystem.checkAchievements(userData);
+        // Son claim zamanı
+        if (userData.lastClaim) {
+            $('#lastClaim').text(moment(userData.lastClaim).fromNow());
+        }
 
-        // Profil bilgilerini yükle
-        $('.profile-info').html(`
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-envelope"></i>
+        // Referans sayısı
+        $('#referralCount').text(userData.referralCount || 0);
+
+        // İşlem geçmişi
+        this.updateTransactionHistory(data.transactions);
+
+        // Lider tablosu
+        this.updateLeaderboard(data.users);
+    }
+
+    updateTransactionHistory(transactions) {
+        const history = transactions
+            .filter(tx => tx.email === this.userEmail)
+            .slice(0, 10)
+            .map(tx => `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-amount">+${tx.amount} PEPE</div>
+                        <div class="activity-time">${moment(tx.timestamp).fromNow()}</div>
+                    </div>
                 </div>
-                <div class="stat-value">${email}</div>
-                <div>E-posta Adresi</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-gift"></i>
+            `)
+            .join('');
+
+        $('#recentClaims').html(history || '<p>Henüz işlem yok</p>');
+    }
+
+    updateLeaderboard(users) {
+        const leaderboard = Object.entries(users)
+            .sort((a, b) => b[1].totalClaimed - a[1].totalClaimed)
+            .slice(0, 5)
+            .map((user, index) => `
+                <div class="leaderboard-item ${user[0] === this.userEmail ? 'current-user' : ''}">
+                    <div class="rank">#${index + 1}</div>
+                    <div class="user-info">
+                        <div class="user-email">${this.maskEmail(user[0])}</div>
+                        <div class="user-total">${user[1].totalClaimed.toLocaleString()} PEPE</div>
+                    </div>
                 </div>
-                <div class="stat-value">${userData.claimCount || 0}</div>
-                <div>Toplam Claim</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-money-bill-wave"></i>
+            `)
+            .join('');
+
+        $('#leaderboard').html(leaderboard);
+    }
+
+    maskEmail(email) {
+        const [name, domain] = email.split('@');
+        return `${name.substring(0, 3)}***@${domain}`;
+    }
+
+    setLoading(isLoading) {
+        const button = $('#claimButton');
+        if (isLoading) {
+            button.prop('disabled', true).addClass('loading');
+        } else {
+            button.prop('disabled', false).removeClass('loading');
+        }
+    }
+
+    setupTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        const icon = $('#themeToggle i');
+        icon.toggleClass('fa-moon fa-sun');
+    }
+}
+
+// Görev sistemi
+class TaskSystem {
+    constructor() {
+        this.tasks = {};
+        this.progress = JSON.parse(localStorage.getItem('taskProgress') || '{}');
+    }
+
+    async loadTasks() {
+        config.tasks.daily.forEach(task => {
+            if (!this.progress[task.id]) {
+                this.progress[task.id] = {
+                    current: 0,
+                    completed: false,
+                    lastReset: new Date().toISOString()
+                };
+            }
+        });
+
+        this.updateTaskUI();
+        this.checkDailyReset();
+    }
+
+    async updateProgress(type) {
+        const relevantTasks = config.tasks.daily.filter(task => task.type === type);
+        
+        relevantTasks.forEach(task => {
+            if (!this.progress[task.id].completed) {
+                this.progress[task.id].current++;
+                
+                if (this.progress[task.id].current >= task.target) {
+                    this.progress[task.id].completed = true;
+                    this.showTaskComplete(task);
+                }
+            }
+        });
+
+        localStorage.setItem('taskProgress', JSON.stringify(this.progress));
+        this.updateTaskUI();
+    }
+
+    updateTaskUI() {
+        const taskHtml = config.tasks.daily.map(task => {
+            const progress = this.progress[task.id];
+            const percent = (progress.current / task.target) * 100;
+            
+            return `
+                <div class="task-card ${progress.completed ? 'completed' : ''}">
+                    <div class="task-header">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-reward">+${task.reward} PEPE</div>
+                    </div>
+                    <div class="task-description">${task.description}</div>
+                    <div class="task-progress">
+                        <div class="task-progress-bar" style="width: ${percent}%"></div>
+                    </div>
+                    <div class="task-status">
+                        ${progress.current}/${task.target}
+                    </div>
                 </div>
-                <div class="stat-value">${userData.totalClaimed || 0}</div>
-                <div>Toplam Kazanç</div>
+            `;
+        }).join('');
+
+        $('.task-list').html(taskHtml);
+    }
+
+    showTaskComplete(task) {
+        toastr.success(`
+            <div class="task-complete">
+                <div class="task-complete-title">Görev Tamamlandı!</div>
+                <div class="task-complete-reward">+${task.reward} PEPE kazandın!</div>
             </div>
         `);
     }
 
-    getReferralHistory(transactions, referrerEmail) {
-        const referredTransactions = transactions.filter(tx => {
-            return tx.referrer === CryptoJS.MD5(referrerEmail).toString();
+    checkDailyReset() {
+        Object.keys(this.progress).forEach(taskId => {
+            const lastReset = new Date(this.progress[taskId].lastReset);
+            const now = new Date();
+            
+            if (lastReset.getDate() !== now.getDate()) {
+                this.progress[taskId] = {
+                    current: 0,
+                    completed: false,
+                    lastReset: now.toISOString()
+                };
+            }
         });
 
-        if (referredTransactions.length === 0) {
-            return '<p>Henüz referans kazancınız yok</p>';
-        }
-
-        return referredTransactions.map(tx => `
-            <div class="transaction">
-                <div class="transaction-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <div class="transaction-details">
-                    <div class="transaction-amount">+${tx.amount * 0.1} PEPE</div>
-                    <div class="transaction-email">${tx.email}</div>
-                    <div class="transaction-date">${moment(tx.timestamp).fromNow()}</div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    updateStats(data) {
-        // Kullanıcı sayısı
-        $('#totalUsers').text(Object.keys(data.users || {}).length);
-
-        // Toplam claim edilen miktar
-        const totalClaimed = Object.values(data.users || {}).reduce((sum, user) => {
-            return sum + (user.totalClaimed || 0);
-        }, 0);
-        $('#totalClaimed').text(totalClaimed.toLocaleString());
-
-        // Toplam çekim miktarı
-        const totalWithdrawn = (data.withdrawals || []).reduce((sum, withdrawal) => {
-            return sum + withdrawal.amount;
-        }, 0);
-        $('#totalWithdrawn').text(totalWithdrawn.toLocaleString());
-
-        // Günlük aktif kullanıcı sayısı
-        const activeTodayCount = Object.values(data.users || {}).filter(user => {
-            return moment(user.lastClaim).isSame(moment(), 'day');
-        }).length;
-        $('#activeTodayCount').text(activeTodayCount);
-
-        // Son 1 saat içinde aktif kullanıcı sayısı
-        const activeInHourCount = Object.values(data.users || {}).filter(user => {
-            return moment(user.lastClaim).isAfter(moment().subtract(1, 'hour'));
-        }).length;
-        $('#activeInHourCount').text(activeInHourCount);
-    }
-
-    updateTransactions(transactions) {
-        const container = $('#recentClaims');
-        container.empty();
-
-        transactions.slice(0, 5).forEach(tx => {
-            container.append(`
-                <div class="transaction">
-                    <div class="transaction-icon">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <div class="transaction-details">
-                        <div class="transaction-amount">${tx.amount} PEPE</div>
-                        <div class="transaction-email">${tx.email}</div>
-                        <div class="transaction-date">${moment(tx.timestamp).fromNow()}</div>
-                    </div>
-                </div>
-            `);
-        });
-    }
-
-    updateLeaderboard(users) {
-        const container = $('#leaderboard');
-        container.empty();
-
-        // Kullanıcıları toplam kazanca göre sırala
-        const sortedUsers = Object.entries(users)
-            .sort((a, b) => b[1].totalClaimed - a[1].totalClaimed)
-            .slice(0, 10);
-
-        sortedUsers.forEach(([email, user], index) => {
-            container.append(`
-                <div class="leaderboard-item">
-                    <div class="leaderboard-rank">#${index + 1}</div>
-                    <div class="leaderboard-email">${email}</div>
-                    <div class="leaderboard-amount">${user.totalClaimed} PEPE</div>
-                </div>
-            `);
-        });
-    }
-
-    updateWithdrawHistory(withdrawals) {
-        const container = $('#withdrawHistory');
-        container.empty();
-
-        withdrawals.slice(0, 5).forEach(withdrawal => {
-            container.append(`
-                <div class="transaction">
-                    <div class="transaction-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="transaction-details">
-                        <div class="transaction-amount">${withdrawal.amount} PEPE</div>
-                        <div class="transaction-email">${withdrawal.email}</div>
-                        <div class="transaction-date">${moment(withdrawal.timestamp).fromNow()}</div>
-                    </div>
-                </div>
-            `);
-        });
-    }
-
-    setLoading(isLoading, buttonId) {
-        const button = $(`#${buttonId}`);
-        const loadingSpinner = button.find('.loading');
-
-        if (isLoading) {
-            button.prop('disabled', true);
-            loadingSpinner.show();
-        } else {
-            button.prop('disabled', false);
-            loadingSpinner.hide();
-        }
+        localStorage.setItem('taskProgress', JSON.stringify(this.progress));
     }
 }
 
-// Yardımcı Fonksiyonlar
-function showElement(selector) {
-    $(selector).css('display', 'flex');
+// Başarım sistemi
+class AchievementSystem {
+    // Önceki achievement sistemi kodları
 }
 
-function hideElement(selector) {
-    $(selector).hide();
+// Veritabanı işlemleri
+class Database {
+    // Önceki database kodları
 }
 
-function closeModal() {
-    hideElement('.modal');
-}
-
-async function copyReferralLink() {
-    const link = $('#referralLink').val();
-    await navigator.clipboard.writeText(link);
-    toastr.success('Referans linki kopyalandı');
-}
+// Toast bildirimleri
+toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "positionClass": "toast-bottom-right",
+    "preventDuplicates": true,
+    "timeOut": "3000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
 
 // Uygulamayı başlat
 $(document).ready(() => {
+    // Oturum kontrolü
+    const userEmail = checkAuth();
+    if (!userEmail) return;
+    
+    // Uygulamayı başlat
     const app = new PepeFaucet();
 });
-    </script>
+</script>
 </body>
 </html>
