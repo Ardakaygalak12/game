@@ -3,101 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐸 Ultimate Pepe Faucet Pro</title>
+    <title>🐸 Ultimate Pepe Faucet Pro v2.0</title>
     
-    <!-- Enhanced Meta Tags -->
-    <meta name="description" content="Next-generation PEPE coin earning platform with advanced features and gamification">
-    <meta name="keywords" content="pepe, cryptocurrency, faucet, earn crypto, web3, blockchain">
+    <!-- Enhanced Meta Tags for SEO -->
+    <meta name="description" content="Next-generation PEPE coin earning platform with advanced features, real-time analytics, and AI-powered rewards">
+    <meta name="keywords" content="pepe, cryptocurrency, faucet, web3, blockchain, defi, rewards, mining">
     <meta name="author" content="Pepe Faucet Labs">
+    <meta property="og:title" content="Ultimate Pepe Faucet Pro">
+    <meta property="og:description" content="Earn PEPE coins with advanced features and AI-powered rewards">
+    <meta property="og:image" content="pepe.jpeg">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/jpeg" href="pepe.jpeg">
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2ecc71">
+    <link rel="apple-touch-icon" href="pepe-192.png">
     
-    <!-- CDN Dependencies -->
+    <!-- Enhanced CDN Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0/web3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.7/countUp.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    
     <style>
-        /* Advanced Color Palette */
+        /* Enhanced Color System */
         :root {
-            /* Pepe-themed color scheme */
-            --primary-pepe: #2ecc71;
-            --secondary-pepe: #27ae60;
-            --accent-purple: #9b59b6;
-            --dark-background: #0f172a;
-            --card-background: rgba(30, 41, 59, 0.9);
-            --hover-background: rgba(51, 65, 85, 0.9);
+            --pepe-primary: #2ecc71;
+            --pepe-secondary: #27ae60;
+            --pepe-accent: #9b59b6;
+            --pepe-dark: #0f172a;
+            --pepe-darker: #090d16;
+            --pepe-light: #ecf0f1;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --hover-bg: rgba(51, 65, 85, 0.95);
             
-            /* Enhanced semantic colors */
-            --success-color: #2ecc71;
-            --error-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #3498db;
-            
-            /* Advanced shadow and glow effects */
-            --primary-shadow: 0 8px 32px rgba(46, 204, 113, 0.3);
+            /* Advanced Effects */
+            --glass-effect: blur(10px);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             --hover-shadow: 0 12px 48px rgba(46, 204, 113, 0.4);
-            --neon-glow: 0 0 15px rgba(46, 204, 113, 0.5),
-                         0 0 25px rgba(46, 204, 113, 0.3);
+            --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            
+            /* Animation Speeds */
+            --transition-fast: 0.2s;
+            --transition-normal: 0.3s;
+            --transition-slow: 0.5s;
         }
 
-        /* Advanced Reset and Base Styles */
+        /* Advanced Resets and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            scroll-behavior: smooth;
+            font-family: 'Inter', system-ui, sans-serif;
         }
 
-        /* Animated Gradient Background */
         body {
-            background: linear-gradient(
-                135deg,
-                var(--dark-background) 0%,
-                #1a365d 50%,
-                #0f172a 100%
-            );
-            color: #ffffff;
+            background: linear-gradient(135deg, var(--pepe-dark), var(--pepe-darker));
+            color: var(--pepe-light);
             min-height: 100vh;
             overflow-x: hidden;
-            perspective: 1px;
         }
 
-        /* Advanced Layout */
+        /* Enhanced Layout System */
         .app-container {
             display: grid;
             grid-template-columns: 280px 1fr;
             min-height: 100vh;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: var(--glass-effect);
         }
 
-        /* Sidebar with Advanced Styling */
+        /* Advanced Sidebar */
         .sidebar {
-            background: var(--card-background);
-            border-right: 1px solid rgba(255,255,255,0.1);
-            padding: 30px;
+            background: var(--card-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 2rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Navigation Enhancements */
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                transparent, 
+                var(--pepe-primary), 
+                transparent
+            );
+            animation: glow 3s infinite;
+        }
+
+        /* Enhanced Navigation */
         .nav-item {
             display: flex;
             align-items: center;
-            padding: 15px 20px;
-            margin: 10px 0;
+            padding: 1rem 1.5rem;
+            margin: 0.5rem 0;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -105,52 +120,45 @@
         .nav-item::before {
             content: '';
             position: absolute;
-            top: 0;
+            top: 50%;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 0;
             background: linear-gradient(
                 135deg,
-                var(--primary-pepe) 0%,
-                var(--secondary-pepe) 100%
+                var(--pepe-primary),
+                var(--pepe-secondary)
             );
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: all var(--transition-normal);
             z-index: -1;
         }
 
         .nav-item:hover::before,
         .nav-item.active::before {
-            opacity: 0.1;
+            opacity: 0.15;
+            height: 100%;
+            top: 0;
         }
 
         .nav-item i {
-            margin-right: 15px;
-            color: var(--primary-pepe);
-            transition: transform 0.3s ease;
+            margin-right: 1rem;
+            color: var(--pepe-primary);
+            transition: transform var(--transition-normal);
         }
 
         .nav-item:hover i {
-            transform: scale(1.2);
-        }
-
-        /* Main Content Area */
-        .main-content {
-            display: grid;
-            grid-template-rows: auto 1fr;
-            padding: 30px;
-            gap: 20px;
-            overflow-y: auto;
+            transform: scale(1.2) rotate(5deg);
         }
 
         /* Advanced Card Design */
         .card {
-            background: var(--card-background);
+            background: var(--card-bg);
             border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--primary-shadow);
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-normal);
+            box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
         }
@@ -164,40 +172,37 @@
             height: 4px;
             background: linear-gradient(
                 90deg,
-                var(--primary-pepe) 0%,
-                var(--accent-purple) 100%
+                var(--pepe-primary),
+                var(--pepe-accent)
             );
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-normal);
         }
 
         .card:hover::before {
             opacity: 1;
         }
 
-        /* Advanced Button Styles */
-        .action-btn {
+        /* Enhanced Button System */
+        .btn-primary {
             background: linear-gradient(
                 45deg,
-                var(--primary-pepe),
-                var(--secondary-pepe)
+                var(--pepe-primary),
+                var(--pepe-secondary)
             );
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 1rem 2rem;
             border-radius: 12px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            transition: all var(--transition-normal);
             position: relative;
             overflow: hidden;
+            text-shadow: var(--text-shadow);
         }
 
-        .action-btn::before {
+        .btn-primary::before {
             content: '';
             position: absolute;
             top: 0;
@@ -207,357 +212,325 @@
             background: linear-gradient(
                 90deg,
                 transparent,
-                rgba(255,255,255,0.3),
+                rgba(255, 255, 255, 0.2),
                 transparent
             );
-            transition: left 0.5s ease;
+            transition: left var(--transition-slow);
         }
 
-        .action-btn:hover::before {
+        .btn-primary:hover::before {
             left: 100%;
         }
 
-        /* Advanced Form Styles */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            color: var(--primary-pepe);
-            font-weight: 600;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper input {
-            width: 100%;
-            padding: 15px 50px 15px 20px;
-            background: var(--hover-background);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary-pepe);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .app-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Additional Specialized Styles Here */
+        /* Advanced Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
         }
 
         .stat-card {
-            background: var(--hover-background);
-            padding: 20px;
+            background: var(--hover-bg);
+            padding: 1.5rem;
             border-radius: 15px;
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all var(--transition-normal);
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
         }
 
-        /* Advanced Achievement System */
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+        /* Advanced Animations */
+        @keyframes glow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
 
-        .achievement-card {
-            background: var(--hover-background);
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
-        .achievement-card::after {
-            content: '';
-            position: absolute;
+        /* Enhanced Responsive Design */
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: auto;
+                padding: 1rem;
+                flex-direction: row;
+                justify-content: space-around;
+                z-index: 1000;
+            }
+            
+            .nav-item {
+                padding: 0.75rem;
+                margin: 0;
+            }
+            
+            .nav-item span {
+                display: none;
+            }
+            
+            .main-content {
+                padding-bottom: 5rem;
+            }
+        }
+
+        /* Advanced Loading Animation */
+        .loading-overlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(
-                90deg,
-                var(--primary-pepe),
-                var(--accent-purple)
-            );
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            height: 100%;
+            background: var(--pepe-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
         }
 
-        .achievement-card:hover::after {
-            opacity: 1;
-        }
-
-        /* Notification and Toast Styles */
-        #toast-container > div {
-            background: var(--card-background) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: var(--primary-shadow);
-        }
-
-        /* Loading Animation */
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--primary-pepe);
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--pepe-primary);
             border-top-color: transparent;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
     <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="logo mb-4 text-center">
-                <h1 class="text-2xl font-bold text-primary-pepe">🐸 Pepe Faucet Pro</h1>
+        <!-- Enhanced Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1 class="text-2xl font-bold">🐸 Pepe Faucet Pro</h1>
+                <p class="text-sm opacity-70">v2.0 Beta</p>
             </div>
 
-            <!-- Navigation Items -->
             <nav>
                 <div class="nav-item active" data-page="dashboard">
-                    <i class="fas fa-home"></i> Dashboard
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
                 </div>
                 <div class="nav-item" data-page="claim">
-                    <i class="fas fa-coins"></i> Claim Rewards
+                    <i class="fas fa-coins"></i>
+                    <span>Claim Rewards</span>
                 </div>
                 <div class="nav-item" data-page="tasks">
-                    <i class="fas fa-tasks"></i> Daily Tasks
+                    <i class="fas fa-tasks"></i>
+                    <span>Daily Tasks</span>
                 </div>
                 <div class="nav-item" data-page="achievements">
-                    <i class="fas fa-trophy"></i> Achievements
+                    <i class="fas fa-trophy"></i>
+                    <span>Achievements</span>
                 </div>
                 <div class="nav-item" data-page="referral">
-                    <i class="fas fa-users"></i> Referral Program
+                    <i class="fas fa-users"></i>
+                    <span>Referral Program</span>
                 </div>
                 <div class="nav-item" data-page="withdraw">
-                    <i class="fas fa-wallet"></i> Withdraw
+                    <i class="fas fa-wallet"></i>
+                    <span>Withdraw</span>
                 </div>
-                <div class="nav-item" data-page="profile">
-                    <i class="fas fa-user"></i> Profile
+                <div class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
                 </div>
             </nav>
 
-            <!-- User Stats Mini Panel -->
-            <div class="user-stats mt-auto">
-                <div class="stat-item flex justify-between mb-2">
-                    <span>Total Earned</span>
-                    <strong id="totalEarned">0 PEPE</strong>
-                </div>
-                <div class="stat-item flex justify-between">
-                    <span>Referrals</span>
-                    <strong id="referralCount">0</strong>
+            <!-- Live Stats Panel -->
+            <div class="user-stats">
+                <div class="card">
+                    <h3>Live Statistics</h3>
+                    <div class="stat-item">
+                        <span>Balance</span>
+                        <strong id="userBalance">0 PEPE</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Level</span>
+                        <strong id="userLevel">1</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Next Claim</span>
+                        <strong id="nextClaim">Ready!</strong>
+                    </div>
                 </div>
             </div>
-        </div>
+        </aside>
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <!-- Dashboard Page -->
+            <!-- Dashboard -->
             <section id="dashboard" class="page active">
-                <div class="card">
-                    <h2 class="text-2xl mb-4">Dashboard Overview</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <i class="fas fa-coins mb-2"></i>
-                            <h3 class="text-lg">Total Balance</h3>
-                            <p class="text-2xl font-bold" id="totalBalance">0 PEPE</p>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fas fa-gift mb-2"></i>
-                            <h3 class="text-lg">Pending Rewards</h3>
-                            <p class="text-2xl font-bold" id="pendingRewards">0 PEPE</p>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fas fa-chart-line mb-2"></i>
-                            <h3 class="text-lg">Earnings This Week</h3>
-                            <p class="text-2xl font-bold" id="weeklyEarnings">0 PEPE</p>
-                        </div>
+                <div class="header">
+                    <h2>Dashboard Overview</h2>
+                    <p class="subtitle">Welcome back, <span id="username">Pepe Lover</span>!</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-coins"></i>
+                        <h3>Total Balance</h3>
+                        <p id="totalBalance" class="value">0 PEPE</p>
+                        <small class="change positive">+2.5% today</small>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Earnings Rate</h3>
+                        <p id="earningsRate" class="value">0 PEPE/hr</p>
+                        <small class="change">Based on last 24h</small>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Active Referrals</h3>
+                        <p id="activeReferrals" class="value">0</p>
+                        <small class="change positive">+2 this week</small>
+                    </div>
+                </div>
+
+                <!-- Activities Chart -->
+                <div class="card mt-6">
+                    <h3>Earnings Activity</h3>
+                    <canvas id="earningsChart" height="200"></canvas>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="card mt-6">
+                    <h3>Recent Activities</h3>
+                    <div class="activities-list" id="recentActivities">
+                        <!-- Will be populated dynamically -->
                     </div>
                 </div>
             </section>
 
-            <!-- Claim Page -->
-            <section id="claim" class="page" style="display:none;">
+            <!-- Enhanced Claim Section -->
+            <section id="claim" class="page">
                 <div class="card">
-                    <h2 class="text-2xl mb-4">Claim Your PEPE Rewards</h2>
-                    <div class="claim-info mb-4">
-                        <p>Current Claim Rate: <span id="claimRate">800-2000PEPE</span> per claim</p>
+                    <div class="claim-header">
+                        <h2>Claim PEPE Rewards</h2>
+                        <div class="multiplier-badge" id="claimMultiplier">
+                            <i class="fas fa-star"></i>
+                            <span>1.5x Multiplier Active!</span>
+                        </div>
                     </div>
-                    <div class="claim-actions">
-                        <button id="claimButton" class="action-btn w-full">
+
+                    <div class="claim-stats grid">
+                        <div class="stat-card">
+                            <h3>Base Reward</h3>
+                            <p id="baseReward">800-2000 PEPE</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Bonus Multiplier</h3>
+                            <p id="bonusMultiplier">x1.5</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Daily Claims</h3>
+                            <p id="dailyClaims">3/5</p>
+                        </div>
+                    </div>
+
+                    <div class="claim-action">
+                        <button id="claimButton" class="btn-primary">
                             <i class="fas fa-hand-holding-usd"></i>
                             Claim Rewards
-                            <span class="loading" style="display: none;"></span>
+                            <div class="claim-timer" id="claimTimer">Ready!</div>
                         </button>
                     </div>
-                    <div class="recent-claims mt-4">
-                        <h3 class="text-lg mb-2">Recent Claims</h3>
-                        <div id="recentClaimsList" class="space-y-2">
-                            <!-- Recent claims will be dynamically populated -->
+
+                    <div class="recent-claims">
+                        <h3>Recent Claims</h3>
+                        <div id="recentClaimsList" class="claims-list">
+                            <!-- Will be populated dynamically -->
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Daily Tasks Page -->
-            <section id="tasks" class="page" style="display:none;">
+            <!-- Enhanced Tasks Section -->
+            <section id="tasks" class="page">
                 <div class="card">
-                    <h2 class="text-2xl mb-4">Daily Tasks</h2>
-                    <div class="tasks-container" id="dailyTasksList">
-                        <!-- Tasks will be dynamically populated -->
-                        <div class="task-card">
-                            <div class="task-header">
-                                <h3 class="task-title">Daily Check-in</h3>
-                                <span class="task-reward">+500 PEPE</span>
-                            </div>
-                            <div class="task-progress">
-                                <div class="progress-bar" style="width: 0%;"></div>
+                    <div class="tasks-header">
+                        <h2>Daily Tasks</h2>
+                        <div class="tasks-progress">
+                            <div class="progress-ring">
+                                <svg width="60" height="60">
+                                    <circle class="progress-ring-circle" cx="30" cy="30" r="25"/>
+                                </svg>
+                                <span id="tasksProgress">4/7</span>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="tasks-grid" id="tasksGrid">
+                        <!-- Will be populated dynamically -->
                     </div>
                 </div>
             </section>
 
-            <!-- Achievements Page -->
-            <section id="achievements" class="page" style="display:none;">
+            <!-- Enhanced Settings Section -->
+            <section id="settings" class="page">
                 <div class="card">
-                    <h2 class="text-2xl mb-4">Achievements</h2>
-                    <div class="achievements-grid" id="achievementsList">
-                        <!-- Achievements will be dynamically populated -->
-                    </div>
-                </div>
-            </section>
+                    <h2>Account Settings</h2>
+                    
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <h3>Notification Preferences</h3>
+                            <div class="toggle-group">
+                                <label class="toggle">
+                                    <input type="checkbox" id="emailNotifs">
+                                    <span class="toggle-slider"></span>
+                                    Email Notifications
+                                </label>
+                                <label class="toggle">
+                                    <input type="checkbox" id="pushNotifs">
+                                    <span class="toggle-slider"></span>
+                                    Push Notifications
+                                </label>
+                            </div>
+                        </div>
 
-            <!-- Referral Page -->
-            <section id="referral" class="page" style="display:none;">
-                <div class="card">
-                    <h2 class="text-2xl mb-4">Referral Program</h2>
-                    <div class="referral-stats mb-4">
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <i class="fas fa-users mb-2"></i>
-                                <h3 class="text-lg">Total Referrals</h3>
-                                <p class="text-2xl font-bold" id="totalReferrals">0</p>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-coins mb-2"></i>
-                                <h3 class="text-lg">Referral Earnings</h3>
-                                <p class="text-2xl font-bold" id="referralEarnings">0 PEPE</p>
+                        <div class="setting-item">
+                            <h3>Security Settings</h3>
+                            <div class="security-options">
+                                <button class="btn-secondary" id="enable2FA">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Enable 2FA
+                                </button>
+                                <button class="btn-secondary" id="changePassword">
+                                    <i class="fas fa-key"></i>
+                                    Change Password
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div class="referral-link-section">
-                        <h3 class="text-lg mb-2">Your Referral Link</h3>
-                        <div class="input-wrapper">
-                            <input type="text" id="referralLink" readonly value="https://pepefaucet.pro/ref/UNIQUE_CODE">
-                            <i class="fas fa-copy cursor-pointer" onclick="copyReferralLink()"></i>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
-            <!-- Withdraw Page -->
-            <section id="withdraw" class="page" style="display:none;">
-                <div class="card">
-                    <h2 class="text-2xl mb-4">Withdraw Earnings</h2>
-                    <div class="withdraw-stats mb-4">
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <i class="fas fa-wallet mb-2"></i>
-                                <h3 class="text-lg">Available Balance</h3>
-                                <p class="text-2xl font-bold" id="withdrawBalance">0 PEPE</p>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-exchange-alt mb-2"></i>
-                                <h3 class="text-lg">Minimum Withdraw</h3>
-                                <p class="text-2xl font-bold">1000 PEPE</p>
-                            </div>
-                        </div>
-                    </div>
-                    <form id="withdrawForm" class="mt-4">
-                        <div class="form-group">
-                            <label>Withdraw Method</label>
-                            <div class="input-wrapper">
-                                <select class="w-full p-3 bg-hover-background rounded-lg">
-                                    <option>FaucetPay</option>
-                                    <option>Binance Pay</option>
-                                    <option>MetaMask</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Withdraw Amount</label>
-                            <div class="input-wrapper">
-                                <input type="number" placeholder="Enter amount to withdraw" 
-                                       min="1000" max="100000" step="100">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                        </div>
-                        <button type="submit" class="action-btn w-full">
-                            <i class="fas fa-paper-plane"></i>
-                            Withdraw Earnings
-                        </button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Profile Page -->
-            <section id="profile" class="page" style="display:none;">
-                <div class="card">
-                    <h2 class="text-2xl mb-4">User Profile</h2>
-                    <div class="profile-header mb-4">
-                        <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="profile-info">
-                            <h3 id="profileUsername">PepeLover123</h3>
-                            <p id="profileEmail">user@pepefaucet.pro</p>
-                        </div>
-                    </div>
-                    <div class="profile-stats">
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <i class="fas fa-level-up-alt mb-2"></i>
-                                <h3 class="text-lg">Current Level</h3>
-                                <p class="text-2xl font-bold" id="userLevel">1</p>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-calendar-alt mb-2"></i>
-                                <h3 class="text-lg">Member Since</h3>
-                                <p class="text-2xl font-bold" id="memberSince">Jan 2024</p>
+                        <div class="setting-item">
+                            <h3>Theme Preferences</h3>
+                            <div class="theme-selector">
+                                <button class="theme-btn active" data-theme="light">Light</button>
+                                <button class="theme-btn" data-theme="dark">Dark</button>
+                                <button class="theme-btn" data-theme="auto">Auto</button>
                             </div>
                         </div>
                     </div>
@@ -566,406 +539,427 @@
         </main>
     </div>
 
-    <!-- Modals -->
-    <div id="achievementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-card-background p-6 rounded-lg max-w-md w-full">
-            <h2 class="text-2xl mb-4 text-primary-pepe">🏆 New Achievement Unlocked!</h2>
-            <div id="achievementModalContent" class="text-center">
-                <!-- Achievement details will be dynamically populated -->
+    <!-- Enhanced Modal System -->
+    <div class="modal" id="achievementModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏆 Achievement Unlocked!</h2>
+                <button class="close-btn">&times;</button>
             </div>
-            <button onclick="closeAchievementModal()" class="action-btn mt-4 w-full">
-                Close
-            </button>
+            <div class="modal-body" id="achievementModalContent">
+                <!-- Will be populated dynamically -->
+            </div>
         </div>
     </div>
 
     <script>
-        // Advanced Configuration
+        // Enhanced Configuration
         const CONFIG = {
             FAUCET: {
-                MIN_CLAIM: 800,
-                MAX_CLAIM: 2000,
-                CLAIM_COOLDOWN: 3600 // 1 hour in seconds
+                BASE_MIN: 800,
+                BASE_MAX: 2000,
+                COOLDOWN: 3600,
+                DAILY_LIMIT: 5,
+                BONUS_MULTIPLIERS: {
+                    REFERRAL: 0.1,
+                    STREAK: 0.05,
+                    LEVEL: 0.02
+                }
+            },
+            LEVELS: {
+                THRESHOLDS: [0, 5000, 15000, 30000, 50000],
+                MULTIPLIERS: [1, 1.1, 1.2, 1.3, 1.5]
             },
             ACHIEVEMENTS: [
                 {
                     id: 'FIRST_CLAIM',
-                    title: 'First Pepe Claimed',
-                    description: 'Make your first PEPE claim',
+                    title: 'First Steps',
+                    description: 'Make your first claim',
                     reward: 100,
-                    icon: 'fas fa-gift'
+                    icon: 'fa-gift'
+                },
+                {
+                    id: 'STREAK_7',
+                    title: 'Weekly Warrior',
+                    description: 'Maintain a 7-day claim streak',
+                    reward: 500,
+                    icon: 'fa-calendar-check'
                 },
                 {
                     id: 'REFERRAL_MASTER',
                     title: 'Referral Master',
-                    description: 'Refer 10 friends',
-                    reward: 500,
-                    icon: 'fas fa-users'
-                },
-                {
-                    id: 'MILLIONAIRE',
-                    title: 'Pepe Millionaire',
-                    description: 'Earn 1,000,000 PEPE',
+                    description: 'Refer 10 active users',
                     reward: 1000,
-                    icon: 'fas fa-coins'
-                }
-            ],
-            DAILY_TASKS: [
-                {
-                    id: 'DAILY_CLAIM',
-                    title: 'Daily Claim',
-                    description: 'Claim rewards 5 times today',
-                    target: 5,
-                    reward: 1000
-                },
-                {
-                    id: 'REFERRAL_TASK',
-                    title: 'Spread the Word',
-                    description: 'Refer 3 new users',
-                    target: 3,
-                    reward: 750
+                    icon: 'fa-users'
                 }
             ]
         };
 
-        // Advanced User Class
-        class PepeFaucetUser {
+        // Advanced User Management Class
+        class PepeFaucetPro {
             constructor() {
-                this.initializeUserData();
+                this.initializeUser();
                 this.setupEventListeners();
+                this.initializeCharts();
+                this.startAutoRefresh();
             }
 
-            initializeUserData() {
-                // Initialize or load user data from local storage
+            initializeUser() {
                 this.userData = JSON.parse(localStorage.getItem('pepeFaucetUser')) || {
-                    username: 'PepeLover',
-                    email: '',
-                    totalEarned: 0,
-                    referralCount: 0,
+                    id: this.generateUID(),
+                    balance: 0,
+                    totalClaims: 0,
+                    lastClaim: 0,
+                    claimStreak: 0,
                     level: 1,
+                    experience: 0,
                     achievements: [],
-                    dailyTasks: {},
-                    lastClaim: 0
+                    referrals: [],
+                    tasks: this.initializeDailyTasks(),
+                    settings: {
+                        emailNotifs: true,
+                        pushNotifs: false,
+                        theme: 'dark'
+                    }
+                };
+            }
+
+            generateUID() {
+                return 'uid_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            initializeDailyTasks() {
+                return {
+                    claims: { target: 5, progress: 0 },
+                    referrals: { target: 3, progress: 0 },
+                    earnings: { target: 10000, progress: 0 }
                 };
             }
 
             setupEventListeners() {
-                // Navigation event listeners
-                $('.nav-item').on('click', function() {
-                    $('.nav-item').removeClass('active');
-                    $(this).addClass('active');
-                    
-                    const page = $(this).data('page');
-                    $('.page').hide();
-                    $(`#${page}`).show();
+                // Navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', () => this.navigate(item.dataset.page));
                 });
 
-                // Claim button listener
-                $('#claimButton').on('click', () => this.claimRewards());
+                // Claim button
+                document.getElementById('claimButton').addEventListener('click', () => this.claim());
 
-                // Withdraw form listener
-                $('#withdrawForm').on('submit', (e) => {
-                    e.preventDefault();
-                    this.processWithdraw();
+                // Settings
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.changeTheme(btn.dataset.theme));
                 });
             }
 
-            claimRewards() {
-                const now = Date.now();
-                const timeSinceLastClaim = now - this.userData.lastClaim;
-
-                // Check claim cooldown
-                if (timeSinceLastClaim < CONFIG.FAUCET.CLAIM_COOLDOWN * 1000) {
-                    toastr.warning(`Please wait ${Math.ceil((CONFIG.FAUCET.CLAIM_COOLDOWN * 1000 - timeSinceLastClaim) / 1000)} seconds before next claim`);
+            async claim() {
+                if (!this.canClaim()) {
+                    toastr.warning('Please wait for the cooldown to finish');
                     return;
                 }
 
-                // Generate random claim amount
-                const claimAmount = Math.floor(Math.random() * 
-                    (CONFIG.FAUCET.MAX_CLAIM - CONFIG.FAUCET.MIN_CLAIM + 1) + 
-                    CONFIG.FAUCET.MIN_CLAIM);
+                // Calculate reward
+                const baseAmount = this.calculateBaseReward();
+                const multiplier = this.calculateMultiplier();
+                const finalAmount = Math.floor(baseAmount * multiplier);
 
                 // Update user data
-                this.userData.totalEarned += claimAmount;
-                this.userData.lastClaim = now;
+                this.userData.balance += finalAmount;
+                this.userData.lastClaim = Date.now();
+                this.userData.totalClaims++;
+                this.updateClaimStreak();
 
-                // Check and update achievements
+                // Check achievements
                 this.checkAchievements();
 
-                // Update daily tasks
-                this.updateDailyTasks('claim');
-
-                // Save user data
+                // Update UI
+                this.updateUI();
                 this.saveUserData();
 
-                // Update UI
-                this.updateUserInterface();
-
                 // Show success notification
-                toastr.success(`Claimed ${claimAmount} PEPE!`);
+                toastr.success(`Claimed ${finalAmount} PEPE! (${multiplier}x multiplier)`);
+            }
+
+            calculateBaseReward() {
+                return Math.floor(
+                    Math.random() * 
+                    (CONFIG.FAUCET.BASE_MAX - CONFIG.FAUCET.BASE_MIN + 1) + 
+                    CONFIG.FAUCET.BASE_MIN
+                );
+            }
+
+            calculateMultiplier() {
+                let multiplier = 1;
+                
+                // Level bonus
+                multiplier += (this.userData.level - 1) * CONFIG.FAUCET.BONUS_MULTIPLIERS.LEVEL;
+                
+                // Referral bonus
+                multiplier += this.userData.referrals.length * CONFIG.FAUCET.BONUS_MULTIPLIERS.REFERRAL;
+                
+                // Streak bonus
+                multiplier += Math.floor(this.userData.claimStreak / 7) * CONFIG.FAUCET.BONUS_MULTIPLIERS.STREAK;
+                
+                return Number(multiplier.toFixed(2));
+            }
+
+            canClaim() {
+                const now = Date.now();
+                const timeSinceLastClaim = now - this.userData.lastClaim;
+                return timeSinceLastClaim >= CONFIG.FAUCET.COOLDOWN * 1000;
+            }
+
+            updateClaimStreak() {
+                const now = Date.now();
+                const daysSinceLastClaim = Math.floor((now - this.userData.lastClaim) / (24 * 60 * 60 * 1000));
+                
+                if (daysSinceLastClaim <= 1) {
+                    this.userData.claimStreak++;
+                } else {
+                    this.userData.claimStreak = 1;
+                }
             }
 
             checkAchievements() {
                 CONFIG.ACHIEVEMENTS.forEach(achievement => {
-                    // Example achievement check logic
-                    if (achievement.id === 'FIRST_CLAIM' && this.userData.totalEarned > 0 &&
-                        !this.userData.achievements.includes('FIRST_CLAIM')) {
-                        this.unlockAchievement(achievement);
-                    }
+                    if (this.userData.achievements.includes(achievement.id)) return;
 
-                    if (achievement.id === 'MILLIONAIRE' && 
-                        this.userData.totalEarned >= 1000000 &&
-                        !this.userData.achievements.includes('MILLIONAIRE')) {
+                    const achieved = this.checkAchievementCondition(achievement);
+                    if (achieved) {
                         this.unlockAchievement(achievement);
                     }
                 });
+            }
+
+            checkAchievementCondition(achievement) {
+                switch(achievement.id) {
+                    case 'FIRST_CLAIM':
+                        return this.userData.totalClaims === 1;
+                    case 'STREAK_7':
+                        return this.userData.claimStreak >= 7;
+                    case 'REFERRAL_MASTER':
+                        return this.userData.referrals.length >= 10;
+                    default:
+                        return false;
+                }
             }
 
             unlockAchievement(achievement) {
                 this.userData.achievements.push(achievement.id);
+                this.userData.balance += achievement.reward;
                 
                 // Show achievement modal
-                $('#achievementModalContent').html(`
-                    <i class="${achievement.icon} text-4xl mb-4 text-primary-pepe"></i>
-                    <h3 class="text-xl mb-2">${achievement.title}</h3>
-                    <p class="mb-4">${achievement.description}</p>
-                    <p class="font-bold">+${achievement.reward} XP</p>
-                `);
-                $('#achievementModal').removeClass('hidden');
+                this.showAchievementModal(achievement);
             }
 
-            updateDailyTasks(taskType) {
-                // Update daily task progress
-                CONFIG.DAILY_TASKS.forEach(task => {
-                    if (task.type === taskType) {
-                        if (!this.userData.dailyTasks[task.id]) {
-                            this.userData.dailyTasks[task.id] = { 
-                                progress: 0, 
-                                completed: false,
-                                date: new Date().toDateString()
-                            };
-                        }
+            showAchievementModal(achievement) {
+                const modal = document.getElementById('achievementModal');
+                const content = document.getElementById('achievementModalContent');
+                
+                content.innerHTML = `
+                    <div class="achievement-unlock">
+                        <i class="fas ${achievement.icon}"></i>
+                        <h3>${achievement.title}</h3>
+                        <p>${achievement.description}</p>
+                        <div class="reward">+${achievement.reward} PEPE</div>
+                    </div>
+                `;
+                
+                modal.classList.add('active');
+            }
 
-                        const dailyTask = this.userData.dailyTasks[task.id];
-                        
-                        // Check if task is for today
-                        if (dailyTask.date !== new Date().toDateString()) {
-                            dailyTask.progress = 0;
-                            dailyTask.completed = false;
-                            dailyTask.date = new Date().toDateString();
-                        }
-
-                        dailyTask.progress++;
-
-                        if (dailyTask.progress >= task.target) {
-                            dailyTask.completed = true;
-                            toastr.success(`Daily Task Completed: ${task.title}`);
+            initializeCharts() {
+                const ctx = document.getElementById('earningsChart').getContext('2d');
+                this.earningsChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: this.getLast7Days(),
+                        datasets: [{
+                            label: 'Daily Earnings',
+                            data: this.getLast7DaysEarnings(),
+                            borderColor: '#2ecc71',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
                         }
                     }
                 });
-
-                this.saveUserData();
-                this.updateTaskUI();
             }
 
-            updateTaskUI() {
-                const taskList = CONFIG.DAILY_TASKS.map(task => {
-                    const userTask = this.userData.dailyTasks[task.id] || 
-                        { progress: 0, completed: false };
-                    
-                    const progressPercent = Math.min(
-                        (userTask.progress / task.target) * 100, 
-                        100
-                    );
-
-                    return `
-                        <div class="task-card ${userTask.completed ? 'completed' : ''}">
-                            <div class="task-header">
-                                <h3 class="task-title">${task.title}</h3>
-                                <span class="task-reward">+${task.reward} PEPE</span>
-                            </div>
-                            <p class="task-description">${task.description}</p>
-                            <div class="task-progress">
-                                <div class="progress-bar" style="width: ${progressPercent}%"></div>
-                            </div>
-                            <div class="task-status">
-                                ${userTask.progress}/${task.target}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                $('#dailyTasksList').html(taskList);
+            getLast7Days() {
+                return Array.from({length: 7}, (_, i) => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - i);
+                    return d.toLocaleDateString('en-US', { weekday: 'short' });
+                }).reverse();
             }
 
-            processWithdraw() {
-                const withdrawAmount = parseFloat($('#withdrawForm input[type="number"]').val());
+            getLast7DaysEarnings() {
+                // Simulate earnings data
+                return Array.from({length: 7}, () => 
+                    Math.floor(Math.random() * 5000) + 1000
+                );
+            }
+
+            updateUI() {
+                // Update balance displays
+                document.getElementById('userBalance').textContent = 
+                    `${this.userData.balance.toLocaleString()} PEPE`;
+                document.getElementById('totalBalance').textContent = 
+                    `${this.userData.balance.toLocaleString()} PEPE`;
                 
-                // Validate withdraw amount
-                if (withdrawAmount < 1000) {
-                    toastr.error('Minimum withdrawal is 1000 PEPE');
-                    return;
-                }
-
-                if (withdrawAmount > this.userData.totalEarned) {
-                    toastr.error('Insufficient balance');
-                    return;
-                }
-
-                // Process withdrawal
-                this.userData.totalEarned -= withdrawAmount;
+                // Update level info
+                document.getElementById('userLevel').textContent = this.userData.level;
                 
-                // Simulate withdrawal process
-                const withdrawalTransaction = {
-                    id: `WD-${Date.now()}`,
-                    amount: withdrawAmount,
-                    method: $('#withdrawForm select').val(),
-                    timestamp: new Date().toISOString()
-                };
+                // Update claim timer
+                this.updateClaimTimer();
+                
+                // Update tasks progress
+                this.updateTasksProgress();
+                
+                // Update charts
+                this.updateCharts();
+            }
 
-                // Add to withdrawal history (if implemented)
-                if (!this.userData.withdrawalHistory) {
-                    this.userData.withdrawalHistory = [];
+            updateClaimTimer() {
+                const now = Date.now();
+                const timeSinceLastClaim = now - this.userData.lastClaim;
+                const timeLeft = CONFIG.FAUCET.COOLDOWN * 1000 - timeSinceLastClaim;
+                
+                const timer = document.getElementById('claimTimer');
+                if (timeLeft <= 0) {
+                    timer.textContent = 'Ready!';
+                    document.getElementById('claimButton').disabled = false;
+                } else {
+                    const minutes = Math.floor(timeLeft / 60000);
+                    const seconds = Math.floor((timeLeft % 60000) / 1000);
+                    timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    document.getElementById('claimButton').disabled = true;
                 }
-                this.userData.withdrawalHistory.push(withdrawalTransaction);
+            }
 
-                // Save user data
-                this.saveUserData();
+            updateTasksProgress() {
+                const tasks = this.userData.tasks;
+                const totalTasks = Object.keys(tasks).length;
+                const completedTasks = Object.values(tasks)
+                    .filter(task => task.progress >= task.target).length;
+                
+                const progressElement = document.getElementById('tasksProgress');
+                progressElement.textContent = `${completedTasks}/${totalTasks}`;
+                
+                const circle = document.querySelector('.progress-ring-circle');
+                const radius = circle.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                const progress = completedTasks / totalTasks;
+                
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                circle.style.strokeDashoffset = circumference - (progress * circumference);
+            }
 
-                // Update UI
-                this.updateUserInterface();
+            updateCharts() {
+                const newData = this.getLast7DaysEarnings();
+                this.earningsChart.data.datasets[0].data = newData;
+                this.earningsChart.update();
+            }
 
-                // Show success notification
-                toastr.success(`Successfully withdrew ${withdrawAmount} PEPE`);
+            startAutoRefresh() {
+                setInterval(() => {
+                    this.updateUI();
+                    this.checkDailyReset();
+                }, 1000);
+            }
+
+            checkDailyReset() {
+                const now = new Date();
+                const lastReset = new Date(this.userData.lastReset || 0);
+                
+                if (now.getDate() !== lastReset.getDate()) {
+                    this.resetDailyTasks();
+                    this.userData.lastReset = now.toISOString();
+                    this.saveUserData();
+                }
+            }
+
+            resetDailyTasks() {
+                this.userData.tasks = this.initializeDailyTasks();
+                toastr.info('Daily tasks have been reset!');
             }
 
             saveUserData() {
                 localStorage.setItem('pepeFaucetUser', JSON.stringify(this.userData));
             }
 
-            updateUserInterface() {
-                // Update dashboard stats
-                $('#totalEarned').text(`${this.userData.totalEarned.toLocaleString()} PEPE`);
-                $('#totalBalance').text(`${this.userData.totalEarned.toLocaleString()} PEPE`);
-                $('#referralCount').text(this.userData.referralCount || 0);
-                $('#profileUsername').text(this.userData.username);
-                $('#profileEmail').text(this.userData.email);
-                $('#userLevel').text(this.userData.level);
-                $('#withdrawBalance').text(`${this.userData.totalEarned.toLocaleString()} PEPE`);
-
-                // Update achievements
-                this.updateAchievementsUI();
-                this.updateTaskUI();
+            navigate(page) {
+                document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+                document.getElementById(page).style.display = 'block';
+                
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.page === page) {
+                        item.classList.add('active');
+                    }
+                });
             }
 
-            updateAchievementsUI() {
-                const achievementsList = CONFIG.ACHIEVEMENTS.map(achievement => {
-                    const unlocked = this.userData.achievements.includes(achievement.id);
-                    
-                    return `
-                        <div class="achievement-card ${unlocked ? 'unlocked' : ''}">
-                            <i class="${achievement.icon} achievement-icon"></i>
-                            <h3 class="text-lg mb-2">${achievement.title}</h3>
-                            <p class="mb-4">${achievement.description}</p>
-                            <div class="achievement-status">
-                                ${unlocked ? 'Unlocked' : 'Locked'}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                $('#achievementsList').html(achievementsList);
-            }
-
-            referUser(referralCode) {
-                // Implement referral logic
-                this.userData.referralCount = (this.userData.referralCount || 0) + 1;
-                
-                // Check referral achievements
-                this.checkAchievements();
-                
-                // Save user data
+            changeTheme(theme) {
+                this.userData.settings.theme = theme;
+                document.body.className = theme;
                 this.saveUserData();
                 
-                // Update UI
-                this.updateUserInterface();
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.theme === theme);
+                });
             }
         }
 
-        // Utility Functions
-        function copyReferralLink() {
-            const referralLink = $('#referralLink');
-            navigator.clipboard.writeText(referralLink.val()).then(() => {
-                toastr.success('Referral link copied to clipboard!');
-            }).catch(err => {
-                toastr.error('Failed to copy link');
-            });
-        }
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Remove loading overlay
+            setTimeout(() => {
+                document.querySelector('.loading-overlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.querySelector('.loading-overlay').style.display = 'none';
+                }, 500);
+            }, 1000);
 
-        function closeAchievementModal() {
-            $('#achievementModal').addClass('hidden');
-        }
+            // Initialize app
+            const app = new PepeFaucetPro();
 
-        // Toastr Configuration
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-bottom-right",
-            "preventDuplicates": true,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        };
+            // Configure toastr notifications
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-bottom-right",
+                timeOut: 5000
+            };
 
-        // Application Initialization
-        $(document).ready(function() {
-            // Check if user is logged in
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (!isLoggedIn) {
-                // Redirect to login page or show login modal
-                window.location.href = 'login.html';
-                return;
-            }
-
-            // Initialize the Pepe Faucet User
-            const pepeFaucetUser = new PepeFaucetUser();
-
-            // Initial UI update
-            pepeFaucetUser.updateUserInterface();
-
-            // Referral Link Generation
-            const userEmail = localStorage.getItem('userEmail');
-            if (userEmail) {
-                const referralCode = generateReferralCode(userEmail);
-                $('#referralLink').val(`https://pepefaucet.pro/ref/${referralCode}`);
+            // Initialize custom scrollbar
+            if (typeof SimpleBar !== 'undefined') {
+                document.querySelectorAll('.scrollable').forEach(element => {
+                    new SimpleBar(element);
+                });
             }
         });
-
-        // Referral Code Generator
-        function generateReferralCode(email) {
-            // Simple referral code generation based on email
-            const hash = CryptoJS.MD5(email).toString();
-            return hash.substring(0, 8).toUpperCase();
-        }
-
-        // Logout Function
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('userEmail');
-            localStorage.removeItem('pepeFaucetUser');
-            window.location.href = 'login.html';
-        }
     </script>
 
-    <!-- Preload Critical Fonts and Icons -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
