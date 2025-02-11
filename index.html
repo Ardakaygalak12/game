@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>earn-dgb | Ana Sayfa</title>
+    <title>earn-dgb | Digibyte Kazan</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -13,14 +13,25 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        :root {
+            --primary-color: #00ff88;
+            --dark-bg: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --hover-bg: #333;
+            --text-color: #fff;
+            --error-color: #ff4444;
+            --success-color: #00cc6a;
+            --warning-color: #ffaa00;
+        }
+
         body {
-            background: #1a1a1a;
-            color: #fff;
+            background: var(--dark-bg);
+            color: var(--text-color);
             min-height: 100vh;
         }
 
         .header {
-            background: #2d2d2d;
+            background: var(--card-bg);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -35,8 +46,15 @@
 
         .logo {
             font-size: 1.5rem;
-            color: #00ff88;
+            color: var(--primary-color);
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
         }
 
         .user-info {
@@ -46,25 +64,29 @@
         }
 
         .balance {
-            background: #333;
-            padding: 0.5rem 1rem;
+            background: var(--hover-bg);
+            padding: 0.8rem 1.2rem;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .balance i {
-            color: #00ff88;
+            color: var(--primary-color);
         }
 
         .main-container {
             margin-top: 80px;
             padding: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .tabs {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #2d2d2d;
+            background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
             overflow: hidden;
@@ -75,6 +97,7 @@
             background: #222;
             padding: 1rem 1rem 0;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .tab-button {
@@ -86,21 +109,20 @@
             font-size: 1rem;
             border-radius: 8px 8px 0 0;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .tab-button:hover {
-            color: #fff;
-            background: #333;
+            color: var(--text-color);
+            background: var(--hover-bg);
         }
 
         .tab-button.active {
-            background: #2d2d2d;
-            color: #00ff88;
+            background: var(--card-bg);
+            color: var(--primary-color);
             font-weight: bold;
-        }
-
-        .tab-button i {
-            margin-right: 0.5rem;
         }
 
         .tab-content {
@@ -110,10 +132,11 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
 
         .card {
-            background: #333;
+            background: var(--hover-bg);
             padding: 2rem;
             border-radius: 12px;
             margin-bottom: 1.5rem;
@@ -121,7 +144,7 @@
 
         .card-title {
             font-size: 1.2rem;
-            color: #00ff88;
+            color: var(--primary-color);
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
@@ -136,40 +159,45 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #00ff88;
+            color: var(--primary-color);
         }
 
         .form-group input {
             width: 100%;
             padding: 1rem;
             border: 2px solid #444;
-            background: #2d2d2d;
-            color: #fff;
+            background: var(--card-bg);
+            color: var(--text-color);
             border-radius: 8px;
             outline: none;
             transition: all 0.3s ease;
+            font-size: 1rem;
         }
 
         .form-group input:focus {
-            border-color: #00ff88;
+            border-color: var(--primary-color);
             box-shadow: 0 0 5px rgba(0,255,136,0.3);
         }
 
         .btn {
             width: 100%;
             padding: 1rem;
-            background: #00ff88;
-            color: #1a1a1a;
+            background: var(--primary-color);
+            color: var(--dark-bg);
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
             font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .btn:hover {
-            background: #00cc6a;
+            background: var(--success-color);
             transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(0,255,136,0.3);
         }
@@ -182,14 +210,17 @@
         }
 
         .logout-btn {
-            background: #ff4444;
-            padding: 0.5rem 1.5rem;
+            background: var(--error-color);
+            padding: 0.8rem 1.5rem;
             border-radius: 8px;
             cursor: pointer;
             border: none;
             color: white;
             font-weight: bold;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .logout-btn:hover {
@@ -203,6 +234,7 @@
             border-radius: 8px;
             text-align: center;
             animation: fadeIn 0.3s ease;
+            display: none;
         }
 
         @keyframes fadeIn {
@@ -210,9 +242,9 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .error { background: #ff4444; color: white; }
-        .success { background: #00cc6a; color: white; }
-        .warning { background: #ffaa00; color: white; }
+        .error { background: var(--error-color); color: white; }
+        .success { background: var(--success-color); color: white; }
+        .warning { background: var(--warning-color); color: white; }
         .info { background: #0088ff; color: white; }
 
         .history {
@@ -220,13 +252,16 @@
         }
 
         .history-title {
-            color: #00ff88;
+            color: var(--primary-color);
             margin-bottom: 1rem;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .history-item {
-            background: #2d2d2d;
+            background: var(--card-bg);
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 0.5rem;
@@ -238,36 +273,19 @@
 
         .history-item:hover {
             transform: translateX(5px);
-            background: #333;
-        }
-
-        .ptc-item {
-            background: #2d2d2d;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .ptc-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .ptc-reward {
-            color: #00ff88;
-            font-weight: bold;
+            background: var(--hover-bg);
         }
 
         .timer {
             text-align: center;
             margin: 1.5rem 0;
             font-size: 1.5rem;
-            color: #00ff88;
+            color: var(--primary-color);
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .loading {
@@ -287,13 +305,67 @@
             width: 50px;
             height: 50px;
             border: 5px solid #333;
-            border-top-color: #00ff88;
+            border-top-color: var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        .ref-box {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .ref-link {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .ref-link input {
+            flex: 1;
+            padding: 0.8rem;
+            background: var(--hover-bg);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-color);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .ref-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--hover-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         @media (max-width: 768px) {
@@ -303,10 +375,6 @@
 
             .main-container {
                 padding: 1rem;
-            }
-
-            .tab-nav {
-                flex-wrap: wrap;
             }
 
             .tab-button {
@@ -338,10 +406,13 @@
                     <i class="fas fa-faucet"></i> Faucet
                 </button>
                 <button class="tab-button" onclick="openTab('ptc')">
-                    <i class="fas fa-ad"></i> PTC Ads
+                    <i class="fas fa-ad"></i> PTC Reklamlar
                 </button>
                 <button class="tab-button" onclick="openTab('withdraw')">
                     <i class="fas fa-money-bill-wave"></i> Para Çek
+                </button>
+                <button class="tab-button" onclick="openTab('referral')">
+                    <i class="fas fa-users"></i> Referans
                 </button>
                 <button class="tab-button" onclick="openTab('settings')">
                     <i class="fas fa-cog"></i> Ayarlar
@@ -355,14 +426,16 @@
                         <i class="fas fa-faucet"></i> DGB Kazan
                     </div>
                     <div class="timer" id="claimTimer">
-                        Sonraki claim için: <span id="timeLeft">5</span> saniye
+                        <i class="fas fa-clock"></i> Sonraki claim için: <span id="timeLeft">5</span> saniye
                     </div>
                     <button class="btn" id="claimButton" onclick="claim()">
-                        <i class="fas fa-hand-holding-usd"></i> Claim (0.1 DGB)
+                        <i class="fas fa-hand-holding-usd"></i> Claim (0.0078673589 DGB)
                     </button>
-                    <div id="claimMessage" class="message" style="display: none;"></div>
+                    <div id="claimMessage" class="message"></div>
                     <div class="history">
-                        <h3 class="history-title">Son Claimler</h3>
+                        <h3 class="history-title">
+                            <i class="fas fa-history"></i> Son Claimler
+                        </h3>
                         <div id="claimHistory"></div>
                     </div>
                 </div>
@@ -377,7 +450,7 @@
                     <div id="ptcList">
                         <!-- Reklamlar admin panelinden yüklenecek -->
                     </div>
-                    <div id="ptcMessage" class="message" style="display: none;"></div>
+                    <div id="ptcMessage" class="message"></div>
                 </div>
             </div>
 
@@ -389,15 +462,45 @@
                     </div>
                     <div class="form-group">
                         <label>Miktar (Minimum: 1 DGB)</label>
-                        <input type="number" id="withdrawAmount" min="1" step="0.1" placeholder="Çekilecek miktar">
+                        <input type="number" id="withdrawAmount" min="1" step="0.0000001" placeholder="Çekilecek miktar">
                     </div>
                     <button class="btn" onclick="withdraw()">
                         <i class="fas fa-paper-plane"></i> Para Çek
                     </button>
-                    <div id="withdrawMessage" class="message" style="display: none;"></div>
+                    <div id="withdrawMessage" class="message"></div>
                     <div class="history">
-                        <h3 class="history-title">Son İşlemler</h3>
+                        <h3 class="history-title">
+                            <i class="fas fa-history"></i> Son İşlemler
+                        </h3>
                         <div id="withdrawHistory"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referral Tab -->
+            <div id="referral" class="tab-content">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-users"></i> Referans Sistemi
+                    </div>
+                    <p>Arkadaşlarınızı davet edin, onların her kazancından %40 bonus kazanın!</p>
+                    <div class="ref-box">
+                        <div class="ref-link">
+                            <input type="text" id="refLink" readonly>
+                            <button class="copy-btn" onclick="copyRefLink()">
+                                <i class="fas fa-copy"></i> Kopyala
+                            </button>
+                        </div>
+                        <div class="ref-stats">
+                            <div class="stat-card">
+                                <div class="stat-value" id="refCount">0</div>
+                                <div>Toplam Referans</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="refEarnings">0 DGB</div>
+                                <div>Referans Kazancı</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -415,7 +518,7 @@
                     <button class="btn" onclick="saveFaucetPayEmail()">
                         <i class="fas fa-save"></i> Kaydet
                     </button>
-                    <div id="settingsMessage" class="message" style="display: none;"></div>
+                    <div id="settingsMessage" class="message"></div>
                 </div>
             </div>
         </div>
@@ -424,15 +527,15 @@
     <div id="loading" class="loading">
         <div class="loading-spinner"></div>
     </div>
-   <script>
-    // API ve Temel Ayarlar
+    <script>
+    // Çevresel değişkenler - Bu kısmı .env dosyasından alacaksınız
     const CONFIG = {
-        JSONBIN_API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W',
-        JSONBIN_BIN_ID: '67a7a415e41b4d34e4867ffe',
-        FAUCETPAY_API_KEY: 'a5a15c7cc4b4d4c6a0cab0cb5d2b2ce3388070028e2c5cf37284f627975cb9ed',
-        PROXY_URL: 'https://api.allorigins.win/raw?url=',  // CORS bypass için
-        CLAIM_AMOUNT: 0.1,
+        JSONBIN_API_KEY: process.env.JSONBIN_API_KEY,
+        JSONBIN_BIN_ID: process.env.JSONBIN_BIN_ID,
+        FAUCETPAY_API_KEY: process.env.FAUCETPAY_API_KEY,
+        CLAIM_AMOUNT: 0.0078673589,
         MIN_WITHDRAW: 1.0,
+        REF_COMMISSION: 0.40, // %40 referans komisyonu
         MESSAGES: {
             FAUCET_NO_BALANCE: 'Muslukta yeterli DGB yok! Admin onayı bekleniyor.',
             INSUFFICIENT_BALANCE: 'Yetersiz bakiye!',
@@ -440,15 +543,14 @@
             GENERIC_ERROR: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.'
         }
     };
-
-    // Global Değişkenler
+        // Global Değişkenler
     let userEmail = localStorage.getItem('userEmail');
     let userBalance = parseFloat(localStorage.getItem('balance') || '0');
     let faucetpayEmail = localStorage.getItem('faucetpayEmail') || '';
     let canClaim = true;
     let timeLeft = 5;
 
-    // Başlangıç Fonksiyonları
+    // Sayfa yüklendiğinde
     window.onload = async function() {
         if (!userEmail) {
             window.location.href = 'login.html';
@@ -457,13 +559,14 @@
         await initializeApp();
     };
 
+    // Uygulama başlatma
     async function initializeApp() {
         try {
             showLoading(true);
             await loadUserData();
             startClaimTimer();
-            updateClaimHistory();
-            updateWithdrawHistory();
+            initializeReferral();
+            await loadHistory();
             await loadPtcAds();
         } catch (error) {
             console.error('Başlangıç hatası:', error);
@@ -473,7 +576,7 @@
         }
     }
 
-    // Kullanıcı Veri Yönetimi
+    // Ana işlevler
     async function loadUserData() {
         try {
             const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
@@ -483,88 +586,22 @@
             const data = await response.json();
             const user = data.record.users.find(u => u.email === userEmail);
 
-            if (user) {
-                userBalance = user.balance || 0;
-                faucetpayEmail = user.faucetpayEmail || '';
-                
-                localStorage.setItem('balance', userBalance);
-                localStorage.setItem('faucetpayEmail', faucetpayEmail);
-                
-                updateUI();
-                return user;
-            }
+            if (!user) throw new Error('Kullanıcı bulunamadı');
+
+            userBalance = user.balance || 0;
+            faucetpayEmail = user.faucetpayEmail || '';
             
-            throw new Error('Kullanıcı bulunamadı');
+            localStorage.setItem('balance', userBalance);
+            localStorage.setItem('faucetpayEmail', faucetpayEmail);
+            
+            updateUI();
+            return user;
         } catch (error) {
             console.error('Veri yükleme hatası:', error);
             throw error;
         }
     }
 
-    function updateUI() {
-        document.getElementById('userBalance').textContent = userBalance.toFixed(8);
-        const faucetpayInput = document.getElementById('faucetpayEmail');
-        if (faucetpayInput) faucetpayInput.value = faucetpayEmail;
-    }
-
-    // FaucetPay İşlemleri
-    async function checkFaucetPay(email) {
-        try {
-            // Mock response - FaucetPay API yerine
-            return {
-                success: true,
-                message: "Success",
-                status: 200
-            };
-            
-            /* Gerçek FaucetPay API isteği için:
-            const response = await fetch('https://faucetpay.io/api/v1/checkaddress', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    api_key: CONFIG.FAUCETPAY_API_KEY,
-                    address: email,
-                    currency: 'DGB'
-                })
-            });
-            return await response.json();
-            */
-        } catch (error) {
-            console.error('FaucetPay kontrol hatası:', error);
-            return { success: false, status: 500 };
-        }
-    }
-
-    async function sendToFaucetPay(email, amount) {
-        try {
-            // Mock response - FaucetPay API yerine
-            return {
-                success: true,
-                status: 200,
-                message: "Success",
-                transfer_id: Date.now().toString()
-            };
-            
-            /* Gerçek FaucetPay API isteği için:
-            const response = await fetch('https://faucetpay.io/api/v1/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    api_key: CONFIG.FAUCETPAY_API_KEY,
-                    amount: amount,
-                    to: email,
-                    currency: 'DGB'
-                })
-            });
-            return await response.json();
-            */
-        } catch (error) {
-            console.error('FaucetPay gönderim hatası:', error);
-            return { success: false, status: 500 };
-        }
-    }
-
-    // Claim İşlemleri
     async function claim() {
         if (!canClaim) return;
 
@@ -576,9 +613,18 @@
                 return;
             }
 
+            // FaucetPay hesap kontrolü
             const faucetCheck = await checkFaucetPay(faucetpayEmail);
             if (!faucetCheck.success) {
                 showMessage('claimMessage', 'Geçersiz FaucetPay hesabı!', 'error');
+                return;
+            }
+
+            // Musluktaki bakiye kontrolü
+            const faucetBalance = await checkFaucetBalance();
+            if (!faucetBalance.success || faucetBalance.balance < CONFIG.CLAIM_AMOUNT) {
+                showMessage('claimMessage', CONFIG.MESSAGES.FAUCET_NO_BALANCE, 'warning');
+                await createPendingClaim();
                 return;
             }
 
@@ -588,24 +634,34 @@
 
             const data = await response.json();
             const userIndex = data.record.users.findIndex(u => u.email === userEmail);
-
-            if (userIndex === -1) {
-                showMessage('claimMessage', 'Kullanıcı bulunamadı!', 'error');
-                return;
-            }
-
-            // Bakiye güncelleme
-            data.record.users[userIndex].balance += CONFIG.CLAIM_AMOUNT;
+            
+            // Claim miktarını hesapla
+            const claimAmount = CONFIG.CLAIM_AMOUNT;
+            
+            // Kullanıcı bakiyesini güncelle
+            data.record.users[userIndex].balance += claimAmount;
             data.record.users[userIndex].lastClaim = new Date().toISOString();
 
+            // Claim geçmişi
             if (!data.record.users[userIndex].claimHistory) {
                 data.record.users[userIndex].claimHistory = [];
             }
-
+            
             data.record.users[userIndex].claimHistory.push({
-                amount: CONFIG.CLAIM_AMOUNT,
+                amount: claimAmount,
                 timestamp: new Date().toISOString()
             });
+
+            // Referans ödemesi
+            if (data.record.users[userIndex].referrer) {
+                const referrerIndex = data.record.users.findIndex(u => u.email === data.record.users[userIndex].referrer);
+                if (referrerIndex !== -1) {
+                    const refAmount = claimAmount * CONFIG.REF_COMMISSION;
+                    data.record.users[referrerIndex].balance += refAmount;
+                    data.record.users[referrerIndex].referralEarnings = 
+                        (data.record.users[referrerIndex].referralEarnings || 0) + refAmount;
+                }
+            }
 
             await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
                 method: 'PUT',
@@ -616,12 +672,12 @@
                 body: JSON.stringify(data.record)
             });
 
-            userBalance += CONFIG.CLAIM_AMOUNT;
+            userBalance += claimAmount;
             localStorage.setItem('balance', userBalance);
             updateUI();
 
-            showMessage('claimMessage', `Başarılı! ${CONFIG.CLAIM_AMOUNT} DGB kazandınız!`, 'success');
-            updateClaimHistory();
+            showMessage('claimMessage', `Başarılı! ${claimAmount} DGB kazandınız!`, 'success');
+            await loadHistory();
 
             canClaim = false;
             startClaimTimer();
@@ -634,225 +690,306 @@
         }
     }
 
-    // Para Çekme İşlemleri
-    async function withdraw() {
-        const amount = parseFloat(document.getElementById('withdrawAmount').value);
-        
-        if (!amount || amount < CONFIG.MIN_WITHDRAW) {
-            showMessage('withdrawMessage', CONFIG.MESSAGES.MINIMUM_WITHDRAW, 'error');
-            return;
+    // FaucetPay İşlemleri
+    async function checkFaucetPay(email) {
+        try {
+            const response = await fetch('https://faucetpay.io/api/v1/checkaddress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    api_key: CONFIG.FAUCETPAY_API_KEY,
+                    address: email,
+                    currency: 'DGB'
+                })
+            });
+            
+            const data = await response.json();
+            return {
+                success: data.status === 200,
+                message: data.message
+            };
+        } catch (error) {
+            console.error('FaucetPay kontrol hatası:', error);
+            return { success: false, message: error.message };
         }
+    }
 
-        if (amount > userBalance) {
-            showMessage('withdrawMessage', CONFIG.MESSAGES.INSUFFICIENT_BALANCE, 'error');
-            return;
+    async function checkFaucetBalance() {
+        try {
+            const response = await fetch('https://faucetpay.io/api/v1/getbalance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    api_key: CONFIG.FAUCETPAY_API_KEY,
+                    currency: 'DGB'
+                })
+            });
+            
+            const data = await response.json();
+            return {
+                success: data.status === 200,
+                balance: parseFloat(data.balance)
+            };
+        } catch (error) {
+            console.error('Faucet bakiye kontrolü hatası:', error);
+            return { success: false, balance: 0 };
         }
+    }
+        // Para çekme ve referans işlemleri
+   async function withdraw() {
+       const amount = parseFloat(document.getElementById('withdrawAmount').value);
+       
+       if (!amount || amount < CONFIG.MIN_WITHDRAW) {
+           showMessage('withdrawMessage', 'Minimum çekim tutarı 1 DGB!', 'error');
+           return;
+       }
+
+       if (amount > userBalance) {
+           showMessage('withdrawMessage', CONFIG.MESSAGES.INSUFFICIENT_BALANCE, 'error');
+           return;
+       }
 
        if (!faucetpayEmail) {
-            showMessage('withdrawMessage', CONFIG.MESSAGES.FAUCETPAY_REQUIRED, 'error');
-            return;
-        }
+           showMessage('withdrawMessage', CONFIG.MESSAGES.FAUCETPAY_REQUIRED, 'error');
+           return;
+       }
 
-        try {
-            showLoading(true);
+       try {
+           showLoading(true);
 
-            const faucetPayResponse = await sendToFaucetPay(faucetpayEmail, amount);
-            if (!faucetPayResponse.success) {
-                throw new Error('FaucetPay transfer başarısız');
-            }
+           // FaucetPay bakiye kontrolü
+           const faucetBalance = await checkFaucetBalance();
+           if (!faucetBalance.success || faucetBalance.balance < amount) {
+               showMessage('withdrawMessage', 'Muslukta yeterli bakiye yok! Lütfen daha sonra tekrar deneyin.', 'warning');
+               return;
+           }
 
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
-                headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
-            });
+           // FaucetPay transfer
+           const transferResult = await sendToFaucetPay(faucetpayEmail, amount);
+           if (!transferResult.success) {
+               showMessage('withdrawMessage', `FaucetPay hatası: ${transferResult.message}`, 'error');
+               return;
+           }
 
-            const data = await response.json();
-            const userIndex = data.record.users.findIndex(u => u.email === userEmail);
+           // Bakiye güncelleme
+           const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
+               headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
+           });
 
-            // Bakiyeyi güncelle
-            data.record.users[userIndex].balance -= amount;
+           const data = await response.json();
+           const userIndex = data.record.users.findIndex(u => u.email === userEmail);
 
-            // Çekim geçmişi
-            if (!data.record.users[userIndex].withdrawals) {
-                data.record.users[userIndex].withdrawals = [];
-            }
+           data.record.users[userIndex].balance -= amount;
+           
+           if (!data.record.users[userIndex].withdrawals) {
+               data.record.users[userIndex].withdrawals = [];
+           }
 
-            data.record.users[userIndex].withdrawals.push({
-                amount: amount,
-                timestamp: new Date().toISOString(),
-                status: 'success',
-                txid: faucetPayResponse.transfer_id
-            });
+           data.record.users[userIndex].withdrawals.push({
+               amount: amount,
+               timestamp: new Date().toISOString(),
+               txid: transferResult.txid
+           });
 
-            // JSONbin'i güncelle
-            await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': CONFIG.JSONBIN_API_KEY
-                },
-                body: JSON.stringify(data.record)
-            });
+           await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
+               method: 'PUT',
+               headers: {
+                   'Content-Type': 'application/json',
+                   'X-Master-Key': CONFIG.JSONBIN_API_KEY
+               },
+               body: JSON.stringify(data.record)
+           });
 
-            // Local verileri güncelle
-            userBalance -= amount;
-            localStorage.setItem('balance', userBalance);
-            updateUI();
+           userBalance -= amount;
+           localStorage.setItem('balance', userBalance);
+           updateUI();
 
-            showMessage('withdrawMessage', 'Para çekme işlemi başarılı!', 'success');
-            document.getElementById('withdrawAmount').value = '';
-            updateWithdrawHistory();
+           document.getElementById('withdrawAmount').value = '';
+           showMessage('withdrawMessage', 'Para çekme işlemi başarılı!', 'success');
+           await loadHistory();
 
-        } catch (error) {
-            console.error('Para çekme hatası:', error);
-            showMessage('withdrawMessage', 'Para çekme işlemi başarısız: ' + error.message, 'error');
-        } finally {
-            showLoading(false);
-        }
-    }
+       } catch (error) {
+           console.error('Para çekme hatası:', error);
+           showMessage('withdrawMessage', 'Para çekme işlemi başarısız!', 'error');
+       } finally {
+           showLoading(false);
+       }
+   }
 
-    // FaucetPay E-posta Ayarları
-    async function saveFaucetPayEmail() {
-        const email = document.getElementById('faucetpayEmail').value.trim();
-        
-        if (!email) {
-            showMessage('settingsMessage', 'Lütfen FaucetPay e-postanızı girin', 'error');
-            return;
-        }
+   async function sendToFaucetPay(email, amount) {
+       try {
+           const response = await fetch('https://faucetpay.io/api/v1/send', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({
+                   api_key: CONFIG.FAUCETPAY_API_KEY,
+                   amount: amount,
+                   to: email,
+                   currency: 'DGB'
+               })
+           });
 
-        try {
-            showLoading(true);
+           const data = await response.json();
+           return {
+               success: data.status === 200,
+               message: data.message,
+               txid: data.transfer_id
+           };
+       } catch (error) {
+           return {
+               success: false,
+               message: error.message,
+               txid: null
+           };
+       }
+   }
 
-            const check = await checkFaucetPay(email);
-            if (!check.success) {
-                showMessage('settingsMessage', 'Geçersiz FaucetPay hesabı!', 'error');
-                return;
-            }
+   // Referans sistemi
+   function initializeReferral() {
+       const refLink = `${window.location.origin}${window.location.pathname}?ref=${btoa(userEmail)}`;
+       document.getElementById('refLink').value = refLink;
+       updateReferralStats();
+   }
 
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
-                headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
-            });
+   async function updateReferralStats() {
+       try {
+           const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
+               headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
+           });
 
-            const data = await response.json();
-            const userIndex = data.record.users.findIndex(u => u.email === userEmail);
+           const data = await response.json();
+           const user = data.record.users.find(u => u.email === userEmail);
 
-            data.record.users[userIndex].faucetpayEmail = email;
+           if (user) {
+               const refCount = user.referrals ? user.referrals.length : 0;
+               const refEarnings = user.referralEarnings || 0;
 
-            await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': CONFIG.JSONBIN_API_KEY
-                },
-                body: JSON.stringify(data.record)
-            });
+               document.getElementById('refCount').textContent = refCount;
+               document.getElementById('refEarnings').textContent = refEarnings.toFixed(8) + ' DGB';
+           }
+       } catch (error) {
+           console.error('Referans istatistikleri güncelleme hatası:', error);
+       }
+   }
 
-            faucetpayEmail = email;
-            localStorage.setItem('faucetpayEmail', email);
+   function copyRefLink() {
+       const refLink = document.getElementById('refLink');
+       refLink.select();
+       document.execCommand('copy');
+       showMessage('referralMessage', 'Referans linki kopyalandı!', 'success');
+   }
 
-            showMessage('settingsMessage', 'FaucetPay e-postanız kaydedildi!', 'success');
-        } catch (error) {
-            console.error('FaucetPay e-posta kaydetme hatası:', error);
-            showMessage('settingsMessage', 'Ayarlar kaydedilemedi: ' + error.message, 'error');
-        } finally {
-            showLoading(false);
-        }
-    }
+   // Geçmiş yükleme
+   async function loadHistory() {
+       try {
+           const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
+               headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
+           });
 
-    // Geçmiş Güncelleme Fonksiyonları
-    function updateClaimHistory() {
-        const historyDiv = document.getElementById('claimHistory');
-        if (!historyDiv) return;
+           const data = await response.json();
+           const user = data.record.users.find(u => u.email === userEmail);
 
-        const user = JSON.parse(localStorage.getItem('userData'));
-        if (user && user.claimHistory && user.claimHistory.length > 0) {
-            const html = user.claimHistory
-                .slice(-5)
-                .reverse()
-                .map(claim => `
-                    <div class="history-item">
-                        <span><i class="fas fa-coins"></i> ${claim.amount} DGB</span>
-                        <span>${new Date(claim.timestamp).toLocaleString()}</span>
-                    </div>
-                `).join('');
-            historyDiv.innerHTML = html;
-        } else {
-            historyDiv.innerHTML = '<p>Henüz claim geçmişi yok.</p>';
-        }
-    }
+           if (user) {
+               updateClaimHistory(user.claimHistory || []);
+               updateWithdrawHistory(user.withdrawals || []);
+           }
+       } catch (error) {
+           console.error('Geçmiş yükleme hatası:', error);
+       }
+   }
 
-    function updateWithdrawHistory() {
-        const historyDiv = document.getElementById('withdrawHistory');
-        if (!historyDiv) return;
+   function updateClaimHistory(history) {
+       const historyDiv = document.getElementById('claimHistory');
+       if (!historyDiv) return;
 
-        const user = JSON.parse(localStorage.getItem('userData'));
-        if (user && user.withdrawals && user.withdrawals.length > 0) {
-            const html = user.withdrawals
-                .slice(-5)
-                .reverse()
-                .map(withdraw => `
-                    <div class="history-item">
-                        <span><i class="fas fa-paper-plane"></i> ${withdraw.amount} DGB</span>
-                        <span>${new Date(withdraw.timestamp).toLocaleString()}</span>
-                    </div>
-                `).join('');
-            historyDiv.innerHTML = html;
-        } else {
-            historyDiv.innerHTML = '<p>Henüz çekim geçmişi yok.</p>';
-        }
-    }
+       const html = history
+           .slice(-5)
+           .reverse()
+           .map(claim => `
+               <div class="history-item">
+                   <span><i class="fas fa-coins"></i> ${claim.amount} DGB</span>
+                   <span>${new Date(claim.timestamp).toLocaleString()}</span>
+               </div>
+           `).join('') || '<p>Henüz claim yapılmamış.</p>';
 
-    // Yardımcı Fonksiyonlar
-    function showLoading(show = true) {
-        document.getElementById('loading').style.display = show ? 'flex' : 'none';
-    }
+       historyDiv.innerHTML = html;
+   }
 
-    function showMessage(elementId, text, type) {
-        const element = document.getElementById(elementId);
-        if (!element) return;
-        
-        element.textContent = text;
-        element.className = `message ${type}`;
-        element.style.display = 'block';
-        
-        setTimeout(() => {
-            element.style.display = 'none';
-        }, 5000);
-    }
+   function updateWithdrawHistory(history) {
+       const historyDiv = document.getElementById('withdrawHistory');
+       if (!historyDiv) return;
 
-    function openTab(tabName) {
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(tabName).classList.add('active');
-        document.querySelector(`[onclick="openTab('${tabName}')"]`).classList.add('active');
-    }
+       const html = history
+           .slice(-5)
+           .reverse()
+           .map(withdraw => `
+               <div class="history-item">
+                   <span><i class="fas fa-paper-plane"></i> ${withdraw.amount} DGB</span>
+                   <span>${new Date(withdraw.timestamp).toLocaleString()}</span>
+               </div>
+           `).join('') || '<p>Henüz çekim yapılmamış.</p>';
 
-    function startClaimTimer() {
-        const timerSpan = document.getElementById('timeLeft');
-        const claimButton = document.getElementById('claimButton');
+       historyDiv.innerHTML = html;
+   }
 
-        if (!canClaim) {
-            claimButton.disabled = true;
-            timerSpan.textContent = timeLeft;
+   // Yardımcı fonksiyonlar
+   function showLoading(show = true) {
+       document.getElementById('loading').style.display = show ? 'flex' : 'none';
+   }
 
-            const timer = setInterval(() => {
-                timeLeft--;
-                timerSpan.textContent = timeLeft;
+   function showMessage(elementId, text, type) {
+       const element = document.getElementById(elementId);
+       if (!element) return;
+       
+       element.textContent = text;
+       element.className = `message ${type}`;
+       element.style.display = 'block';
+       
+       setTimeout(() => {
+           element.style.display = 'none';
+       }, 5000);
+   }
 
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    canClaim = true;
-                    claimButton.disabled = false;
-                    timeLeft = 5;
-                    timerSpan.textContent = 'Hazır!';
-                }
-            }, 1000);
-        }
-    }
+   function openTab(tabName) {
+       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+       document.getElementById(tabName).classList.add('active');
+       document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
+   }
 
-    function logout() {
-        localStorage.clear();
-        window.location.href = 'login.html';
-    }
+   function startClaimTimer() {
+       const timerSpan = document.getElementById('timeLeft');
+       const claimButton = document.getElementById('claimButton');
+
+       if (!canClaim) {
+           claimButton.disabled = true;
+           timerSpan.textContent = timeLeft;
+
+           const timer = setInterval(() => {
+               timeLeft--;
+               timerSpan.textContent = timeLeft;
+
+               if (timeLeft <= 0) {
+                   clearInterval(timer);
+                   canClaim = true;
+                   claimButton.disabled = false;
+                   timeLeft = 5;
+                   timerSpan.textContent = 'Hazır!';
+               }
+           }, 1000);
+       }
+   }
+
+   function updateUI() {
+       document.getElementById('userBalance').textContent = userBalance.toFixed(8);
+       const faucetpayInput = document.getElementById('faucetpayEmail');
+       if (faucetpayInput) faucetpayInput.value = faucetpayEmail;
+   }
+
+   function logout() {
+       localStorage.clear();
+       window.location.href = 'login.html';
+   }
 </script>
 </body>
 </html>
