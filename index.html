@@ -3,45 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DGB Faucet | Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>DGB Faucet</title>
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-hover: #1d4ed8;
-            --background: #0f172a;
-            --card-bg: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --error: #ef4444;
-            --success: #22c55e;
-            --warning: #eab308;
-            --info: #3b82f6;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background: var(--background);
-            color: var(--text-primary);
+            background: #f3f4f6;
             min-height: 100vh;
-            line-height: 1.5;
+            padding-bottom: 2rem;
         }
 
         .header {
-            background: var(--card-bg);
+            background: white;
             padding: 1rem;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
         }
 
         .header-content {
@@ -50,164 +31,119 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 1rem;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .logo i {
-            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .balance {
-            background: var(--background);
+            background: #f3f4f6;
             padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .balance i {
-            color: var(--primary-color);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #374151;
         }
 
         .logout-btn {
-            background: var(--error);
-            color: white;
             padding: 0.5rem 1rem;
+            background: #ef4444;
+            color: white;
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 6px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            transition: background 0.2s;
         }
 
         .logout-btn:hover {
             background: #dc2626;
         }
 
-        .main-container {
+        .container {
             max-width: 1200px;
-            margin: 5rem auto 2rem;
-            padding: 1rem;
-        }
-
-        .tabs {
-            background: var(--card-bg);
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        .tab-nav {
-            display: flex;
-            background: var(--background);
-            padding: 0.5rem;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .tab-button {
-            padding: 0.75rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 1rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .tab-button:hover {
-            color: var(--text-primary);
-            background: var(--card-bg);
-        }
-
-        .tab-button.active {
-            color: var(--primary-color);
-            background: var(--card-bg);
-            font-weight: 600;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 2rem;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
 
         .card {
-            background: var(--background);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             padding: 1.5rem;
-            border-radius: 1rem;
             margin-bottom: 1.5rem;
         }
 
         .card-title {
-            font-size: 1.25rem;
-            color: var(--primary-color);
+            font-size: 1.125rem;
+            color: #1f2937;
             margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
             font-weight: 600;
         }
 
-        .timer {
-            text-align: center;
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin: 2rem 0;
-            font-weight: 700;
+        .tabs {
             display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: #4b5563;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            background: #f9fafb;
+        }
+
+        .tab.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .btn {
             width: 100%;
             padding: 1rem;
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 6px;
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
 
         .btn-primary {
-            background: var(--primary-color);
+            background: #2563eb;
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--primary-hover);
+            background: #1d4ed8;
         }
 
         .btn:disabled {
@@ -215,109 +151,118 @@
             cursor: not-allowed;
         }
 
-        .message {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-            display: none;
-        }
-
-        .message.error { background: var(--error); color: white; }
-        .message.success { background: var(--success); color: white; }
-        .message.warning { background: var(--warning); color: white; }
-        .message.info { background: var(--info); color: white; }
-
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: var(--text-secondary);
+            color: #374151;
+            font-size: 0.875rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.75rem 1rem;
-            background: var(--card-bg);
-            border: 1px solid #334155;
-            color: var(--text-primary);
-            border-radius: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
             font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-        }
-
-        .history {
-            margin-top: 2rem;
-        }
-
-        .history-title {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .history-item {
-            background: var(--card-bg);
             padding: 1rem;
-            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
             margin-bottom: 0.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 0.875rem;
+            color: #374151;
         }
 
-        .ref-box {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
+        .message {
+            padding: 1rem;
+            border-radius: 6px;
             margin-top: 1rem;
+            font-size: 0.875rem;
+            display: none;
         }
 
-        .ref-link {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
 
-        .ref-stats {
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .ptc-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
-            margin-top: 1.5rem;
         }
 
-        .stat-card {
-            background: var(--background);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            text-align: center;
+        .ptc-ad {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 1.25rem;
+            transition: transform 0.2s;
         }
 
-        .stat-value {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            font-weight: 700;
+        .ptc-ad:hover {
+            transform: translateY(-2px);
+        }
+
+        .ptc-ad h3 {
+            color: #1f2937;
+            font-size: 1.125rem;
             margin-bottom: 0.5rem;
+            font-weight: 600;
         }
 
+        .ptc-ad p {
+            color: #4b5563;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .view-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-btn:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .view-btn .reward-text {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        /* API İşlem yüklenme göstergesi */
         .loading {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             justify-content: center;
             align-items: center;
@@ -325,734 +270,429 @@
         }
 
         .loading-spinner {
-            width: 2.5rem;
-            height: 2.5rem;
-            border: 3px solid var(--text-secondary);
-            border-top-color: var(--primary-color);
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #2563eb;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
-        .ptc-ad {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .ptc-ad h3 {
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .ptc-ad p {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .ptc-ad button {
-            width: auto;
-        }
-
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 640px) {
             .header-content {
                 flex-direction: column;
                 gap: 1rem;
+                text-align: center;
             }
 
             .user-info {
+                flex-direction: column;
                 width: 100%;
-                justify-content: space-between;
             }
 
-            .tab-button {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
+            .balance {
+                width: 100%;
             }
 
-            .main-container {
-                margin-top: 8rem;
+            .logout-btn {
+                width: 100%;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-coins"></i> DGB Faucet
-            </div>
-            <div class="user-info">
-                <div class="balance">
-                    <i class="fas fa-wallet"></i> Bakiye: <span id="userBalance">0</span> DGB
-                </div>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Çıkış
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="main-container">
-        <div class="tabs">
-            <div class="tab-nav">
-                <button class="tab-button active" onclick="openTab('faucet')">
-                    <i class="fas fa-faucet"></i> Faucet
-                </button>
-                <button class="tab-button" onclick="openTab('ptc')">
-                    <i class="fas fa-ad"></i> PTC Reklamlar
-                </button>
-                <button class="tab-button" onclick="openTab('withdraw')">
-                    <i class="fas fa-money-bill-wave"></i> Para Çek
-                </button>
-                <button class="tab-button" onclick="openTab('referral')">
-                    <i class="fas fa-users"></i> Referans
-                </button>
-            </div>
-
-            <!-- Faucet Tab -->
-            <div id="faucet" class="tab-content active">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-faucet"></i> DGB Kazan
-                    </div>
-                    <div class="timer" id="claimTimer">
-                        <i class="fas fa-clock"></i> <span id="timeLeft">0</span>
-                    </div>
-                    <button class="btn btn-primary btn-block" id="claimButton" onclick="claim()">
-                        <i class="fas fa-hand-holding-usd"></i> Claim (0.0078673589 DGB)
-                    </button>
-                    <div id="claimMessage" class="message"></div>
-                    <div class="history">
-                        <div class="history-title">
-                            <i class="fas fa-history"></i> Son İşlemler
-                        </div>
-                        <div id="claimHistory"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PTC Tab -->
-            <div id="ptc" class="tab-content">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-ad"></i> PTC Reklamlar
-                    </div>
-                    <div id="ptcList">
-                        <!-- Reklamlar admin panelinden yüklenecek -->
-                    </div>
-                    <div id="ptcMessage" class="message"></div>
-                </div>
-            </div>
-
-            <!-- Withdraw Tab -->
-            <div id="withdraw" class="tab-content">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-money-bill-wave"></i> Para Çek
-                    </div>
-                    
-                    <!-- FaucetPay Ayarları -->
-                    <div class="card mb-4">
-                        <div class="card-title">
-                            <i class="fas fa-cog"></i> FaucetPay Ayarları
-                        </div>
-                        <div class="form-group">
-                            <label>FaucetPay E-posta</label>
-                            <div class="input-group">
-                                <input type="email" id="faucetpayEmail" class="form-control" placeholder="FaucetPay e-posta adresiniz">
-                                <button class="btn btn-primary" onclick="saveFaucetPayEmail()">
-                                    <i class="fas fa-save"></i> Kaydet
-                                </button>
-                            </div>
-                            <div id="faucetpayMessage" class="message"></div>
-                        </div>
-                    </div>
-
-                    <!-- Para Çekme Formu -->
-                    <div class="form-group">
-                        <label>Miktar (Min: 1 DGB)</label>
-                        <input type="number" id="withdrawAmount" class="form-control" min="1" step="0.0000001" placeholder="Çekilecek miktar">
-                    </div>
-                    <button class="btn btn-primary btn-block" onclick="withdraw()">
-                        <i class="fas fa-paper-plane"></i> Para Çek
-                    </button>
-                    <div id="withdrawMessage" class="message"></div>
-                    <div class="history">
-                        <div class="history-title">
-                            <i class="fas fa-history"></i> Son İşlemler
-                        </div>
-                        <div id="withdrawHistory"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Referral Tab -->
-            <div id="referral" class="tab-content">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-users"></i> Referans Sistemi
-                    </div>
-                    <p>Arkadaşlarınızı davet edin, onların her kazancından %40 bonus kazanın!</p>
-                    <div class="ref-box">
-                        <div class="ref-link">
-                            <input type="text" id="refLink" class="form-control" readonly>
-                            <button class="btn btn-primary" onclick="copyRefLink()">
-                                <i class="fas fa-copy"></i> Kopyala
-                            </button>
-                        </div>
-                        <div class="ref-stats">
-                            <div class="stat-card">
-                                <div class="stat-value" id="refCount">0</div>
-                                <div>Toplam Referans</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value" id="refEarnings">0 DGB</div>
-                                <div>Referans Kazancı</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="loading">
         <div class="loading-spinner"></div>
     </div>
 
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">DGB Faucet</div>
+            <div class="user-info">
+                <div class="balance">Bakiye: <span id="userBalance">0</span> DGB</div>
+                <button class="logout-btn" onclick="logout()">Çıkış</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="openTab('faucet')">Faucet</button>
+            <button class="tab" onclick="openTab('ptc')">PTC Reklamlar</button>
+            <button class="tab" onclick="openTab('withdraw')">Para Çek</button>
+            <button class="tab" onclick="openTab('referral')">Referans</button>
+        </div>
+
+        <!-- Faucet Tab -->
+        <div id="faucet" class="tab-content active">
+            <div class="card">
+                <div class="card-title">DGB Kazan</div>
+                <button class="btn btn-primary" id="claimButton" onclick="claim()">
+                    Claim (0.0078673589 DGB)
+                </button>
+                <div id="claimMessage" class="message"></div>
+                <div style="margin-top: 2rem;">
+                    <div class="card-title">Son İşlemler</div>
+                    <div id="claimHistory"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PTC Tab -->
+        <div id="ptc" class="tab-content">
+            <div class="card">
+                <div class="card-title">PTC Reklamlar</div>
+                <div id="ptcList" class="ptc-list">
+                    <!-- Reklamlar buraya yüklenecek -->
+                </div>
+                <div id="ptcMessage" class="message"></div>
+            </div>
+        </div>
+
+        <!-- Withdraw Tab -->
+        <div id="withdraw" class="tab-content">
+            <div class="card">
+                <div class="card-title">Para Çek</div>
+                <div class="form-group">
+                    <label>Miktar (Min: 1 DGB)</label>
+                    <input type="number" id="withdrawAmount" class="form-control" min="1" step="0.0000001" placeholder="Çekilecek miktar">
+                </div>
+                <button class="btn btn-primary" onclick="withdraw()">Para Çek</button>
+                <div id="withdrawMessage" class="message"></div>
+                <div style="margin-top: 2rem;">
+                    <div class="card-title">Son İşlemler</div>
+                    <div id="withdrawHistory"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referral Tab -->
+        <div id="referral" class="tab-content">
+            <div class="card">
+                <div class="card-title">Referans Sistemi</div>
+                <p style="margin-bottom: 1rem; color: #4b5563;">
+                    Arkadaşlarınızı davet edin, onların her kazancından %40 bonus kazanın!
+                </p>
+                <div class="ref-box">
+                    <div class="ref-link">
+                        <input type="text" id="refLink" class="form-control" readonly>
+                        <button class="btn btn-primary" style="width: auto;" onclick="copyRefLink()">Kopyala</button>
+                    </div>
+                    <div class="ref-stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="refCount">0</div>
+                            <div class="stat-label">Toplam Referans</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="refEarnings">0 DGB</div>
+                            <div class="stat-label">Referans Kazancı</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-       // CORS için optimize edilmiş proxy yapılandırması
-const CORS_PROXY = {
-    MAIN: 'https://api.allorigins.win/raw?url=',
-    BACKUPS: [
-        'https://corsproxy.io/?',
-        'https://proxy.cors.sh/'
-    ],
-    current: 0,
-    timeout: 5000,
-
-    get: function() {
-        if (this.current >= this.BACKUPS.length) {
-            this.current = 0;
-            return this.MAIN;
-        }
-        return this.BACKUPS[this.current];
-    },
-
-    next: function() {
-        this.current++;
-        return this.get();
-    }
-};
-
-// Cache mekanizması
-const cache = {
-    data: new Map(),
-    timeout: 30000, // 30 saniye cache süresi
-
-    set: function(key, value) {
-        this.data.set(key, {
-            value: value,
-            timestamp: Date.now()
-        });
-    },
-
-    get: function(key) {
-        const item = this.data.get(key);
-        if (!item) return null;
-        
-        if (Date.now() - item.timestamp > this.timeout) {
-            this.data.delete(key);
-            return null;
-        }
-        
-        return item.value;
-    }
-};
-
-// Sabitler
-const CONFIG = {
-    JSONBIN_API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W',
-    JSONBIN_BIN_ID: '67a7a415e41b4d34e4867ffe',
-    FAUCETPAY_API_KEY: 'a5a15c7cc4b4d4c6a0cab0cb5d2b2ce3388070028e2c5cf37284f627975cb9ed',
-    CLAIM_AMOUNT: 0.0078673589,
-    MIN_WITHDRAW: 1.0,
-    REF_COMMISSION: 0.40,
-    BASE_URL: 'https://earn-dgb.netlify.app'
-};
-
-// Global değişkenler
-let userEmail = localStorage.getItem('userEmail');
-let userBalance = parseFloat(localStorage.getItem('balance') || '0');
-let canClaim = true;
-
-// Optimize edilmiş fetch fonksiyonu
-async function fetchWithCORS(url, options = {}) {
-    let lastError;
-    let proxyUrl;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), CORS_PROXY.timeout);
-
-    do {
-        try {
-            proxyUrl = CORS_PROXY.get() + encodeURIComponent(url);
-            const response = await fetch(proxyUrl, {
-                ...options,
-                signal: controller.signal,
-                headers: {
-                    ...options.headers,
-                    'Origin': window.location.origin,
-                    'Cache-Control': 'no-cache'
-                }
-            });
-
-            clearTimeout(timeoutId);
-            
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response;
-
-        } catch (error) {
-            lastError = error;
-            if (error.name === 'AbortError') {
-                console.log('Request timed out, trying next proxy...');
+        // API ve Config
+        const API = {
+            BASE_URL: 'http://localhost:8000/api',
+            ENDPOINTS: {
+                USER: '/user',
+                CLAIM: '/claim',
+                WITHDRAW: '/withdraw',
+                PTC_ADS: '/ptc-ads',
+                VIEW_PTC: '/view-ptc'
             }
-            CORS_PROXY.next();
-        }
-    } while (CORS_PROXY.current < CORS_PROXY.BACKUPS.length);
-
-    throw lastError;
-}
-
-// Optimize edilmiş JSONBin request fonksiyonu
-async function jsonbinRequest(method = 'GET', body = null) {
-    const cacheKey = `jsonbin_${method}_${JSON.stringify(body)}`;
-    
-    if (method === 'GET') {
-        const cachedData = cache.get(cacheKey);
-        if (cachedData) return cachedData;
-    }
-
-    const options = {
-        method,
-        headers: {
-            'X-Master-Key': CONFIG.JSONBIN_API_KEY,
-            'Content-Type': 'application/json',
-            'X-Bin-Versioning': false
-        }
-    };
-
-    if (body) {
-        options.body = JSON.stringify(body);
-    }
-
-    try {
-        const response = await fetchWithCORS(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, options);
-        const data = await response.json();
-        
-        if (method === 'GET') {
-            cache.set(cacheKey, data);
-        }
-        
-        return data;
-    } catch (error) {
-        console.error('JSONBin API hatası:', error);
-        throw new Error('Veri işleme hatası oluştu');
-    }
-}
-
-// Loading animasyonunu optimize et
-function toggleLoading(show) {
-    const loadingEl = document.querySelector('.loading');
-    if (show) {
-        loadingEl.style.display = 'flex';
-        setTimeout(() => {
-            if (loadingEl.style.display === 'flex') {
-                loadingEl.style.display = 'none';
-                showMessage('claimMessage', 'İşlem zaman aşımına uğradı, lütfen tekrar deneyin.', 'warning');
-            }
-        }, 10000);
-    } else {
-        loadingEl.style.display = 'none';
-    }
-}
-        // Sayfa yüklendiğinde
-window.onload = async function() {
-    if (!userEmail) {
-        window.location.href = 'login.html';
-        return;
-    }
-    await initializeApp();
-};
-
-// Optimize edilmiş uygulama başlatma
-async function initializeApp() {
-    try {
-        toggleLoading(true);
-        
-        // Paralel veri yükleme
-        const [userData, history, ptcAds] = await Promise.all([
-            loadUserData(),
-            loadHistory(),
-            loadPtcAds()
-        ]);
-
-        initializeReferral();
-        document.getElementById('timeLeft').textContent = 'Hazır!';
-    } catch (error) {
-        console.error('Başlangıç hatası:', error);
-        showMessage('claimMessage', 'Bir hata oluştu', 'error');
-    } finally {
-        toggleLoading(false);
-    }
-}
-
-// Kullanıcı verilerini yükleme
-async function loadUserData() {
-    try {
-        const data = await jsonbinRequest('GET');
-        const user = data.record.users.find(u => u.email === userEmail);
-
-        if (!user) {
-            throw new Error('Kullanıcı bulunamadı');
-        }
-
-        userBalance = user.balance || 0;
-        localStorage.setItem('balance', userBalance);
-        document.getElementById('userBalance').textContent = userBalance.toFixed(8);
-        document.getElementById('faucetpayEmail').value = user.email || '';
-
-        return user;
-    } catch (error) {
-        console.error('Veri yükleme hatası:', error);
-        throw error;
-    }
-}
-
-// Claim işlemi
-async function claim() {
-    try {
-        toggleLoading(true);
-        const data = await jsonbinRequest('GET');
-        const userIndex = data.record.users.findIndex(u => u.email === userEmail);
-
-        // Referrer komisyonu
-        if (data.record.users[userIndex].referrer) {
-            const referrerIndex = data.record.users.findIndex(u => u.email === data.record.users[userIndex].referrer);
-            if (referrerIndex !== -1) {
-                const commission = CONFIG.CLAIM_AMOUNT * CONFIG.REF_COMMISSION;
-                data.record.users[referrerIndex].balance = (data.record.users[referrerIndex].balance || 0) + commission;
-                data.record.users[referrerIndex].referralEarnings = (data.record.users[referrerIndex].referralEarnings || 0) + commission;
-            }
-        }
-
-        data.record.users[userIndex].balance += CONFIG.CLAIM_AMOUNT;
-        data.record.users[userIndex].lastClaim = new Date().toISOString();
-
-        if (!data.record.users[userIndex].claimHistory) {
-            data.record.users[userIndex].claimHistory = [];
-        }
-
-        data.record.users[userIndex].claimHistory.push({
-            amount: CONFIG.CLAIM_AMOUNT,
-            timestamp: new Date().toISOString()
-        });
-
-        await jsonbinRequest('PUT', data.record);
-
-        userBalance += CONFIG.CLAIM_AMOUNT;
-        localStorage.setItem('balance', userBalance);
-        document.getElementById('userBalance').textContent = userBalance.toFixed(8);
-
-        showMessage('claimMessage', `Başarılı! ${CONFIG.CLAIM_AMOUNT} DGB kazandınız!`, 'success');
-        await loadHistory();
-
-    } catch (error) {
-        console.error('Claim hatası:', error);
-        showMessage('claimMessage', 'Claim işlemi başarısız', 'error');
-    } finally {
-        toggleLoading(false);
-    }
-}
-
-// FaucetPay API çağrıları için yardımcı fonksiyon
-async function faucetpayRequest(endpoint, params) {
-    const formData = new URLSearchParams({
-        api_key: CONFIG.FAUCETPAY_API_KEY,
-        ...params
-    });
-
-    try {
-        const response = await fetchWithCORS(`https://faucetpay.io/api/v1/${endpoint}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formData
-        });
-        
-        return await response.json();
-    } catch (error) {
-        console.error('FaucetPay API hatası:', error);
-        throw new Error('FaucetPay işlemi başarısız');
-    }
-}
-
-// Para çekme işlemi
-async function withdraw() {
-    const amount = parseFloat(document.getElementById('withdrawAmount').value);
-    
-    if (!amount || amount < CONFIG.MIN_WITHDRAW) {
-        showMessage('withdrawMessage', `Minimum çekim tutarı ${CONFIG.MIN_WITHDRAW} DGB`, 'error');
-        return;
-    }
-
-    if (amount > userBalance) {
-        showMessage('withdrawMessage', 'Yetersiz bakiye', 'error');
-        return;
-    }
-
-    try {
-        toggleLoading(true);
-
-        const accountResult = await faucetpayRequest('checkaddress', {
-            address: userEmail,
-            currency: 'DGB'
-        });
-        
-        if (!accountResult.status) {
-            throw new Error('Geçersiz FaucetPay hesabı');
-        }
-
-        const data = await jsonbinRequest('GET');
-        const userIndex = data.record.users.findIndex(u => u.email === userEmail);
-
-        data.record.users[userIndex].balance -= amount;
-        
-        if (!data.record.users[userIndex].withdrawals) {
-            data.record.users[userIndex].withdrawals = [];
-        }
-
-        const withdrawalData = {
-            amount: amount,
-            email: userEmail,
-            timestamp: new Date().toISOString(),
-            status: 'pending'
         };
 
-        data.record.users[userIndex].withdrawals.push(withdrawalData);
+        const CONFIG = {
+            CLAIM_AMOUNT: 0.0078673589,
+            MIN_WITHDRAW: 1.0,
+            REF_COMMISSION: 0.40,
+            BASE_URL: window.location.origin
+        };
 
-        await jsonbinRequest('PUT', data.record);
+        let userEmail = localStorage.getItem('userEmail');
+        let userBalance = parseFloat(localStorage.getItem('balance') || '0');
 
-        userBalance -= amount;
-        localStorage.setItem('balance', userBalance);
-        document.getElementById('userBalance').textContent = userBalance.toFixed(8);
-        document.getElementById('withdrawAmount').value = '';
+        // API istekleri için yardımcı fonksiyon
+        async function apiRequest(endpoint, options = {}) {
+            const loading = document.querySelector('.loading');
+            try {
+                loading.style.display = 'flex';
+                const response = await fetch(`${API.BASE_URL}${endpoint}`, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
 
-        showMessage('withdrawMessage', `${amount} DGB çekim talebiniz alındı. Admin onayından sonra FaucetPay hesabınıza gönderilecek.`, 'success');
-        await loadHistory();
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'API request failed');
+                }
 
-    } catch (error) {
-        console.error('Para çekme hatası:', error);
-        showMessage('withdrawMessage', 'Para çekme işlemi başarısız: ' + error.message, 'error');
-    } finally {
-        toggleLoading(false);
-    }
-}
-        // PTC reklamları yükleme
-async function loadPtcAds() {
-    const ptcList = document.getElementById('ptcList');
-    try {
-        const data = await jsonbinRequest('GET');
-        const ads = data.record.ptcAds || [];
-        
-        if (ads.length > 0) {
-            ptcList.innerHTML = ads.map(ad => `
-                <div class="ptc-ad">
-                    <h3>${ad.title}</h3>
-                    <p>${ad.description}</p>
-                    <button class="btn btn-primary" onclick="viewPtcAd('${ad.id}')">
-                        <i class="fas fa-eye"></i> Reklamı Görüntüle (${ad.reward} DGB)
-                    </button>
-                </div>
-            `).join('');
-        } else {
-            ptcList.innerHTML = '<p>Şu anda aktif reklam bulunmuyor.</p>';
-        }
-    } catch (error) {
-        console.error('PTC reklamları yükleme hatası:', error);
-        ptcList.innerHTML = '<p>Reklamlar yüklenemedi.</p>';
-    }
-}
-
-// PTC reklam görüntüleme
-async function viewPtcAd(adId) {
-    try {
-        const data = await jsonbinRequest('GET');
-        const userIndex = data.record.users.findIndex(u => u.email === userEmail);
-        const ad = data.record.ptcAds.find(a => a.id === adId);
-
-        if (ad && userIndex !== -1) {
-            data.record.users[userIndex].balance += ad.reward;
-
-            if (!data.record.users[userIndex].ptcHistory) {
-                data.record.users[userIndex].ptcHistory = [];
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            } finally {
+                loading.style.display = 'none';
             }
+        }
+
+        // Uygulama başlatma
+        async function initializeApp() {
+            try {
+                await Promise.all([
+                    loadUserData(),
+                    loadHistory(),
+                    loadPtcAds()
+                ]);
+                initializeReferral();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showMessage('claimMessage', 'Uygulama başlatılamadı', 'error');
+            }
+        }
+
+        // Kullanıcı verilerini yükleme
+        async function loadUserData() {
+            try {
+                const data = await apiRequest(`${API.ENDPOINTS.USER}/${userEmail}`);
+                userBalance = data.balance || 0;
+                localStorage.setItem('balance', userBalance);
+                document.getElementById('userBalance').textContent = userBalance.toFixed(8);
+                return data;
+            } catch (error) {
+                console.error('User data loading error:', error);
+                throw error;
+            }
+        }
+
+        // Claim işlemi
+        async function claim() {
+            try {
+                const data = await apiRequest(API.ENDPOINTS.CLAIM, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email: userEmail,
+                        amount: CONFIG.CLAIM_AMOUNT
+                    })
+                });
+
+                userBalance = data.newBalance;
+                localStorage.setItem('balance', userBalance);
+                document.getElementById('userBalance').textContent = userBalance.toFixed(8);
+
+                showMessage('claimMessage', `Başarılı! ${CONFIG.CLAIM_AMOUNT} DGB kazandınız!`, 'success');
+                await loadHistory();
+            } catch (error) {
+                showMessage('claimMessage', 'Claim işlemi başarısız: ' + error.message, 'error');
+            }
+        }
+
+        // Para çekme işlemi
+        async function withdraw() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
             
-            data.record.users[userIndex].ptcHistory.push({
-                adId: adId,
-                amount: ad.reward,
-                timestamp: new Date().toISOString()
+            if (!amount || amount < CONFIG.MIN_WITHDRAW) {
+                showMessage('withdrawMessage', `Minimum çekim tutarı ${CONFIG.MIN_WITHDRAW} DGB`, 'error');
+                return;
+            }
+
+            try {
+                const data = await apiRequest(API.ENDPOINTS.WITHDRAW, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email: userEmail,
+                        amount: amount
+                    })
+                });
+
+                userBalance = data.newBalance;
+                localStorage.setItem('balance', userBalance);
+                document.getElementById('userBalance').textContent = userBalance.toFixed(8);
+                document.getElementById('withdrawAmount').value = '';
+
+                showMessage('withdrawMessage', `${amount} DGB çekim talebiniz alındı`, 'success');
+                await loadHistory();
+            } catch (error) {
+                showMessage('withdrawMessage', 'Para çekme işlemi başarısız: ' + error.message, 'error');
+            }
+        }
+
+        // PTC reklamları yükleme
+        async function loadPtcAds() {
+            const ptcList = document.getElementById('ptcList');
+            try {
+                const ads = await apiRequest(API.ENDPOINTS.PTC_ADS);
+                
+                if (ads.length > 0) {
+                    ptcList.innerHTML = ads.map(ad => `
+                        <div class="ptc-ad" id="ptc-${ad.id}">
+                            <h3>${ad.title}</h3>
+                            <p>${ad.description}</p>
+                            <div class="view-btn" onclick="viewPtcAd('${ad.id}', ${ad.reward})">
+                                <span>Reklamı Görüntüle</span>
+                                <span class="reward-text">${ad.reward} DGB</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    ptcList.innerHTML = '<div class="ptc-ad"><p>Şu anda aktif reklam bulunmuyor.</p></div>';
+                }
+            } catch (error) {
+                console.error('PTC ads loading error:', error);
+                ptcList.innerHTML = '<div class="ptc-ad"><p>Reklamlar yüklenemedi.</p></div>';
+            }
+        }
+
+        // PTC reklam görüntüleme
+        async function viewPtcAd(adId, reward) {
+            try {
+                const data = await apiRequest(API.ENDPOINTS.VIEW_PTC, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email: userEmail,
+                        ad_id: adId
+                    })
+                });
+
+                userBalance = data.newBalance;
+                localStorage.setItem('balance', userBalance);
+                document.getElementById('userBalance').textContent = userBalance.toFixed(8);
+
+                showMessage('ptcMessage', `Tebrikler! ${reward} DGB kazandınız!`, 'success');
+                
+                // Reklamı listeden kaldır
+                const adElement = document.getElementById(`ptc-${adId}`);
+                adElement.style.opacity = '0';
+                setTimeout(() => adElement.remove(), 300);
+                
+            } catch (error) {
+                showMessage('ptcMessage', 'Reklam görüntülenemedi: ' + error.message, 'error');
+            }
+        }
+
+        // İşlem geçmişini yükleme
+        async function loadHistory() {
+            try {
+                const data = await loadUserData();
+                
+                // Claim geçmişi
+                const claimHistory = document.getElementById('claimHistory');
+                if (data.claim_history && data.claim_history.length > 0) {
+                    claimHistory.innerHTML = data.claim_history
+                        .slice(-5)
+                        .reverse()
+                        .map(claim => `
+                            <div class="history-item">
+                                <span>${claim.amount} DGB</span>
+                                <span>${new Date(claim.timestamp).toLocaleString()}</span>
+                            </div>
+                        `).join('');
+                } else {
+                    claimHistory.innerHTML = '<p>Henüz claim yapılmamış.</p>';
+                }
+
+                // Çekim geçmişi
+                const withdrawHistory = document.getElementById('withdrawHistory');
+                if (data.withdrawals && data.withdrawals.length > 0) {
+                    withdrawHistory.innerHTML = data.withdrawals
+                        .slice(-5)
+                        .reverse()
+                        .map(withdraw => `
+                            <div class="history-item">
+                                <span>${withdraw.amount} DGB (${withdraw.status})</span>
+                                <span>${new Date(withdraw.timestamp).toLocaleString()}</span>
+                            </div>
+                        `).join('');
+                } else {
+                    withdrawHistory.innerHTML = '<p>Henüz çekim yapılmamış.</p>';
+                }
+            } catch (error) {
+                console.error('History loading error:', error);
+            }
+        }
+
+        // Referral sistemi
+        function initializeReferral() {
+            const refLink = `${CONFIG.BASE_URL}?ref=${btoa(userEmail)}`;
+            document.getElementById('refLink').value = refLink;
+            updateReferralStats();
+        }
+
+        async function updateReferralStats() {
+            try {
+                const data = await loadUserData();
+                document.getElementById('refCount').textContent = data.ref_count || 0;
+                document.getElementById('refEarnings').textContent = (data.referral_earnings || 0).toFixed(8) + ' DGB';
+            } catch (error) {
+                console.error('Referral stats update error:', error);
+            }
+        }
+
+        function copyRefLink() {
+            const refLink = document.getElementById('refLink');
+            refLink.select();
+            document.execCommand('copy');
+            showMessage('referralMessage', 'Referans linki kopyalandı!', 'success');
+        }
+
+        // Yardımcı fonksiyonlar
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
-
-            await jsonbinRequest('PUT', data.record);
-
-            userBalance += ad.reward;
-            localStorage.setItem('balance', userBalance);
-            document.getElementById('userBalance').textContent = userBalance.toFixed(8);
-
-            showMessage('ptcMessage', `Tebrikler! ${ad.reward} DGB kazandınız!`, 'success');
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
             
-            // Reklam görüntülendikten sonra listeden kaldır
-            document.querySelector(`[onclick="viewPtcAd('${adId}')"]`).closest('.ptc-ad').remove();
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
         }
-    } catch (error) {
-        console.error('PTC reklam görüntüleme hatası:', error);
-        showMessage('ptcMessage', 'Reklam görüntülenemedi', 'error');
-    }
-}
 
-// Referans sistemi
-function initializeReferral() {
-    const refLink = `${CONFIG.BASE_URL}?ref=${btoa(userEmail)}`;
-    document.getElementById('refLink').value = refLink;
-    updateReferralStats();
-}
+        function showMessage(elementId, text, type) {
+            const message = document.getElementById(elementId);
+            message.textContent = text;
+            message.className = `message ${type}`;
+            message.style.display = 'block';
 
-// Geçmiş yükleme
-async function loadHistory() {
-    try {
-        const data = await jsonbinRequest('GET');
-        const user = data.record.users.find(u => u.email === userEmail);
-
-        if (user) {
-            updateClaimHistory(user.claimHistory || []);
-            updateWithdrawHistory(user.withdrawals || []);
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
         }
-    } catch (error) {
-        console.error('Geçmiş yükleme hatası:', error);
-    }
-}
 
-// Claim geçmişini güncelleme
-function updateClaimHistory(history) {
-    const historyDiv = document.getElementById('claimHistory');
-    const html = history
-        .slice(-5)
-        .reverse()
-        .map(claim => `
-            <div class="history-item">
-                <span><i class="fas fa-coins"></i> ${claim.amount} DGB</span>
-                <span>${new Date(claim.timestamp).toLocaleString()}</span>
-            </div>
-        `).join('') || '<p>Henüz claim yapılmamış.</p>';
-
-    historyDiv.innerHTML = html;
-}
-
-// Para çekme geçmişini güncelleme
-function updateWithdrawHistory(history) {
-    const historyDiv = document.getElementById('withdrawHistory');
-    const html = history
-        .slice(-5)
-        .reverse()
-        .map(withdraw => `
-            <div class="history-item">
-                <span>
-                    <i class="fas fa-paper-plane"></i> ${withdraw.amount} DGB
-                    ${withdraw.status === 'completed' ? 
-                        '<span class="badge bg-success">Tamamlandı</span>' : 
-                        '<span class="badge bg-warning">Beklemede</span>'}
-                </span>
-                <span>${new Date(withdraw.timestamp).toLocaleString()}</span>
-            </div>
-        `).join('') || '<p>Henüz çekim yapılmamış.</p>';
-
-    historyDiv.innerHTML = html;
-}
-
-// Referral istatistiklerini güncelleme
-async function updateReferralStats() {
-    try {
-        const data = await jsonbinRequest('GET');
-        const user = data.record.users.find(u => u.email === userEmail);
-
-        if (user) {
-            const refCount = data.record.users.filter(u => u.referrer === userEmail).length;
-            const refEarnings = user.referralEarnings || 0;
-
-            document.getElementById('refCount').textContent = refCount;
-            document.getElementById('refEarnings').textContent = refEarnings.toFixed(8) + ' DGB';
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
         }
-    } catch (error) {
-        console.error('Referans istatistikleri güncelleme hatası:', error);
-    }
-}
 
-// Referans linkini kopyalama
-function copyRefLink() {
-    const refLink = document.getElementById('refLink');
-    refLink.select();
-    document.execCommand('copy');
-    showMessage('referralMessage', 'Referans linki kopyalandı!', 'success');
-}
-
-// Mesaj gösterme
-function showMessage(elementId, text, type) {
-    const message = document.getElementById(elementId);
-    message.textContent = text;
-    message.className = `message ${type}`;
-    message.style.display = 'block';
-
-    setTimeout(() => {
-        message.style.display = 'none';
-    }, 5000);
-}
-
-// Tab değiştirme
-function openTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    document.getElementById(tabName).classList.add('active');
-    document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
-}
-
-// FaucetPay email kaydetme
-async function saveFaucetPayEmail() {
-    showMessage('faucetpayMessage', 'FaucetPay bağlantınız kayıtlı emailiniz ile otomatik sağlanmıştır.', 'info');
-}
-
-// Çıkış yapma
-function logout() {
-    localStorage.clear();
-    window.location.href = 'login.html';
-}
+        // Sayfa yüklendiğinde
+        window.onload = async function() {
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return;
+            }
+            await initializeApp();
+        };
     </script>
 </body>
 </html>
