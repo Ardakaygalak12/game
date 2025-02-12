@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGB Faucet | Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --error: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .header {
+            background: var(--card-bg);
+            padding: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo i {
+            color: var(--primary-color);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 5rem auto 2rem;
+            padding: 1rem;
+        }
+
+        .tabs {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .tab-nav {
+            display: flex;
+            background: var(--background);
+            padding: 0.5rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            color: var(--text-primary);
+            background: var(--card-bg);
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+            background: var(--card-bg);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--background);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid #334155;
+            color: var(--text-primary);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        th {
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .message.error { background: var(--error); color: white; }
+        .message.success { background: var(--success); color: white; }
+        .message.warning { background: var(--warning); color: white; }
+        .message.info { background: var(--info); color: white; }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 3px solid var(--text-secondary);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .tab-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .main-container {
+                margin-top: 8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i> DGB Faucet Admin
+            </div>
+            <button class="btn btn-danger" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Çıkış
+            </button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">Toplam Kullanıcı</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalClaims">0</div>
+                <div class="stat-label">Toplam Claim</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalWithdraws">0 DGB</div>
+                <div class="stat-label">Toplam Ödeme</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeAds">0</div>
+                <div class="stat-label">Aktif PTC Reklam</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab-nav">
+                <button class="tab-button active" onclick="openTab('users')">
+                    <i class="fas fa-users"></i> Kullanıcılar
+                </button>
+                <button class="tab-button" onclick="openTab('ptc')">
+                    <i class="fas fa-ad"></i> PTC Reklamlar
+                </button>
+                <button class="tab-button" onclick="openTab('withdrawals')">
+                    <i class="fas fa-money-bill-wave"></i> Ödemeler
+                </button>
+                <button class="tab-button" onclick="openTab('referrals')">
+                    <i class="fas fa-user-friends"></i> Referanslar
+                </button>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="users" class="tab-content active">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-users"></i> Kullanıcı Yönetimi
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="userSearch" class="form-control" placeholder="Kullanıcı ara...">
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>E-posta</th>
+                                    <th>Bakiye</th>
+                                    <th>Son Claim</th>
+                                    <th>Kayıt Tarihi</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PTC Tab -->
+            <div id="ptc" class="tab-content">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-ad"></i> PTC Reklam Yönetimi
+                    </div>
+                    <form id="ptcForm">
+                        <div class="form-group">
+                            <label>Reklam Başlığı</label>
+                            <input type="text" id="ptcTitle" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Açıklama</label>
+                            <textarea id="ptcDescription" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>URL</label>
+                            <input type="url" id="ptcUrl" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Bekleme Süresi (10-180 saniye)</label>
+                            <input type="number" id="ptcTimer" class="form-control" min="10" max="180" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ödül (DGB)</label>
+                            <input type="number" id="ptcReward" class="form-control" step="0.00000001" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Reklam Ekle
+                        </button>
+                    </form>
+                    <div id="ptcMessage" class="message"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Başlık</th>
+                                    <th>URL</th>
+                                    <th>Süre</th>
+                                    <th>Ödül</th>
+                                    <th>Görüntülenme</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ptcList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Withdrawals Tab -->
+            <div id="withdrawals" class="tab-content">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-money-bill-wave"></i> Ödeme Yönetimi
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Kullanıcı</th>
+                                    <th>Miktar</th>
+                                    <th>Tarih</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withdrawList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referrals Tab -->
+            <div id="referrals" class="tab-content">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-user-friends"></i> Referans Sıralaması
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Kullanıcı</th>
+                                    <th>Referans Sayısı</th>
+                                    <th>Toplam Kazanç</th>
+                                    <th>Son Referans</th>
+                                </tr>
+                            </thead>
+                            <tbody id="referralList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // Sabitler
+        const CONFIG = {
+            JSONBIN_API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W',
+            JSONBIN_BIN_ID: '67a7a415e41b4d34e4867ffe',
+            ADMIN_EMAIL: 'admin@dgbfaucet.com'
+        };
+
+        // Global değişkenler
+        let userData = null;
+
+        // Sayfa yüklendiğinde
+        window.onload = async function() {
+            if (!localStorage.getItem('isAdmin')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            await initializeAdmin();
+        };
+
+        // Admin panelini başlatma
+        async function initializeAdmin() {
+            try {
+                toggleLoading(true);
+                await loadData();
+                updateStats();
+                loadUsers();
+                loadPtcAds();
+                loadWithdrawals();
+                loadReferrals();
+            } catch (error) {
+                console.error('Başlatma hatası:', error);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        // Veri yükleme
+        async function loadData() {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
+                    headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
+                });
+                const data = await response.json();
+                userData = data.record;
+                return userData;
+            } catch (error) {
+                console.error('Veri yükleme hatası:', error);
+                throw error;
+            }
+        }
+
+        // İstatistikleri güncelleme
+        function updateStats() {
+            if (!userData) return;
+
+            const totalUsers = userData.users.length;
+            const totalClaims = userData.users.reduce((sum, user) => sum + (user.claimHistory?.length || 0), 0);
+            const totalWithdraws = userData.users.reduce((sum, user) => {
+                const withdrawAmount = user.withdrawals
+                    ?.filter(w => w.status === 'completed')
+                    ?.reduce((wSum, w) => wSum + w.amount, 0) || 0;
+                return sum + withdrawAmount;
+            }, 0);
+            const activeAds = userData.ptcAds?.filter(ad => !ad.disabled)?.length || 0;
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('totalClaims').textContent = totalClaims;
+            document.getElementById('totalWithdraws').textContent = totalWithdraws.toFixed(8) + ' DGB';
+            document.getElementById('activeAds').textContent = activeAds;
+        }
+
+        // Kullanıcıları yükleme
+        function loadUsers() {
+            if (!userData) return;
+
+            const userList = document.getElementById('userList');
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+
+            const filteredUsers = userData.users.filter(user => 
+                user.email.toLowerCase().includes(searchTerm)
+            );
+
+            userList.innerHTML = filteredUsers.map(user => `
+                <tr>
+                    <td>${user.email}</td>
+                    <td>${user.balance?.toFixed(8) || 0} DGB</td>
+                    <td>${user.lastClaim ? new Date(user.lastClaim).toLocaleString() : '-'}</td>
+                    <td>${new Date(user.createdAt).toLocaleString()}</td>
+                    <td>
+                        <button class="btn btn-warning" onclick="editBalance('${user.email}')">
+                            <i class="fas fa-coins"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="banUser('${user.email}')">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Bakiye düzenleme
+        async function editBalance(email) {
+            const amount = prompt('Yeni bakiye miktarını girin:');
+            if (!amount) return;
+
+            try {
+                toggleLoading(true);
+                const user = userData.users.find(u => u.email === email);
+                if (!user) throw new Error('Kullanıcı bulunamadı');
+
+                user.balance = parseFloat(amount);
+
+                await updateData();
+                await loadData();
+                loadUsers();
+                updateStats();
+
+                showMessage('userMessage', 'Bakiye güncellendi', 'success');
+            } catch (error) {
+                console.error('Bakiye güncelleme hatası:', error);
+                showMessage('userMessage', 'Bakiye güncellenemedi', 'error');
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        // Kullanıcı banlama
+        async function banUser(email) {
+            if (!confirm(`${email} kullanıcısını banlamak istediğinize emin misiniz?`)) return;
+
+            try {
+                toggleLoading(true);
+                userData.users = userData.users.filter(u => u.email !== email);
+
+                await updateData();
+                await loadData();
+                loadUsers();
+                updateStats();
+
+                showMessage('userMessage', 'Kullanıcı banlandı', 'success');
+            } catch (error) {
+                console.error('Kullanıcı banlama hatası:', error);
+                showMessage('userMessage', 'Kullanıcı banlanamadı', 'error');
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        // PTC reklamları yükleme
+        function loadPtcAds() {
+            if (!userData) return;
+
+            const ptcList = document.getElementById('ptcList');
+            const ads = userData.ptcAds || [];
+
+            ptcList.innerHTML = ads.map(ad => `
+                <tr>
+                    <td>${ad.title}</td>
+                    <td>${ad.url}</td>
+                    <td>${ad.timer} saniye</td>
+                    <td>${ad.reward} DGB</td>
+                    <td>${ad.views || 0}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteAd('${ad.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // PTC reklam ekleme
+        document.getElementById('ptcForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('ptcTitle').value;
+            const description = document.getElementById('ptcDescription').value;
+            const url = document.getElementById('ptcUrl').value;
+            const timer = parseInt(document.getElementById('ptcTimer').value);
+            const reward = parseFloat(document.getElementById('ptcReward').value);
+
+            if (timer < 10 || timer > 180) {
+                showMessage('ptcMessage', 'Süre 10-180 saniye arasında olmalıdır', 'error');
+                return;
+            }
+
+            try {
+                toggleLoading(true);
+
+                if (!userData.ptcAds) userData.ptcAds = [];
+
+                userData.ptcAds.push({
+                    id: Date.now().toString(),
+                    title,
+                    description,
+                    url,
+                    timer,
+                    reward,
+                    views: 0,
+                    createdAt: new Date().toISOString()
+                });
+
+                await updateData();
+                await loadData();
+                loadPtcAds();
+                updateStats();
+
+                e.target.reset();
+                showMessage('ptcMessage', 'Reklam eklendi', 'success');
+            } catch (error) {
+                console.error('Reklam ekleme hatası:', error);
+                showMessage('ptcMessage', 'Reklam eklenemedi', 'error');
+            } finally {
+                toggleLoading(false);
+            }
+        });
+
+        // PTC reklam silme
+        async function deleteAd(adId) {
+            if (!confirm('Reklamı silmek istediğinize emin misiniz?')) return;
+
+            try {
+                toggleLoading(true);
+                userData.ptcAds = userData.ptcAds.filter(ad => ad.id !== adId);
+
+                await updateData();
+                await loadData();
+                loadPtcAds();
+                updateStats();
+
+                showMessage('ptcMessage', 'Reklam silindi', 'success');
+            } catch (error) {
+                console.error('Reklam silme hatası:', error);
+                showMessage('ptcMessage', 'Reklam silinemedi', 'error');
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        // Ödemeleri yükleme
+        function loadWithdrawals() {
+            if (!userData) return;
+
+            const withdrawList = document.getElementById('withdrawList');
+            const withdrawals = userData.users.reduce((all, user) => {
+                const userWithdrawals = (user.withdrawals || []).map(w => ({
+                    ...w,
+                    email: user.email
+                }));
+                return [...all, ...userWithdrawals];
+            }, []);
+
+            withdrawList.innerHTML = withdrawals
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .map(w => `
+                    <tr>
+                        <td>${w.email}</td>
+                        <td>${w.amount} DGB</td>
+                        <td>${new Date(w.timestamp).toLocaleString()}</td>
+                        <td>
+                            <span class="badge ${w.status === 'completed' ? 'success' : 'warning'}">
+                                ${w.status === 'completed' ? 'Tamamlandı' : 'Bekliyor'}
+                            </span>
+                        </td>
+                        <td>
+                            ${w.status === 'pending' ? `
+                                <button class="btn btn-success" onclick="approveWithdraw('${w.email}', '${w.timestamp}')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-danger" onclick="rejectWithdraw('${w.email}', '${w.timestamp}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            ` : '-'}
+                        </td>
+                    </tr>
+                `).join('');
+        }
+
+        // Ödeme onaylama
+        async function approveWithdraw(email, timestamp) {
+            try {
+                toggleLoading(true);
+                const user = userData.users.find(u => u.email === email);
+                if (!user) throw new Error('Kullanıcı bulunamadı');
+
+                const withdrawal = user.withdrawals.find(w => w.timestamp === timestamp);
+                if (!withdrawal) throw new Error('Ödeme bulunamadı');
+
+                withdrawal.status = 'completed';
+                withdrawal.completedAt = new Date().toISOString();
+
+                await updateData();
+                await loadData();
+                loadWithdrawals();
+                updateStats();
+
+                showMessage('withdrawMessage', 'Ödeme onaylandı', 'success');
+            } catch (error) {
+                console.error('Ödeme onaylama hatası:', error);
+                showMessage('withdrawMessage', 'Ödeme onaylanamadı', 'error');
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        // Ödeme reddetme
+        async function rejectWithdraw(email, timestamp) {
+            try {
+                toggleLoading(true);
+                const user = userData.users.find(u => u.email === email);
+                if (!user) throw new Error('Kullanıcı bulunamadı');
+
+                const withdrawal = user.withdrawals.find(w => w.timestamp === timestamp);
+                if (!withdrawal) throw new Error('Ödeme bulunamadı');
+
+                // Bakiyeyi iade et
+                user.balance += withdrawal.amount;
+                user.withdrawals = user.withdrawals.filter(w => w.timestamp !== timestamp);
+
+                await updateData();
+                await loadData();
+                loadWithdrawals();
+                updateStats();
+
+                showMessage('withdrawMessage', 'Ödeme reddedildi ve bakiye iade edildi', 'success');
+            } catch (error) {
+                console.error('Ödeme reddetme hatası:', error);
+                showMessage('withdrawMessage', 'Ödeme reddedilemedi', 'error');
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        // Referansları yükleme
+        function loadReferrals() {
+            if (!userData) return;
+
+            const referralList = document.getElementById('referralList');
+            const referralStats = userData.users.map(user => {
+                const referrals = userData.users.filter(u => u.referrer === user.email);
+                const totalEarnings = user.referralEarnings || 0;
+                const lastReferral = referrals.length > 0 
+                    ? referrals.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0].createdAt
+                    : null;
+
+                return {
+                    email: user.email,
+                    count: referrals.length,
+                    earnings: totalEarnings,
+                    lastReferral
+                };
+            }).sort((a, b) => b.count - a.count);
+
+            referralList.innerHTML = referralStats
+                .filter(stat => stat.count > 0)
+                .map(stat => `
+                    <tr>
+                        <td>${stat.email}</td>
+                        <td>${stat.count}</td>
+                        <td>${stat.earnings.toFixed(8)} DGB</td>
+                        <td>${stat.lastReferral ? new Date(stat.lastReferral).toLocaleString() : '-'}</td>
+                    </tr>
+                `).join('');
+        }
+
+        // Veri güncelleme
+        async function updateData() {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': CONFIG.JSONBIN_API_KEY
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) throw new Error('Veri güncellenemedi');
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Veri güncelleme hatası:', error);
+                throw error;
+            }
+        }
+
+        // Tab değiştirme
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // Arama fonksiyonu
+        document.getElementById('userSearch').addEventListener('input', () => {
+            loadUsers();
+        });
+
+        // Loading göstergesi
+        function toggleLoading(show) {
+            document.querySelector('.loading').style.display = show ? 'flex' : 'none';
+        }
+
+        // Mesaj gösterme
+        function showMessage(elementId, text, type) {
+            const message = document.getElementById(elementId);
+            if (!message) return;
+
+            message.textContent = text;
+            message.className = `message ${type}`;
+            message.style.display = 'block';
+
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        }
+
+        // Çıkış yapma
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Otomatik yenileme
+        setInterval(async () => {
+            await loadData();
+            updateStats();
+            loadUsers();
+            loadPtcAds();
+            loadWithdrawals();
+            loadReferrals();
+        }, 60000); // Her 1 dakikada bir yenile
+
+        // Sayfa ilk yüklendiğinde veri kontrolü
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!userData) {
+                await loadData();
+            }
+        });
+
+        // Kullanıcı girişi kontrolü
+        function checkAuth() {
+            const isAdmin = localStorage.getItem('isAdmin');
+            const userEmail = localStorage.getItem('userEmail');
+
+            if (!isAdmin || userEmail !== CONFIG.ADMIN_EMAIL) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Sayfa yüklendiğinde yetki kontrolü
+        checkAuth();
+    </script>
+</body>
+</html>
