@@ -7,193 +7,133 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2563eb;
+            --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --background: #0f172a;
-            --card-bg: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --error: #ef4444;
+            --danger: #ef4444;
             --success: #22c55e;
-            --warning: #eab308;
-            --info: #3b82f6;
+            --warning: #f59e0b;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background: var(--background);
-            color: var(--text-primary);
+            background: #f8fafc;
             min-height: 100vh;
-            line-height: 1.5;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 1rem;
+        }
+
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #64748b;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .nav-item.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .nav-item i {
+            width: 1.5rem;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
         }
 
         .header {
-            background: var(--card-bg);
-            padding: 1rem;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .logo i {
-            color: var(--primary-color);
-        }
-
-        .main-container {
-            max-width: 1200px;
-            margin: 5rem auto 2rem;
-            padding: 1rem;
-        }
-
-        .tabs {
-            background: var(--card-bg);
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-
-        .tab-nav {
-            display: flex;
-            background: var(--background);
-            padding: 0.5rem;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .tab-button {
-            padding: 0.75rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 1rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .tab-button:hover {
-            color: var(--text-primary);
-            background: var(--card-bg);
-        }
-
-        .tab-button.active {
-            color: var(--primary-color);
-            background: var(--card-bg);
-            font-weight: 600;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 2rem;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
         .card {
-            background: var(--background);
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             padding: 1.5rem;
-            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 1.5rem;
         }
 
         .card-title {
-            font-size: 1.25rem;
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 1.125rem;
             font-weight: 600;
+            color: #1e293b;
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
-        .form-group label {
-            display: block;
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
             margin-bottom: 0.5rem;
-            color: var(--text-secondary);
         }
 
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: var(--card-bg);
-            border: 1px solid #334155;
-            color: var(--text-primary);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--error);
-            color: white;
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
         }
 
         .table-container {
@@ -203,44 +143,121 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
         }
 
         th, td {
-            padding: 1rem;
+            padding: 0.75rem 1rem;
             text-align: left;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         th {
-            background: var(--card-bg);
-            color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 600;
+            color: #1e293b;
+            background: #f8fafc;
         }
 
         tr:hover {
-            background: rgba(255, 255, 255, 0.02);
+            background: #f8fafc;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .message {
             padding: 1rem;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
             display: none;
         }
 
-        .message.error { background: var(--error); color: white; }
-        .message.success { background: var(--success); color: white; }
-        .message.warning { background: var(--warning); color: white; }
-        .message.info { background: var(--info); color: white; }
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
 
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Loading göstergesi */
         .loading {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(255, 255, 255, 0.8);
             display: none;
             justify-content: center;
             align-items: center;
@@ -250,8 +267,8 @@
         .loading-spinner {
             width: 2.5rem;
             height: 2.5rem;
-            border: 3px solid var(--text-secondary);
-            border-top-color: var(--primary-color);
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #2563eb;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -260,646 +277,401 @@
             to { transform: rotate(360deg); }
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
+            .sidebar {
+                display: none;
             }
 
-            .tab-button {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .main-container {
-                margin-top: 8rem;
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-shield-alt"></i> DGB Faucet Admin
-            </div>
-            <button class="btn btn-danger" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Çıkış
-            </button>
-        </div>
-    </div>
-
-    <div class="main-container">
-        <div class="grid">
-            <div class="stat-card">
-                <div class="stat-value" id="totalUsers">0</div>
-                <div class="stat-label">Toplam Kullanıcı</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalClaims">0</div>
-                <div class="stat-label">Toplam Claim</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalWithdraws">0 DGB</div>
-                <div class="stat-label">Toplam Ödeme</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="activeAds">0</div>
-                <div class="stat-label">Aktif PTC Reklam</div>
-            </div>
-        </div>
-
-        <div class="tabs">
-            <div class="tab-nav">
-                <button class="tab-button active" onclick="openTab('users')">
-                    <i class="fas fa-users"></i> Kullanıcılar
-                </button>
-                <button class="tab-button" onclick="openTab('ptc')">
-                    <i class="fas fa-ad"></i> PTC Reklamlar
-                </button>
-                <button class="tab-button" onclick="openTab('withdrawals')">
-                    <i class="fas fa-money-bill-wave"></i> Ödemeler
-                </button>
-                <button class="tab-button" onclick="openTab('referrals')">
-                    <i class="fas fa-user-friends"></i> Referanslar
-                </button>
-            </div>
-
-            <!-- Users Tab -->
-            <div id="users" class="tab-content active">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-users"></i> Kullanıcı Yönetimi
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="userSearch" class="form-control" placeholder="Kullanıcı ara...">
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>E-posta</th>
-                                    <th>Bakiye</th>
-                                    <th>Son Claim</th>
-                                    <th>Kayıt Tarihi</th>
-                                    <th>İşlemler</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userList"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PTC Tab -->
-            <div id="ptc" class="tab-content">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-ad"></i> PTC Reklam Yönetimi
-                    </div>
-                    <form id="ptcForm">
-                        <div class="form-group">
-                            <label>Reklam Başlığı</label>
-                            <input type="text" id="ptcTitle" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Açıklama</label>
-                            <textarea id="ptcDescription" class="form-control" rows="3" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>URL</label>
-                            <input type="url" id="ptcUrl" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Bekleme Süresi (10-180 saniye)</label>
-                            <input type="number" id="ptcTimer" class="form-control" min="10" max="180" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Ödül (DGB)</label>
-                            <input type="number" id="ptcReward" class="form-control" step="0.00000001" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Reklam Ekle
-                        </button>
-                    </form>
-                    <div id="ptcMessage" class="message"></div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Başlık</th>
-                                    <th>URL</th>
-                                    <th>Süre</th>
-                                    <th>Ödül</th>
-                                    <th>Görüntülenme</th>
-                                    <th>İşlemler</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ptcList"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Withdrawals Tab -->
-            <div id="withdrawals" class="tab-content">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-money-bill-wave"></i> Ödeme Yönetimi
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Kullanıcı</th>
-                                    <th>Miktar</th>
-                                    <th>Tarih</th>
-                                    <th>Durum</th>
-                                    <th>İşlemler</th>
-                                </tr>
-                            </thead>
-                            <tbody id="withdrawList"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Referrals Tab -->
-            <div id="referrals" class="tab-content">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-user-friends"></i> Referans Sıralaması
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Kullanıcı</th>
-                                    <th>Referans Sayısı</th>
-                                    <th>Toplam Kazanç</th>
-                                    <th>Son Referans</th>
-                                </tr>
-                            </thead>
-                            <tbody id="referralList"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="loading">
         <div class="loading-spinner"></div>
     </div>
 
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-cog"></i>
+            Admin Panel
+        </div>
+        <nav>
+            <a href="#dashboard" class="nav-item active" onclick="showTab('dashboard')">
+                <i class="fas fa-chart-line"></i>
+                Dashboard
+            </a>
+            <a href="#users" class="nav-item" onclick="showTab('users')">
+                <i class="fas fa-users"></i>
+                Kullanıcılar
+            </a>
+            <a href="#settings" class="nav-item" onclick="showTab('settings')">
+                <i class="fas fa-cogs"></i>
+                Ayarlar
+            </a>
+            <a href="#" class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Çıkış
+            </a>
+        </nav>
+        </div>
+
+    <div class="main-content">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="header">
+                <h2>Dashboard</h2>
+                <div id="faucetBalance"></div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Toplam Kullanıcı</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalClaims">0</div>
+                    <div class="stat-label">Toplam Claim</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalWithdrawals">0 DGB</div>
+                    <div class="stat-label">Toplam Ödeme</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="bannedUsers">0</div>
+                    <div class="stat-label">Banlı Kullanıcı</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="tab-content">
+            <div class="header">
+                <h2>Kullanıcılar</h2>
+            </div>
+
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Bakiye</th>
+                                <th>Son Claim</th>
+                                <th>Referans</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersList">
+                            <!-- Kullanıcılar buraya yüklenecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="header">
+                <h2>Ayarlar</h2>
+            </div>
+
+            <div class="card">
+                <form id="settingsForm" onsubmit="saveSettings(event)">
+                    <div class="form-group">
+                        <label>Claim Ödül Miktarı (DGB)</label>
+                        <input type="number" id="claimAmount" class="form-control" step="0.00000001">
+                    </div>
+                    <div class="form-group">
+                        <label>Claim Bekleme Süresi (Dakika)</label>
+                        <input type="number" id="claimInterval" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Çekim Miktarı (DGB)</label>
+                        <input type="number" id="minWithdraw" class="form-control" step="0.00000001">
+                    </div>
+                    <div class="form-group">
+                        <label>Referans Komisyonu (%)</label>
+                        <input type="number" id="refCommission" class="form-control" step="0.1">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Ayarları Kaydet
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bakiye Düzenleme Modal -->
+    <div id="balanceModal" class="modal">
+        <div class="modal-content">
+            <h3>Bakiye Düzenle</h3>
+            <form id="balanceForm" onsubmit="adjustBalance(event)">
+                <input type="hidden" id="userEmail">
+                <div class="form-group">
+                    <label>Miktar (DGB)</label>
+                    <input type="number" id="balanceAmount" class="form-control" step="0.00000001" required>
+                    <small>Pozitif değer ekler, negatif değer çıkarır</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <button type="button" class="btn btn-danger" onclick="closeModal('balanceModal')">İptal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ban Modal -->
+    <div id="banModal" class="modal">
+        <div class="modal-content">
+            <h3>Kullanıcı Banla</h3>
+            <form id="banForm" onsubmit="banUser(event)">
+                <input type="hidden" id="banUserEmail">
+                <div class="form-group">
+                    <label>Ban Sebebi</label>
+                    <textarea id="banReason" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger">Banla</button>
+                <button type="button" class="btn btn-primary" onclick="closeModal('banModal')">İptal</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Sabitler
-        const CONFIG = {
-            JSONBIN_API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W',
-            JSONBIN_BIN_ID: '67a7a415e41b4d34e4867ffe',
-            ADMIN_EMAIL: 'admin@dgbfaucet.com'
+        const API = {
+            BASE_URL: 'http://localhost:8000/api',
+            ENDPOINTS: {
+                STATS: '/admin/stats',
+                USERS: '/admin/users',
+                SETTINGS: '/admin/settings',
+                ADJUST_BALANCE: '/admin/adjust-balance',
+                BAN_USER: '/admin/ban-user',
+                UNBAN_USER: '/admin/unban-user'
+            }
         };
 
-        // Global değişkenler
-        let userData = null;
-
-        // Sayfa yüklendiğinde
-        window.onload = async function() {
-            if (!localStorage.getItem('isAdmin')) {
+        // Admin kontrolü
+        function checkAdmin() {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (!isAdmin) {
                 window.location.href = 'login.html';
-                return;
-            }
-            await initializeAdmin();
-        };
-
-        // Admin panelini başlatma
-        async function initializeAdmin() {
-            try {
-                toggleLoading(true);
-                await loadData();
-                updateStats();
-                loadUsers();
-                loadPtcAds();
-                loadWithdrawals();
-                loadReferrals();
-            } catch (error) {
-                console.error('Başlatma hatası:', error);
-            } finally {
-                toggleLoading(false);
-            }
-        }
-
-        // Veri yükleme
-        async function loadData() {
-            try {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
-                    headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
-                });
-                const data = await response.json();
-                userData = data.record;
-                return userData;
-            } catch (error) {
-                console.error('Veri yükleme hatası:', error);
-                throw error;
-            }
-        }
-
-        // İstatistikleri güncelleme
-        function updateStats() {
-            if (!userData) return;
-
-            const totalUsers = userData.users.length;
-            const totalClaims = userData.users.reduce((sum, user) => sum + (user.claimHistory?.length || 0), 0);
-            const totalWithdraws = userData.users.reduce((sum, user) => {
-                const withdrawAmount = user.withdrawals
-                    ?.filter(w => w.status === 'completed')
-                    ?.reduce((wSum, w) => wSum + w.amount, 0) || 0;
-                return sum + withdrawAmount;
-            }, 0);
-            const activeAds = userData.ptcAds?.filter(ad => !ad.disabled)?.length || 0;
-
-            document.getElementById('totalUsers').textContent = totalUsers;
-            document.getElementById('totalClaims').textContent = totalClaims;
-            document.getElementById('totalWithdraws').textContent = totalWithdraws.toFixed(8) + ' DGB';
-            document.getElementById('activeAds').textContent = activeAds;
-        }
-
-        // Kullanıcıları yükleme
-        function loadUsers() {
-            if (!userData) return;
-
-            const userList = document.getElementById('userList');
-            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
-
-            const filteredUsers = userData.users.filter(user => 
-                user.email.toLowerCase().includes(searchTerm)
-            );
-
-            userList.innerHTML = filteredUsers.map(user => `
-                <tr>
-                    <td>${user.email}</td>
-                    <td>${user.balance?.toFixed(8) || 0} DGB</td>
-                    <td>${user.lastClaim ? new Date(user.lastClaim).toLocaleString() : '-'}</td>
-                    <td>${new Date(user.createdAt).toLocaleString()}</td>
-                    <td>
-                        <button class="btn btn-warning" onclick="editBalance('${user.email}')">
-                            <i class="fas fa-coins"></i>
-                        </button>
-                        <button class="btn btn-danger" onclick="banUser('${user.email}')">
-                            <i class="fas fa-ban"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Bakiye düzenleme
-        async function editBalance(email) {
-            const amount = prompt('Yeni bakiye miktarını girin:');
-            if (!amount) return;
-
-            try {
-                toggleLoading(true);
-                const user = userData.users.find(u => u.email === email);
-                if (!user) throw new Error('Kullanıcı bulunamadı');
-
-                user.balance = parseFloat(amount);
-
-                await updateData();
-                await loadData();
-                loadUsers();
-                updateStats();
-
-                showMessage('userMessage', 'Bakiye güncellendi', 'success');
-            } catch (error) {
-                console.error('Bakiye güncelleme hatası:', error);
-                showMessage('userMessage', 'Bakiye güncellenemedi', 'error');
-            } finally {
-                toggleLoading(false);
-            }
-        }
-
-        // Kullanıcı banlama
-        async function banUser(email) {
-            if (!confirm(`${email} kullanıcısını banlamak istediğinize emin misiniz?`)) return;
-
-            try {
-                toggleLoading(true);
-                userData.users = userData.users.filter(u => u.email !== email);
-
-                await updateData();
-                await loadData();
-                loadUsers();
-                updateStats();
-
-                showMessage('userMessage', 'Kullanıcı banlandı', 'success');
-            } catch (error) {
-                console.error('Kullanıcı banlama hatası:', error);
-                showMessage('userMessage', 'Kullanıcı banlanamadı', 'error');
-            } finally {
-                toggleLoading(false);
-            }
-        }
-
-        // PTC reklamları yükleme
-        function loadPtcAds() {
-            if (!userData) return;
-
-            const ptcList = document.getElementById('ptcList');
-            const ads = userData.ptcAds || [];
-
-            ptcList.innerHTML = ads.map(ad => `
-                <tr>
-                    <td>${ad.title}</td>
-                    <td>${ad.url}</td>
-                    <td>${ad.timer} saniye</td>
-                    <td>${ad.reward} DGB</td>
-                    <td>${ad.views || 0}</td>
-                    <td>
-                        <button class="btn btn-danger" onclick="deleteAd('${ad.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // PTC reklam ekleme
-        document.getElementById('ptcForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const title = document.getElementById('ptcTitle').value;
-            const description = document.getElementById('ptcDescription').value;
-            const url = document.getElementById('ptcUrl').value;
-            const timer = parseInt(document.getElementById('ptcTimer').value);
-            const reward = parseFloat(document.getElementById('ptcReward').value);
-
-            if (timer < 10 || timer > 180) {
-                showMessage('ptcMessage', 'Süre 10-180 saniye arasında olmalıdır', 'error');
-                return;
-            }
-
-            try {
-                toggleLoading(true);
-
-                if (!userData.ptcAds) userData.ptcAds = [];
-
-                userData.ptcAds.push({
-                    id: Date.now().toString(),
-                    title,
-                    description,
-                    url,
-                    timer,
-                    reward,
-                    views: 0,
-                    createdAt: new Date().toISOString()
-                });
-
-                await updateData();
-                await loadData();
-                loadPtcAds();
-                updateStats();
-
-                e.target.reset();
-                showMessage('ptcMessage', 'Reklam eklendi', 'success');
-            } catch (error) {
-                console.error('Reklam ekleme hatası:', error);
-                showMessage('ptcMessage', 'Reklam eklenemedi', 'error');
-            } finally {
-                toggleLoading(false);
-            }
-        });
-
-        // PTC reklam silme
-        async function deleteAd(adId) {
-            if (!confirm('Reklamı silmek istediğinize emin misiniz?')) return;
-
-            try {
-                toggleLoading(true);
-                userData.ptcAds = userData.ptcAds.filter(ad => ad.id !== adId);
-
-                await updateData();
-                await loadData();
-                loadPtcAds();
-                updateStats();
-
-                showMessage('ptcMessage', 'Reklam silindi', 'success');
-            } catch (error) {
-                console.error('Reklam silme hatası:', error);
-                showMessage('ptcMessage', 'Reklam silinemedi', 'error');
-            } finally {
-                toggleLoading(false);
-            }
-        }
-
-        // Ödemeleri yükleme
-        function loadWithdrawals() {
-            if (!userData) return;
-
-            const withdrawList = document.getElementById('withdrawList');
-            const withdrawals = userData.users.reduce((all, user) => {
-                const userWithdrawals = (user.withdrawals || []).map(w => ({
-                    ...w,
-                    email: user.email
-                }));
-                return [...all, ...userWithdrawals];
-            }, []);
-
-            withdrawList.innerHTML = withdrawals
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                .map(w => `
-                    <tr>
-                        <td>${w.email}</td>
-                        <td>${w.amount} DGB</td>
-                        <td>${new Date(w.timestamp).toLocaleString()}</td>
-                        <td>
-                            <span class="badge ${w.status === 'completed' ? 'success' : 'warning'}">
-                                ${w.status === 'completed' ? 'Tamamlandı' : 'Bekliyor'}
-                            </span>
-                        </td>
-                        <td>
-                            ${w.status === 'pending' ? `
-                                <button class="btn btn-success" onclick="approveWithdraw('${w.email}', '${w.timestamp}')">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="btn btn-danger" onclick="rejectWithdraw('${w.email}', '${w.timestamp}')">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            ` : '-'}
-                        </td>
-                    </tr>
-                `).join('');
-        }
-
-        // Ödeme onaylama
-        async function approveWithdraw(email, timestamp) {
-            try {
-                toggleLoading(true);
-                const user = userData.users.find(u => u.email === email);
-                if (!user) throw new Error('Kullanıcı bulunamadı');
-
-                const withdrawal = user.withdrawals.find(w => w.timestamp === timestamp);
-                if (!withdrawal) throw new Error('Ödeme bulunamadı');
-
-                withdrawal.status = 'completed';
-                withdrawal.completedAt = new Date().toISOString();
-
-                await updateData();
-                await loadData();
-                loadWithdrawals();
-                updateStats();
-
-                showMessage('withdrawMessage', 'Ödeme onaylandı', 'success');
-            } catch (error) {
-                console.error('Ödeme onaylama hatası:', error);
-                showMessage('withdrawMessage', 'Ödeme onaylanamadı', 'error');
-            } finally {
-                toggleLoading(false);
-            }
-        }
-
-        // Ödeme reddetme
-        async function rejectWithdraw(email, timestamp) {
-            try {
-                toggleLoading(true);
-                const user = userData.users.find(u => u.email === email);
-                if (!user) throw new Error('Kullanıcı bulunamadı');
-
-                const withdrawal = user.withdrawals.find(w => w.timestamp === timestamp);
-                if (!withdrawal) throw new Error('Ödeme bulunamadı');
-
-                // Bakiyeyi iade et
-                user.balance += withdrawal.amount;
-                user.withdrawals = user.withdrawals.filter(w => w.timestamp !== timestamp);
-
-                await updateData();
-                await loadData();
-                loadWithdrawals();
-                updateStats();
-
-                showMessage('withdrawMessage', 'Ödeme reddedildi ve bakiye iade edildi', 'success');
-            } catch (error) {
-                console.error('Ödeme reddetme hatası:', error);
-                showMessage('withdrawMessage', 'Ödeme reddedilemedi', 'error');
-            } finally {
-                toggleLoading(false);
-            }
-        }
-
-        // Referansları yükleme
-        function loadReferrals() {
-            if (!userData) return;
-
-            const referralList = document.getElementById('referralList');
-            const referralStats = userData.users.map(user => {
-                const referrals = userData.users.filter(u => u.referrer === user.email);
-                const totalEarnings = user.referralEarnings || 0;
-                const lastReferral = referrals.length > 0 
-                    ? referrals.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0].createdAt
-                    : null;
-
-                return {
-                    email: user.email,
-                    count: referrals.length,
-                    earnings: totalEarnings,
-                    lastReferral
-                };
-            }).sort((a, b) => b.count - a.count);
-
-            referralList.innerHTML = referralStats
-                .filter(stat => stat.count > 0)
-                .map(stat => `
-                    <tr>
-                        <td>${stat.email}</td>
-                        <td>${stat.count}</td>
-                        <td>${stat.earnings.toFixed(8)} DGB</td>
-                        <td>${stat.lastReferral ? new Date(stat.lastReferral).toLocaleString() : '-'}</td>
-                    </tr>
-                `).join('');
-        }
-
-        // Veri güncelleme
-        async function updateData() {
-            try {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': CONFIG.JSONBIN_API_KEY
-                    },
-                    body: JSON.stringify(userData)
-                });
-
-                if (!response.ok) throw new Error('Veri güncellenemedi');
-                
-                return await response.json();
-            } catch (error) {
-                console.error('Veri güncelleme hatası:', error);
-                throw error;
             }
         }
 
         // Tab değiştirme
-        function openTab(tabName) {
+        function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
             });
             
-            document.getElementById(tabName).classList.add('active');
-            document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[href="#${tabId}"]`).classList.add('active');
         }
 
-        // Arama fonksiyonu
-        document.getElementById('userSearch').addEventListener('input', () => {
-            loadUsers();
-        });
+        // İstatistikleri yükle
+        async function loadStats() {
+            try {
+                const stats = await fetchApi(API.ENDPOINTS.STATS);
+                document.getElementById('totalUsers').textContent = stats.total_users;
+                document.getElementById('totalClaims').textContent = stats.total_claims;
+                document.getElementById('totalWithdrawals').textContent = stats.total_withdrawals.toFixed(8) + ' DGB';
+                document.getElementById('bannedUsers').textContent = stats.banned_users;
+                document.getElementById('faucetBalance').textContent = 'Faucet Bakiye: ' + stats.faucet_balance.toFixed(8) + ' DGB';
+            } catch (error) {
+                showMessage('İstatistikler yüklenemedi: ' + error.message, 'error');
+            }
+        }
 
-        // Loading göstergesi
-        function toggleLoading(show) {
-            document.querySelector('.loading').style.display = show ? 'flex' : 'none';
+        // Kullanıcıları yükle
+        async function loadUsers() {
+            try {
+                const users = await fetchApi(API.ENDPOINTS.USERS);
+                const usersList = document.getElementById('usersList');
+                
+                usersList.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>${user.balance.toFixed(8)} DGB</td>
+                        <td>${user.last_claim ? new Date(user.last_claim).toLocaleString() : '-'}</td>
+                        <td>${user.referrer || '-'}</td>
+                        <td>
+                            <span class="badge ${user.banned ? 'badge-danger' : 'badge-success'}">
+                                ${user.banned ? 'Banlı' : 'Aktif'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" onclick="openBalanceModal('${user.email}')">
+                                <i class="fas fa-coins"></i>
+                            </button>
+                            ${user.banned ? 
+                                `<button class="btn btn-primary" onclick="unbanUser('${user.email}')">
+                                    <i class="fas fa-user-check"></i>
+                                </button>` :
+                                `<button class="btn btn-danger" onclick="openBanModal('${user.email}')">
+                                    <i class="fas fa-user-slash"></i>
+                                </button>`
+                            }
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                showMessage('Kullanıcılar yüklenemedi: ' + error.message, 'error');
+            }
+        }
+
+        // Ayarları yükle
+        async function loadSettings() {
+            try {
+                const settings = await fetchApi(API.ENDPOINTS.SETTINGS);
+                settings.forEach(setting => {
+                    const input = document.getElementById(setting.key);
+                    if (input) {
+                        input.value = setting.value;
+                    }
+                });
+            } catch (error) {
+                showMessage('Ayarlar yüklenemedi: ' + error.message, 'error');
+            }
+        }
+
+        // Ayarları kaydet
+        async function saveSettings(event) {
+            event.preventDefault();
+            try {
+                const settings = {
+                    claim_amount: document.getElementById('claimAmount').value,
+                    claim_interval: document.getElementById('claimInterval').value,
+                    min_withdraw: document.getElementById('minWithdraw').value,
+                    ref_commission: document.getElementById('refCommission').value
+                };
+
+                await fetchApi(API.ENDPOINTS.SETTINGS, {
+                    method: 'POST',
+                    body: JSON.stringify(settings)
+                });
+
+                showMessage('Ayarlar başarıyla kaydedildi', 'success');
+            } catch (error) {
+                showMessage('Ayarlar kaydedilemedi: ' + error.message, 'error');
+            }
+        }
+
+        // Bakiye düzenleme modalı
+        function openBalanceModal(email) {
+            document.getElementById('userEmail').value = email;
+            document.getElementById('balanceAmount').value = '';
+            document.getElementById('balanceModal').style.display = 'flex';
+        }
+
+        // Ban modalı
+        function openBanModal(email) {
+            document.getElementById('banUserEmail').value = email;
+            document.getElementById('banReason').value = '';
+            document.getElementById('banModal').style.display = 'flex';
+        }
+
+        // Modal kapatma
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Bakiye düzenleme
+        async function adjustBalance(event) {
+            event.preventDefault();
+            try {
+                const email = document.getElementById('userEmail').value;
+                const amount = parseFloat(document.getElementById('balanceAmount').value);
+
+                await fetchApi(API.ENDPOINTS.ADJUST_BALANCE, {
+                    method: 'POST',
+                    body: JSON.stringify({ email, amount })
+                });
+
+                closeModal('balanceModal');
+                showMessage('Bakiye başarıyla güncellendi', 'success');
+                await loadUsers();
+            } catch (error) {
+                showMessage('Bakiye güncellenemedi: ' + error.message, 'error');
+            }
+        }
+
+        // Kullanıcı banlama
+        async function banUser(event) {
+            event.preventDefault();
+            try {
+                const email = document.getElementById('banUserEmail').value;
+                const reason = document.getElementById('banReason').value;
+
+                await fetchApi(API.ENDPOINTS.BAN_USER, {
+                    method: 'POST',
+                    body: JSON.stringify({ email, reason })
+                });
+
+                closeModal('banModal');
+                showMessage('Kullanıcı başarıyla banlandı', 'success');
+                await loadUsers();
+            } catch (error) {
+                showMessage('Kullanıcı banlanamadı: ' + error.message, 'error');
+            }
+        }
+
+        // Ban kaldırma
+        async function unbanUser(email) {
+            try {
+                await fetchApi(API.ENDPOINTS.UNBAN_USER, {
+                    method: 'POST',
+                    body: JSON.stringify({ email })
+                });
+
+                showMessage('Kullanıcının banı kaldırıldı', 'success');
+                await loadUsers();
+            } catch (error) {
+                showMessage('Ban kaldırılamadı: ' + error.message, 'error');
+            }
+        }
+
+        // API istekleri için yardımcı fonksiyon
+        async function fetchApi(endpoint, options = {}) {
+            try {
+                const response = await fetch(API.BASE_URL + endpoint, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'API isteği başarısız');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
         }
 
         // Mesaj gösterme
-        function showMessage(elementId, text, type) {
-            const message = document.getElementById(elementId);
-            if (!message) return;
-
-            message.textContent = text;
+        function showMessage(text, type) {
+            const message = document.createElement('div');
             message.className = `message ${type}`;
-            message.style.display = 'block';
+            message.textContent = text;
+            
+            document.querySelector('.main-content').insertBefore(
+                message, 
+                document.querySelector('.main-content').firstChild
+            );
 
-            setTimeout(() => {
-                message.style.display = 'none';
-            }, 5000);
+            setTimeout(() => message.remove(), 5000);
         }
 
         // Çıkış yapma
@@ -908,35 +680,15 @@
             window.location.href = 'login.html';
         }
 
-        // Otomatik yenileme
-        setInterval(async () => {
-            await loadData();
-            updateStats();
-            loadUsers();
-            loadPtcAds();
-            loadWithdrawals();
-            loadReferrals();
-        }, 60000); // Her 1 dakikada bir yenile
-
-        // Sayfa ilk yüklendiğinde veri kontrolü
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!userData) {
-                await loadData();
-            }
-        });
-
-        // Kullanıcı girişi kontrolü
-        function checkAuth() {
-            const isAdmin = localStorage.getItem('isAdmin');
-            const userEmail = localStorage.getItem('userEmail');
-
-            if (!isAdmin || userEmail !== CONFIG.ADMIN_EMAIL) {
-                window.location.href = 'login.html';
-            }
-        }
-
-        // Sayfa yüklendiğinde yetki kontrolü
-        checkAuth();
+        // Sayfa yüklendiğinde
+        window.onload = async function() {
+            checkAdmin();
+            await Promise.all([
+                loadStats(),
+                loadUsers(),
+                loadSettings()
+            ]);
+        };
     </script>
 </body>
 </html>
