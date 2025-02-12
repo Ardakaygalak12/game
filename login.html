@@ -3,39 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>earn-dgb | Giriş</title>
+    <title>DGB Faucet | Giriş</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
         }
 
         body {
-            background: #1a1a1a;
-            color: #fff;
+            background: var(--background);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            line-height: 1.5;
         }
 
         .container {
-            background: #2d2d2d;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            width: 90%;
+            width: 100%;
             max-width: 400px;
+            padding: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
         .logo {
             text-align: center;
             margin-bottom: 2rem;
-            font-size: 2rem;
-            color: #00ff88;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
         .form-group {
@@ -45,212 +70,322 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #00ff88;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
         }
 
-        .form-group input {
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .form-control {
             width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #444;
-            background: #333;
-            color: #fff;
-            border-radius: 5px;
-            outline: none;
-            transition: border-color 0.3s;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: var(--background);
+            border: 1px solid #334155;
+            color: var(--text-primary);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
-        .form-group input:focus {
-            border-color: #00ff88;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
 
         .btn {
             width: 100%;
-            padding: 1rem;
-            background: #00ff88;
-            color: #1a1a1a;
+            padding: 0.75rem 1rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .btn:hover {
-            background: #00cc6a;
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
         }
 
         .toggle-form {
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
         }
 
         .toggle-form a {
-            color: #00ff88;
+            color: var(--primary-color);
             text-decoration: none;
             cursor: pointer;
+            margin-left: 0.25rem;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
         }
 
         .message {
-            text-align: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
             margin-top: 1rem;
-            padding: 0.5rem;
-            border-radius: 5px;
+            font-size: 0.875rem;
+            display: none;
         }
 
-        .error {
-            background: #ff4444;
+        .message.error {
+            background: var(--error);
             color: white;
         }
 
-        .success {
-            background: #00cc6a;
+        .message.success {
+            background: var(--success);
             color: white;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 3px solid var(--text-secondary);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">
-            <i class="fas fa-coins"></i> earn-dgb
-        </div>
-        <div id="loginForm">
-            <div class="form-group">
-                <label><i class="fas fa-envelope"></i> E-posta</label>
-                <input type="email" id="loginEmail" placeholder="E-posta adresiniz">
+        <div class="card">
+            <div class="logo">
+                <i class="fas fa-coins"></i>
+                <h1>DGB Faucet</h1>
             </div>
-            <div class="form-group">
-                <label><i class="fas fa-lock"></i> Şifre</label>
-                <input type="password" id="loginPassword" placeholder="Şifreniz">
-            </div>
-            <button class="btn" onclick="login()">Giriş Yap</button>
-            <div class="toggle-form">
-                Hesabınız yok mu? <a onclick="toggleForms()">Kayıt Ol</a>
-            </div>
-        </div>
 
-        <div id="registerForm" style="display: none;">
-            <div class="form-group">
-                <label><i class="fas fa-envelope"></i> E-posta</label>
-                <input type="email" id="registerEmail" placeholder="E-posta adresiniz">
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-lock"></i> Şifre</label>
-                <input type="password" id="registerPassword" placeholder="Şifreniz">
-            </div>
-            <button class="btn" onclick="register()">Kayıt Ol</button>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">E-posta Adresi</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="ornek@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Şifre</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                </button>
+                <div id="loginMessage" class="message"></div>
+            </form>
+
+            <form id="registerForm" style="display: none;">
+                <div class="form-group">
+                    <label for="registerEmail">E-posta Adresi</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="registerEmail" class="form-control" placeholder="ornek@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Şifre</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="registerPassword" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Kayıt Ol
+                </button>
+                <div id="registerMessage" class="message"></div>
+            </form>
+
             <div class="toggle-form">
-                Zaten hesabınız var mı? <a onclick="toggleForms()">Giriş Yap</a>
+                <span id="loginText">Hesabınız yok mu?</span>
+                <a id="toggleBtn" onclick="toggleForm()">Kayıt Ol</a>
             </div>
         </div>
-        <div id="message" class="message" style="display: none;"></div>
+    </div>
+
+    <div class="loading">
+        <div class="loading-spinner"></div>
     </div>
 
     <script>
-        // API ve Sistem Ayarları
-        const JSONBIN_API_KEY = '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W';
-        const JSONBIN_BIN_ID = '67a7a415e41b4d34e4867ffe';
-        const FAUCETPAY_API_KEY = 'a5a15c7cc4b4d4c6a0cab0cb5d2b2ce3388070028e2c5cf37284f627975cb9ed';
-        
-        // Admin bilgileri
-        const ADMIN_EMAIL = 'admin@earn-dgb.com';
-        const ADMIN_PASSWORD = 'Admin123!@#';
+        // Sabitler
+        const CONFIG = {
+            JSONBIN_API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W',
+            JSONBIN_BIN_ID: '67a7a415e41b4d34e4867ffe',
+            ADMIN_EMAIL: 'admin@dgbfaucet.com',
+            ADMIN_PASSWORD: 'Admin123!@#'
+        };
 
-        function toggleForms() {
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const message = document.getElementById('message');
+        // Form elementleri
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const loginText = document.getElementById('loginText');
+        const loading = document.querySelector('.loading');
 
-            loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
-            registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
-            message.style.display = 'none';
+        // Form geçişi
+        function toggleForm() {
+            const isLogin = loginForm.style.display !== 'none';
+            loginForm.style.display = isLogin ? 'none' : 'block';
+            registerForm.style.display = isLogin ? 'block' : 'none';
+            toggleBtn.textContent = isLogin ? 'Giriş Yap' : 'Kayıt Ol';
+            loginText.textContent = isLogin ? 'Zaten hesabınız var mı?' : 'Hesabınız yok mu?';
+            clearMessages();
         }
 
-        function showMessage(text, type) {
-            const message = document.getElementById('message');
+        // Mesaj gösterme
+        function showMessage(formId, text, type) {
+            const message = document.getElementById(formId + 'Message');
             message.textContent = text;
             message.className = `message ${type}`;
             message.style.display = 'block';
+            
+            if (type === 'error') {
+                const form = document.getElementById(formId);
+                form.classList.add('shake');
+                setTimeout(() => form.classList.remove('shake'), 500);
+            }
         }
 
-        async function login() {
+        // Mesajları temizleme
+        function clearMessages() {
+            document.querySelectorAll('.message').forEach(msg => {
+                msg.style.display = 'none';
+                msg.textContent = '';
+            });
+        }
+
+        // Loading göstergesi
+        function toggleLoading(show) {
+            loading.style.display = show ? 'flex' : 'none';
+        }
+
+        // Giriş işlemi
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
+
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
-            if (!email || !password) {
-                showMessage('Lütfen tüm alanları doldurun', 'error');
-                return;
-            }
-
             try {
+                toggleLoading(true);
+
                 // Admin kontrolü
-                if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                if (email === CONFIG.ADMIN_EMAIL && password === CONFIG.ADMIN_PASSWORD) {
                     localStorage.setItem('isAdmin', 'true');
                     localStorage.setItem('userEmail', email);
                     window.location.href = 'admin.html';
                     return;
                 }
 
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-                    headers: {
-                        'X-Master-Key': JSONBIN_API_KEY
-                    }
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
+                    headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
                 });
 
                 const data = await response.json();
                 const users = data.record.users || [];
-
                 const user = users.find(u => u.email === email && u.password === password);
-                
+
                 if (user) {
                     localStorage.setItem('userEmail', email);
-                    localStorage.setItem('faucetpayEmail', user.faucetpayEmail || '');
                     localStorage.setItem('balance', user.balance || 0);
                     window.location.href = 'index.html';
                 } else {
-                    showMessage('Geçersiz e-posta veya şifre', 'error');
+                    showMessage('login', 'Geçersiz e-posta veya şifre', 'error');
                 }
             } catch (error) {
-                showMessage('Bir hata oluştu', 'error');
-                console.error(error);
+                console.error('Giriş hatası:', error);
+                showMessage('login', 'Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+            } finally {
+                toggleLoading(false);
             }
-        }
+        });
 
-        async function register() {
+        // Kayıt işlemi
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
+
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
 
-            if (!email || !password) {
-                showMessage('Lütfen tüm alanları doldurun', 'error');
-                return;
-            }
-
-            if (email === ADMIN_EMAIL) {
-                showMessage('Bu e-posta kullanılamaz', 'error');
+            if (email === CONFIG.ADMIN_EMAIL) {
+                showMessage('register', 'Bu e-posta adresi kullanılamaz', 'error');
                 return;
             }
 
             try {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-                    headers: {
-                        'X-Master-Key': JSONBIN_API_KEY
-                    }
+                toggleLoading(true);
+
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
+                    headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
                 });
 
                 let data = await response.json();
                 
-                // Eğer data.record boşsa veya users dizisi yoksa, yeni bir yapı oluştur
                 if (!data.record || !data.record.users) {
-                    data = {
-                        record: {
-                            users: [],
-                            settings: {
-                                faucetAmount: 0.1,
-                                faucetTimer: 3600,
-                                minWithdraw: 1.0,
-                                withdrawFee: 0.1
-                            },
-                            ads: [],
-                            withdrawals: []
+                    data.record = {
+                        users: [],
+                        settings: {
+                            faucetAmount: 0.1,
+                            faucetTimer: 3600,
+                            minWithdraw: 1.0,
+                            withdrawFee: 0.1
                         }
                     };
                 }
@@ -258,39 +393,96 @@
                 const users = data.record.users;
 
                 if (users.some(u => u.email === email)) {
-                    showMessage('Bu e-posta adresi zaten kayıtlı', 'error');
+                    showMessage('register', 'Bu e-posta adresi zaten kayıtlı', 'error');
                     return;
                 }
 
+                // Yeni kullanıcı oluştur
                 users.push({
                     email,
                     password,
                     balance: 0,
-                    faucetpayEmail: '',
                     lastClaim: null,
-                    totalClaimed: 0,
                     claimHistory: [],
-                    ptcHistory: []
+                    withdrawals: [],
+                    referralCode: btoa(email).slice(0, 8),
+                    referrer: null,
+                    createdAt: new Date().toISOString()
                 });
 
-                await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+                await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_API_KEY
+                        'X-Master-Key': CONFIG.JSONBIN_API_KEY
                     },
                     body: JSON.stringify(data.record)
                 });
 
-                showMessage('Kayıt başarılı! Giriş yapabilirsiniz', 'success');
+               showMessage('register', 'Kayıt başarılı! Giriş yapabilirsiniz', 'success');
                 setTimeout(() => {
-                    toggleForms();
+                    toggleForm();
+                    document.getElementById('loginEmail').value = email;
                 }, 2000);
             } catch (error) {
-                showMessage('Bir hata oluştu', 'error');
-                console.error(error);
+                console.error('Kayıt hatası:', error);
+                showMessage('register', 'Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+            } finally {
+                toggleLoading(false);
+            }
+        });
+
+        // Referral kontrolü
+        function checkReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            
+            if (refCode) {
+                localStorage.setItem('pendingReferral', refCode);
             }
         }
+
+        // Input validasyonu
+        function validateInput(input, type = 'text') {
+            input.addEventListener('input', () => {
+                if (type === 'email') {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(input.value)) {
+                        input.setCustomValidity('Geçerli bir e-posta adresi giriniz');
+                    } else {
+                        input.setCustomValidity('');
+                    }
+                } else if (type === 'password') {
+                    if (input.value.length < 6) {
+                        input.setCustomValidity('Şifre en az 6 karakter olmalıdır');
+                    } else {
+                        input.setCustomValidity('');
+                    }
+                }
+            });
+        }
+
+        // Input validasyonlarını başlat
+        validateInput(document.getElementById('loginEmail'), 'email');
+        validateInput(document.getElementById('loginPassword'), 'password');
+        validateInput(document.getElementById('registerEmail'), 'email');
+        validateInput(document.getElementById('registerPassword'), 'password');
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            // LocalStorage'dan oturum kontrolü
+            const userEmail = localStorage.getItem('userEmail');
+            if (userEmail) {
+                if (localStorage.getItem('isAdmin') === 'true') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }
+
+            // Referral kontrolü
+            checkReferral();
+        });
     </script>
 </body>
 </html>
