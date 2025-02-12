@@ -6,14 +6,6 @@
     <title>DGB Faucet | Admin Panel</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -35,6 +27,7 @@
             background: white;
             border-right: 1px solid #e2e8f0;
             padding: 1rem;
+            z-index: 100;
         }
 
         .sidebar-header {
@@ -58,6 +51,7 @@
             border-radius: 0.5rem;
             margin-bottom: 0.5rem;
             transition: all 0.2s;
+            cursor: pointer;
         }
 
         .nav-item:hover {
@@ -87,6 +81,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .header h2 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .faucet-balance {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: #1e293b;
+            font-weight: 500;
         }
 
         .card {
@@ -175,17 +183,30 @@
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: #2563eb;
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--primary-hover);
+            background: #1d4ed8;
         }
 
         .btn-danger {
-            background: var(--danger);
+            background: #ef4444;
             color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
         }
 
         .form-group {
@@ -205,6 +226,7 @@
             border: 1px solid #e2e8f0;
             border-radius: 0.375rem;
             font-size: 0.875rem;
+            transition: all 0.2s;
         }
 
         .form-control:focus {
@@ -236,6 +258,7 @@
             margin-bottom: 1rem;
             font-size: 0.875rem;
             display: none;
+            animation: fadeIn 0.3s ease;
         }
 
         .message.success {
@@ -250,7 +273,42 @@
             border: 1px solid #fecaca;
         }
 
-        /* Loading göstergesi */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 500px;
+            margin: 1rem;
+        }
+
+        .modal-content h3 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
         .loading {
             position: fixed;
             top: 0;
@@ -261,7 +319,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
         }
 
         .loading-spinner {
@@ -273,8 +331,22 @@
             animation: spin 1s linear infinite;
         }
 
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         @media (max-width: 768px) {
@@ -285,6 +357,10 @@
             .main-content {
                 margin-left: 0;
                 padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -300,31 +376,35 @@
             Admin Panel
         </div>
         <nav>
-            <a href="#dashboard" class="nav-item active" onclick="showTab('dashboard')">
+            <a class="nav-item active" onclick="showTab('dashboard')">
                 <i class="fas fa-chart-line"></i>
                 Dashboard
             </a>
-            <a href="#users" class="nav-item" onclick="showTab('users')">
+            <a class="nav-item" onclick="showTab('users')">
                 <i class="fas fa-users"></i>
                 Kullanıcılar
             </a>
-            <a href="#settings" class="nav-item" onclick="showTab('settings')">
+            <a class="nav-item" onclick="showTab('ptc')">
+                <i class="fas fa-ad"></i>
+                PTC Reklamlar
+            </a>
+            <a class="nav-item" onclick="showTab('settings')">
                 <i class="fas fa-cogs"></i>
                 Ayarlar
             </a>
-            <a href="#" class="nav-item" onclick="logout()">
+            <a class="nav-item" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i>
                 Çıkış
             </a>
         </nav>
-        </div>
+    </div>
 
     <div class="main-content">
         <!-- Dashboard Tab -->
         <div id="dashboard" class="tab-content active">
             <div class="header">
                 <h2>Dashboard</h2>
-                <div id="faucetBalance"></div>
+                <div class="faucet-balance" id="faucetBalance">0 DGB</div>
             </div>
 
             <div class="stats-grid">
@@ -344,6 +424,14 @@
                     <div class="stat-value" id="bannedUsers">0</div>
                     <div class="stat-label">Banlı Kullanıcı</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPtcViews">0</div>
+                    <div class="stat-label">PTC Görüntüleme</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPtcRewards">0 DGB</div>
+                    <div class="stat-label">PTC Ödemeleri</div>
+                </div>
             </div>
         </div>
 
@@ -359,15 +447,57 @@
                         <thead>
                             <tr>
                                 <th>Email</th>
-                                <th>Bakiye</th>
                                 <th>Son Claim</th>
                                 <th>Referans</th>
+                                <th>Ref. Kazanç</th>
                                 <th>Durum</th>
                                 <th>İşlemler</th>
                             </tr>
                         </thead>
                         <tbody id="usersList">
                             <!-- Kullanıcılar buraya yüklenecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PTC Tab -->
+        <div id="ptc" class="tab-content">
+            <div class="header">
+                <h2>PTC Reklamlar</h2>
+                <button class="btn btn-primary" onclick="openPtcModal()">
+                    <i class="fas fa-plus"></i>
+                    Yeni Reklam
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="activePtcAds">0</div>
+                    <div class="stat-label">Aktif Reklam</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPtcAds">0</div>
+                    <div class="stat-label">Toplam Reklam</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Başlık</th>
+                                <th>Ödül</th>
+                                <th>Süre</th>
+                                <th>Görüntülenme</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ptcAdsList">
+                            <!-- PTC Reklamları buraya yüklenecek -->
                         </tbody>
                     </table>
                 </div>
@@ -381,22 +511,25 @@
             </div>
 
             <div class="card">
-                <form id="settingsForm" onsubmit="saveSettings(event)">
+                <div class="card-header">
+                    <h3 class="card-title">Faucet Ayarları</h3>
+                </div>
+                <form id="settingsForm">
                     <div class="form-group">
-                        <label>Claim Ödül Miktarı (DGB)</label>
-                        <input type="number" id="claimAmount" class="form-control" step="0.00000001">
+                        <label for="claimAmount">Claim Miktarı (DGB)</label>
+                        <input type="number" step="0.0001" class="form-control" id="claimAmount" name="claim_amount">
                     </div>
                     <div class="form-group">
-                        <label>Claim Bekleme Süresi (Dakika)</label>
-                        <input type="number" id="claimInterval" class="form-control">
+                        <label for="claimInterval">Claim Aralığı (Dakika)</label>
+                        <input type="number" class="form-control" id="claimInterval" name="claim_interval">
                     </div>
                     <div class="form-group">
-                        <label>Minimum Çekim Miktarı (DGB)</label>
-                        <input type="number" id="minWithdraw" class="form-control" step="0.00000001">
+                        <label for="minWithdraw">Minimum Çekim (DGB)</label>
+                        <input type="number" step="0.0001" class="form-control" id="minWithdraw" name="min_withdraw">
                     </div>
                     <div class="form-group">
-                        <label>Referans Komisyonu (%)</label>
-                        <input type="number" id="refCommission" class="form-control" step="0.1">
+                        <label for="refCommission">Referans Komisyonu (%)</label>
+                        <input type="number" step="0.01" class="form-control" id="refCommission" name="ref_commission">
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
@@ -407,288 +540,740 @@
         </div>
     </div>
 
-    <!-- Bakiye Düzenleme Modal -->
-    <div id="balanceModal" class="modal">
+    <!-- PTC Reklam Modalı -->
+    <div id="ptcAdModal" class="modal">
         <div class="modal-content">
-            <h3>Bakiye Düzenle</h3>
-            <form id="balanceForm" onsubmit="adjustBalance(event)">
-                <input type="hidden" id="userEmail">
+            <h3 id="ptcAdModalTitle">Yeni PTC Reklam</h3>
+            <form id="ptcAdForm">
+                <input type="hidden" id="ptcAdId">
                 <div class="form-group">
-                    <label>Miktar (DGB)</label>
-                    <input type="number" id="balanceAmount" class="form-control" step="0.00000001" required>
-                    <small>Pozitif değer ekler, negatif değer çıkarır</small>
+                    <label for="adTitle">Başlık</label>
+                    <input type="text" class="form-control" id="adTitle" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Kaydet</button>
-                <button type="button" class="btn btn-danger" onclick="closeModal('balanceModal')">İptal</button>
+                <div class="form-group">
+                    <label for="adUrl">URL</label>
+                    <input type="url" class="form-control" id="adUrl" required>
+                </div>
+                <div class="form-group">
+                    <label for="adDescription">Açıklama</label>
+                    <textarea class="form-control" id="adDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="adReward">Ödül (DGB)</label>
+                    <input type="number" step="0.0001" class="form-control" id="adReward" required>
+                </div>
+                <div class="form-group">
+                    <label for="adDuration">Görüntüleme Süresi (Saniye)</label>
+                    <input type="number" class="form-control" id="adDuration" min="10" max="240" required>
+                </div>
+                <div class="form-group">
+                    <label for="adActive">Durum</label>
+                    <select class="form-control" id="adActive">
+                        <option value="true">Aktif</option>
+                        <option value="false">Pasif</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Kaydet
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="closePtcModal()">
+                        <i class="fas fa-times"></i>
+                        İptal
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Ban Modal -->
-    <div id="banModal" class="modal">
+    <!-- Kullanıcı İşlem Modalı -->
+    <div id="userActionModal" class="modal">
         <div class="modal-content">
-            <h3>Kullanıcı Banla</h3>
-            <form id="banForm" onsubmit="banUser(event)">
-                <input type="hidden" id="banUserEmail">
+            <h3 id="userActionModalTitle">Kullanıcı İşlemi</h3>
+            <form id="userActionForm">
+                <input type="hidden" id="userActionEmail">
                 <div class="form-group">
-                    <label>Ban Sebebi</label>
-                    <textarea id="banReason" class="form-control" required></textarea>
+                    <label for="balanceAdjustment">Bakiye Ayarla (DGB)</label>
+                    <input type="number" step="0.0001" class="form-control" id="balanceAdjustment">
                 </div>
-                <button type="submit" class="btn btn-danger">Banla</button>
-                <button type="button" class="btn btn-primary" onclick="closeModal('banModal')">İptal</button>
+                <div class="form-group">
+                    <label for="banReason">Ban Sebebi</label>
+                    <input type="text" class="form-control" id="banReason">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-danger" onclick="banUser()">
+                        <i class="fas fa-ban"></i>
+                        Kullanıcıyı Banla
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="adjustBalance()">
+                        <i class="fas fa-coins"></i>
+                        Bakiye Ayarla
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
     <script>
-        const API = {
-            BASE_URL: 'http://localhost:8000/api',
-            ENDPOINTS: {
-                STATS: '/admin/stats',
-                USERS: '/admin/users',
-                SETTINGS: '/admin/settings',
-                ADJUST_BALANCE: '/admin/adjust-balance',
-                BAN_USER: '/admin/ban-user',
-                UNBAN_USER: '/admin/unban-user'
-            }
-        };
+        <script>
+    // API endpoint'leri
+    const API_BASE_URL = 'http://localhost:8000/api';
 
-        // Admin kontrolü
-        function checkAdmin() {
-            const isAdmin = localStorage.getItem('isAdmin') === 'true';
-            if (!isAdmin) {
-                window.location.href = 'login.html';
-            }
+    // Tab değiştirme fonksiyonu
+    function showTab(tabName) {
+        // Tüm tab içeriklerini gizle
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Tüm nav itemlerden active sınıfını kaldır
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Seçilen tabı ve nav itemı aktifleştir
+        document.getElementById(tabName).classList.add('active');
+        document.querySelector(`.nav-item[onclick="showTab('${tabName}')"]`).classList.add('active');
+
+        // İlgili tab için veri yükleme fonksiyonunu çağır
+        switch(tabName) {
+            case 'dashboard':
+                loadDashboardStats();
+                break;
+            case 'users':
+                loadUsers();
+                break;
+            case 'ptc':
+                loadPtcAds();
+                break;
+            case 'settings':
+                loadSettings();
+                break;
         }
+    }
 
-        // Tab değiştirme
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
+    // Dashboard istatistiklerini yükle
+    async function loadDashboardStats() {
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/admin/stats`);
+            const stats = await response.json();
+
+            document.getElementById('totalUsers').textContent = stats.total_users;
+            document.getElementById('totalClaims').textContent = stats.total_claims;
+            document.getElementById('totalWithdrawals').textContent = stats.total_withdrawals + ' DGB';
+            document.getElementById('bannedUsers').textContent = stats.banned_users;
+            document.getElementById('totalPtcViews').textContent = stats.total_ptc_views;
+            document.getElementById('faucetBalance').textContent = stats.faucet_balance + ' DGB';
+        } catch (error) {
+            showError('İstatistikler yüklenemedi');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Kullanıcıları yükle
+    async function loadUsers() {
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/admin/users`);
+            const users = await response.json();
+            const usersList = document.getElementById('usersList');
             
-            document.getElementById(tabId).classList.add('active');
-            document.querySelector(`[href="#${tabId}"]`).classList.add('active');
-        }
+            // Listeyi temizle
+            usersList.innerHTML = '';
 
-        // İstatistikleri yükle
-        async function loadStats() {
-            try {
-                const stats = await fetchApi(API.ENDPOINTS.STATS);
-                document.getElementById('totalUsers').textContent = stats.total_users;
-                document.getElementById('totalClaims').textContent = stats.total_claims;
-                document.getElementById('totalWithdrawals').textContent = stats.total_withdrawals.toFixed(8) + ' DGB';
-                document.getElementById('bannedUsers').textContent = stats.banned_users;
-                document.getElementById('faucetBalance').textContent = 'Faucet Bakiye: ' + stats.faucet_balance.toFixed(8) + ' DGB';
-            } catch (error) {
-                showMessage('İstatistikler yüklenemedi: ' + error.message, 'error');
-            }
+            // Kullanıcıları listele
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.email}</td>
+                    <td>${user.last_claim || 'Henüz claim yapılmamış'}</td>
+                    <td>${user.referrer || '-'}</td>
+                    <td>${user.referral_earnings.toFixed(4)} DGB</td>
+                    <td>
+                        <span class="badge ${user.banned ? 'badge-danger' : 'badge-success'}">
+                            ${user.banned ? 'Banlı' : 'Aktif'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="openUserActionModal('${user.email}')">
+                            <i class="fas fa-cog"></i> İşlem
+                        </button>
+                    </td>
+                `;
+                usersList.appendChild(row);
+            });
+        } catch (error) {
+            showError('Kullanıcılar yüklenemedi');
+        } finally {
+            hideLoading();
         }
+    }
 
-        // Kullanıcıları yükle
-        async function loadUsers() {
-            try {
-                const users = await fetchApi(API.ENDPOINTS.USERS);
-                const usersList = document.getElementById('usersList');
-                
-                usersList.innerHTML = users.map(user => `
-                    <tr>
-                        <td>${user.email}</td>
-                        <td>${user.balance.toFixed(8)} DGB</td>
-                        <td>${user.last_claim ? new Date(user.last_claim).toLocaleString() : '-'}</td>
-                        <td>${user.referrer || '-'}</td>
-                        <td>
-                            <span class="badge ${user.banned ? 'badge-danger' : 'badge-success'}">
-                                ${user.banned ? 'Banlı' : 'Aktif'}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary" onclick="openBalanceModal('${user.email}')">
-                                <i class="fas fa-coins"></i>
-                            </button>
-                            ${user.banned ? 
-                                `<button class="btn btn-primary" onclick="unbanUser('${user.email}')">
-                                    <i class="fas fa-user-check"></i>
-                                </button>` :
-                                `<button class="btn btn-danger" onclick="openBanModal('${user.email}')">
-                                    <i class="fas fa-user-slash"></i>
-                                </button>`
-                            }
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (error) {
-                showMessage('Kullanıcılar yüklenemedi: ' + error.message, 'error');
-            }
+    // PTC Reklamlarını yükle
+    async function loadPtcAds() {
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/admin/ptc-stats`);
+            const stats = await response.json();
+
+            document.getElementById('activePtcAds').textContent = stats.active_ads;
+            document.getElementById('totalPtcAds').textContent = stats.total_ads;
+
+            // Reklam listesini getir
+            const adsResponse = await fetch(`${API_BASE_URL}/ptc-ads`);
+            const ads = await adsResponse.json();
+            const ptcAdsList = document.getElementById('ptcAdsList');
+            
+            // Listeyi temizle
+            ptcAdsList.innerHTML = '';
+
+            // Reklamları listele
+            ads.forEach(ad => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${ad.title}</td>
+                    <td>${ad.reward.toFixed(4)} DGB</td>
+                    <td>${ad.duration} saniye</td>
+                    <td>${ad.views}</td>
+                    <td>
+                        <span class="badge ${ad.active ? 'badge-success' : 'badge-danger'}">
+                            ${ad.active ? 'Aktif' : 'Pasif'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="openPtcModal(${JSON.stringify(ad).replace(/"/g, '&quot;')})">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deletePtcAd(${ad.id})">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                    </td>
+                `;
+                ptcAdsList.appendChild(row);
+            });
+        } catch (error) {
+            showError('PTC reklamları yüklenemedi');
+        } finally {
+            hideLoading();
         }
+    }
 
-        // Ayarları yükle
-        async function loadSettings() {
-            try {
-                const settings = await fetchApi(API.ENDPOINTS.SETTINGS);
-                settings.forEach(setting => {
-                    const input = document.getElementById(setting.key);
-                    if (input) {
+    // Ayarları yükle
+    async function loadSettings() {
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/admin/settings`);
+            const settings = await response.json();
+
+            // Ayarları forma doldur
+            settings.forEach(setting => {
+                const input = document.querySelector(`#settingsForm [name="${setting.key}"]`);
+                if (input) {
+                    if (setting.key === 'ref_commission') {
+                        // Yüzde için özel işlem
+                        input.value = (parseFloat(setting.value) * 100).toFixed(2);
+                    } else {
                         input.value = setting.value;
                     }
-                });
-            } catch (error) {
-                showMessage('Ayarlar yüklenemedi: ' + error.message, 'error');
+                }
+            });
+        } catch (error) {
+            showError('Ayarlar yüklenemedi');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Ayarları kaydet
+    document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            showLoading();
+            const formData = new FormData(e.target);
+            const settings = {};
+
+            // Referans komisyonunu yüzdeden ondalık sayıya çevir
+            formData.forEach((value, key) => {
+                settings[key] = key === 'ref_commission' 
+                    ? (parseFloat(value) / 100).toFixed(4) 
+                    : value;
+            });
+
+            const response = await fetch(`${API_BASE_URL}/admin/settings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(settings)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showSuccess('Ayarlar başarıyla güncellendi');
+            } else {
+                showError('Ayarlar güncellenemedi');
             }
+        } catch (error) {
+            showError('Ayarlar kaydedilemedi');
+        } finally {
+            hideLoading();
         }
+    });
 
-        // Ayarları kaydet
-        async function saveSettings(event) {
-            event.preventDefault();
-            try {
-                const settings = {
-                    claim_amount: document.getElementById('claimAmount').value,
-                    claim_interval: document.getElementById('claimInterval').value,
-                    min_withdraw: document.getElementById('minWithdraw').value,
-                    ref_commission: document.getElementById('refCommission').value
-                };
+    // PTC Reklam Formu Gönderimi
+    document.getElementById('ptcAdForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            showLoading();
+            const formData = {
+                title: document.getElementById('adTitle').value,
+                url: document.getElementById('adUrl').value,
+                description: document.getElementById('adDescription').value,
+                reward: parseFloat(document.getElementById('adReward').value),
+                duration: parseInt(document.getElementById('adDuration').value),
+                active: document.getElementById('adActive').value === 'true'
+            };
 
-                await fetchApi(API.ENDPOINTS.SETTINGS, {
-                    method: 'POST',
-                    body: JSON.stringify(settings)
-                });
+            const adId = document.getElementById('ptcAdId').value;
+            let response;
 
-                showMessage('Ayarlar başarıyla kaydedildi', 'success');
-            } catch (error) {
-                showMessage('Ayarlar kaydedilemedi: ' + error.message, 'error');
-            }
-        }
-
-        // Bakiye düzenleme modalı
-        function openBalanceModal(email) {
-            document.getElementById('userEmail').value = email;
-            document.getElementById('balanceAmount').value = '';
-            document.getElementById('balanceModal').style.display = 'flex';
-        }
-
-        // Ban modalı
-        function openBanModal(email) {
-            document.getElementById('banUserEmail').value = email;
-            document.getElementById('banReason').value = '';
-            document.getElementById('banModal').style.display = 'flex';
-        }
-
-        // Modal kapatma
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Bakiye düzenleme
-        async function adjustBalance(event) {
-            event.preventDefault();
-            try {
-                const email = document.getElementById('userEmail').value;
-                const amount = parseFloat(document.getElementById('balanceAmount').value);
-
-                await fetchApi(API.ENDPOINTS.ADJUST_BALANCE, {
-                    method: 'POST',
-                    body: JSON.stringify({ email, amount })
-                });
-
-                closeModal('balanceModal');
-                showMessage('Bakiye başarıyla güncellendi', 'success');
-                await loadUsers();
-            } catch (error) {
-                showMessage('Bakiye güncellenemedi: ' + error.message, 'error');
-            }
-        }
-
-        // Kullanıcı banlama
-        async function banUser(event) {
-            event.preventDefault();
-            try {
-                const email = document.getElementById('banUserEmail').value;
-                const reason = document.getElementById('banReason').value;
-
-                await fetchApi(API.ENDPOINTS.BAN_USER, {
-                    method: 'POST',
-                    body: JSON.stringify({ email, reason })
-                });
-
-                closeModal('banModal');
-                showMessage('Kullanıcı başarıyla banlandı', 'success');
-                await loadUsers();
-            } catch (error) {
-                showMessage('Kullanıcı banlanamadı: ' + error.message, 'error');
-            }
-        }
-
-        // Ban kaldırma
-        async function unbanUser(email) {
-            try {
-                await fetchApi(API.ENDPOINTS.UNBAN_USER, {
-                    method: 'POST',
-                    body: JSON.stringify({ email })
-                });
-
-                showMessage('Kullanıcının banı kaldırıldı', 'success');
-                await loadUsers();
-            } catch (error) {
-                showMessage('Ban kaldırılamadı: ' + error.message, 'error');
-            }
-        }
-
-        // API istekleri için yardımcı fonksiyon
-        async function fetchApi(endpoint, options = {}) {
-            try {
-                const response = await fetch(API.BASE_URL + endpoint, {
-                    ...options,
+            if (adId) {
+                // Var olan reklamı güncelle
+                response = await fetch(`${API_BASE_URL}/admin/ptc-ad/${adId}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        ...options.headers
-                    }
+                    },
+                    body: JSON.stringify(formData)
                 });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.detail || 'API isteği başarısız');
-                }
-
-                return data;
-            } catch (error) {
-                console.error('API Error:', error);
-                throw error;
+            } else {
+                // Yeni reklam oluştur
+                response = await fetch(`${API_BASE_URL}/admin/ptc-ad`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
             }
+
+            const result = await response.json();
+            if (result.success) {
+                showSuccess(adId ? 'Reklam güncellendi' : 'Yeni reklam oluşturuldu');
+                closePtcModal();
+                loadPtcAds();
+            } else {
+                showError('Reklam kaydedilemedi');
+            }
+        } catch (error) {
+            showError('Reklam işlemi başarısız');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    // PTC Reklamını Sil
+    async function deletePtcAd(adId) {
+        if (!confirm('Bu reklamı silmek istediğinizden emin misiniz?')) return;
+
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/admin/ptc-ad/${adId}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showSuccess('Reklam başarıyla silindi');
+                loadPtcAds();
+            } else {
+                showError('Reklam silinemedi');
+            }
+        } catch (error) {
+            showError('Reklam silme işlemi başarısız');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Kullanıcı İşlem Modalını Aç
+    function openUserActionModal(email) {
+        const modal = document.getElementById('userActionModal');
+        document.getElementById('userActionEmail').value = email;
+        modal.style.display = 'flex';
+    }
+
+    // Kullanıcı Bakiyesini Ayarla
+    async function adjustBalance() {
+        const email = document.getElementById('userActionEmail').value;
+        const amount = document.getElementById('balanceAdjustment').value;
+
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/admin/adjust-balance`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, amount: parseFloat(amount) })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showSuccess('Kullanıcı bakiyesi güncellendi');
+                loadUsers();
+            } else {
+                showError('Bakiye güncellenemedi');
+            }
+        } catch (error) {
+            showError('Bakiye ayarlama işlemi başarısız');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Kullanıcıyı Banla
+    async function banUser() {
+        const email = document.getElementById('userActionEmail').value;
+        const reason = document.getElementById('banReason').value;
+
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/admin/ban-user`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, reason })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showSuccess('Kullanıcı başarıyla banlandı');
+                loadUsers();
+            } else {
+                showError('Kullanıcı banlanamadı');
+            }
+        } catch (error) {
+            showError('Kullanıcı banlama işlemi başarısız');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Çıkış Yap
+    function logout() {
+        // Kullanıcı oturumunu sonlandır
+        // Gerçek bir uygulamada token silme, local storage temizleme vb. işlemler yapılmalı
+        window.location.href = 'login.html';
+    }
+
+    // PTC reklam modalını aç
+    function openPtcModal(ad = null) {
+        const modal = document.getElementById('ptcAdModal');
+        const form = document.getElementById('ptcAdForm');
+        
+        // Formu sıfırla
+        form.reset();
+
+        if (ad) {
+            // Mevcut reklamı düzenleme
+            document.getElementById('ptcAdModalTitle').textContent = 'Reklamı Düzenle';
+            document.getElementById('ptcAdId').value = ad.id;
+            document.getElementById('adTitle').value = ad.title;
+            document.getElementById('adUrl').value = ad.url;
+            document.getElementById('adDescription').value = ad.description;
+            document.getElementById('adReward').value = ad.reward;
+            document.getElementById('adDuration').value = ad.duration;
+            document.getElementById('adActive').value = ad.active.toString();
+        } else {
+            // Yeni reklam
+            document.getElementById('ptcAdModalTitle').textContent = 'Yeni PTC Reklam';
         }
 
-        // Mesaj gösterme
-        function showMessage(text, type) {
-            const message = document.createElement('div');
-            message.className = `message ${type}`;
-            message.textContent = text;
+        modal.style.display = 'flex';
+    }
+
+    // PTC reklam modalını kapat
+    function closePtcModal() {
+        document.getElementById('ptcAdModal').style.display = 'none';
+    }
+
+    // Yükleme ekranını göster
+    function showLoading() {
+        document.querySelector('.loading').style.display = 'flex';
+    }
+
+    // Yükleme ekranını gizle
+    function hideLoading() {
+        document.querySelector('.loading').style.display = 'none';
+    }
+
+    // Hata mesajı göster
+    function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.classList.add('message', 'error');
+        errorDiv.textContent = message;
+        document.querySelector('.main-content').prepend(errorDiv);
+        
+        setTimeout(() => {
+            errorDiv.remove();
+        }, 5000);
+    }
+
+        // Başarı mesajı göster
+    function showSuccess(message) {
+        const successDiv = document.createElement('div');
+        successDiv.classList.add('message', 'success');
+        successDiv.textContent = message;
+        document.querySelector('.main-content').prepend(successDiv);
+        
+        setTimeout(() => {
+            successDiv.remove();
+        }, 5000);
+    }
+
+    // Modal kapatma fonksiyonları
+    function closeUserActionModal() {
+        document.getElementById('userActionModal').style.display = 'none';
+    }
+
+    // API çağrıları için genel hata yakalama
+    async function handleApiCall(apiCall, successMessage, errorMessage) {
+        try {
+            showLoading();
+            const response = await apiCall();
+            const result = await response.json();
+
+            if (result.success) {
+                showSuccess(successMessage);
+                return true;
+            } else {
+                showError(errorMessage);
+                return false;
+            }
+        } catch (error) {
+            showError(errorMessage);
+            return false;
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Kullanıcı işlem modalı için event listener
+    document.addEventListener('DOMContentLoaded', () => {
+        // Sayfa yüklendiğinde dashboard'ı göster
+        showTab('dashboard');
+
+        // Modalları kapatma event listenerları
+        const modalCloseButtons = document.querySelectorAll('.modal');
+        modalCloseButtons.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Kullanıcı izinleri kontrolü (varsayılan olarak tüm işlemlere izin ver)
+    function checkPermission(action) {
+        // Gerçek bir uygulamada kullanıcı rolü ve yetkilerine göre kontrol edilmeli
+        return true;
+    }
+
+    // Detaylı kullanıcı bilgileri modalı
+    async function showUserDetails(email) {
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/user/${email}`);
+            const userDetails = await response.json();
+
+            // Kullanıcı detay modalını oluştur
+            const modalContent = `
+                <div class="modal-header">
+                    <h3>Kullanıcı Detayları</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="user-detail">
+                        <strong>Email:</strong> ${userDetails.email}
+                        <br>
+                        <strong>Bakiye:</strong> ${userDetails.balance.toFixed(4)} DGB
+                        <br>
+                        <strong>Son Claim:</strong> ${userDetails.last_claim || 'Henüz claim yapılmamış'}
+                        <br>
+                        <strong>Referans:</strong> ${userDetails.referrer || '-'}
+                        <br>
+                        <strong>Referans Kazancı:</strong> ${userDetails.referral_earnings.toFixed(4)} DGB
+                    </div>
+                    <div class="user-history">
+                        <h4>Claim Geçmişi</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Miktar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${userDetails.claim_history.map(claim => `
+                                    <tr>
+                                        <td>${new Date(claim.timestamp).toLocaleString()}</td>
+                                        <td>${claim.amount.toFixed(4)} DGB</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Modalı göster
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    ${modalContent}
+                    <div class="modal-buttons">
+                        <button class="btn btn-danger" onclick="this.closest('.modal').remove()">Kapat</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+
+        } catch (error) {
+            showError('Kullanıcı detayları alınamadı');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Gelişmiş raporlama ve filtreleme fonksiyonları
+    function exportUserData() {
+        // Kullanıcı verilerini CSV veya Excel olarak dışa aktar
+        try {
+            // Veri toplama ve dışa aktarma mantığı
+            const users = document.querySelectorAll('#usersList tr');
+            let csvContent = "data:text/csv;charset=utf-8,";
             
-            document.querySelector('.main-content').insertBefore(
-                message, 
-                document.querySelector('.main-content').firstChild
-            );
+            // CSV başlıkları
+            csvContent += "Email,Son Claim,Referans,Referans Kazancı,Durum\n";
 
-            setTimeout(() => message.remove(), 5000);
+            users.forEach(user => {
+                const cells = user.querySelectorAll('td');
+                const rowData = [
+                    cells[0].textContent,
+                    cells[1].textContent,
+                    cells[2].textContent,
+                    cells[3].textContent,
+                    cells[4].textContent
+                ];
+                csvContent += rowData.join(",") + "\n";
+            });
+
+            // CSV dosyasını indirme
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "kullanicilar_raporu.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showSuccess('Kullanıcı raporu başarıyla oluşturuldu');
+        } catch (error) {
+            showError('Rapor oluşturulurken hata oluştu');
+        }
+    }
+
+    // Kullanıcı arama ve filtreleme
+    function filterUsers() {
+        const searchInput = document.getElementById('userSearchInput');
+        const filter = searchInput.value.toLowerCase();
+        const userRows = document.querySelectorAll('#usersList tr');
+
+        userRows.forEach(row => {
+            const email = row.querySelector('td:first-child').textContent.toLowerCase();
+            const referrer = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            
+            row.style.display = (
+                email.includes(filter) || 
+                referrer.includes(filter)
+            ) ? '' : 'none';
+        });
+    }
+
+    // Sayfa yüklenme event listener
+    document.addEventListener('DOMContentLoaded', () => {
+        // Kullanıcı arama input'u için event listener
+        const userSearchInput = document.getElementById('userSearchInput');
+        if (userSearchInput) {
+            userSearchInput.addEventListener('keyup', filterUsers);
         }
 
-        // Çıkış yapma
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'login.html';
+        // Kullanıcı verilerini dışa aktarma butonu
+        const exportButton = document.getElementById('exportUsersBtn');
+        if (exportButton) {
+            exportButton.addEventListener('click', exportUserData);
         }
+    });
 
-        // Sayfa yüklendiğinde
-        window.onload = async function() {
-            checkAdmin();
-            await Promise.all([
-                loadStats(),
-                loadUsers(),
-                loadSettings()
-            ]);
-        };
+    // PTC reklam istatistikleri detayı
+    async function showPtcAdDetails(adId) {
+        try {
+            showLoading();
+            const response = await fetch(`${API_BASE_URL}/admin/ptc-ad/${adId}`);
+            const adDetails = await response.json();
+
+            // Reklam detay modalını oluştur
+            const modalContent = `
+                <div class="modal-header">
+                    <h3>Reklam Detayları</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="ad-detail">
+                        <strong>Başlık:</strong> ${adDetails.title}
+                        <br>
+                        <strong>URL:</strong> ${adDetails.url}
+                        <br>
+                        <strong>Açıklama:</strong> ${adDetails.description}
+                        <br>
+                        <strong>Ödül:</strong> ${adDetails.reward.toFixed(4)} DGB
+                        <br>
+                        <strong>Görüntüleme Süresi:</strong> ${adDetails.duration} saniye
+                        <br>
+                        <strong>Toplam Görüntülenme:</strong> ${adDetails.views}
+                        <br>
+                        <strong>Durum:</strong> ${adDetails.active ? 'Aktif' : 'Pasif'}
+                    </div>
+                </div>
+            `;
+
+            // Modalı göster
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    ${modalContent}
+                    <div class="modal-buttons">
+                        <button class="btn btn-danger" onclick="this.closest('.modal').remove()">Kapat</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+
+        } catch (error) {
+            showError('Reklam detayları alınamadı');
+        } finally {
+            hideLoading();
+        }
+    }
+        
     </script>
 </body>
 </html>
