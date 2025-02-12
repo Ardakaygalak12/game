@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CountdownPro Faucet</title>
+    <title>CountdownPro DGB Faucet</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
 </head>
 <body class="bg-gray-100">
@@ -21,7 +21,7 @@
     <!-- Main Content -->
     <main class="container mx-auto p-4">
         <div class="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
-            <h2 class="text-xl font-bold mb-4 text-center">Bitcoin Faucet</h2>
+            <h2 class="text-xl font-bold mb-4 text-center">DigiByte (DGB) Faucet</h2>
             
             <!-- Faucet Form -->
             <form id="claimForm">
@@ -30,12 +30,12 @@
                     <input type="text" 
                            id="faucetAddress"
                            class="w-full p-2 border rounded" 
-                           placeholder="Enter your FaucetPay Address">
+                           placeholder="Enter your FaucetPay DGB address">
                 </div>
 
                 <button type="submit" 
                         class="w-full bg-blue-500 text-white py-3 rounded-lg font-bold hover:bg-blue-600 transition-colors">
-                    Claim 0.00000100 - 0.00000300 BTC
+                    Claim 0.01 - 0.03 DGB
                 </button>
             </form>
 
@@ -74,14 +74,14 @@
                 
                 statusMessage.classList.remove('hidden');
                 if (result.success) {
-                    statusMessage.innerHTML = `<p class="text-green-500">Başarılı! ${result.amount} BTC gönderildi.</p>`;
+                    statusMessage.innerHTML = `<p class="text-green-500">Başarılı! ${result.amount} DGB gönderildi.</p>`;
                     
                     // Son ödemelere ekle
                     const payment = document.createElement('div');
                     payment.className = 'flex justify-between text-sm';
                     payment.innerHTML = `
                         <span>${address.substring(0, 6)}...</span>
-                        <span>${result.amount} BTC</span>
+                        <span>${result.amount} DGB</span>
                     `;
                     document.getElementById('recentPayments').prepend(payment);
                 } else {
