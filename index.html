@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DGB Faucet</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -23,6 +24,9 @@
             padding: 1rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .header-content {
@@ -38,6 +42,13 @@
             font-size: 1.25rem;
             font-weight: 600;
             color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: #2563eb;
         }
 
         .user-info {
@@ -63,6 +74,9 @@
             cursor: pointer;
             font-size: 0.875rem;
             transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .logout-btn:hover {
@@ -88,6 +102,9 @@
             color: #1f2937;
             margin-bottom: 1.5rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .tabs {
@@ -106,6 +123,9 @@
             font-size: 0.875rem;
             color: #4b5563;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .tab:hover {
@@ -124,6 +144,7 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
 
         .btn {
@@ -135,6 +156,10 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .btn-primary {
@@ -168,6 +193,13 @@
             border: 1px solid #d1d5db;
             border-radius: 6px;
             font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .history-item {
@@ -180,6 +212,11 @@
             align-items: center;
             font-size: 0.875rem;
             color: #374151;
+            transition: transform 0.2s;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
         }
 
         .message {
@@ -188,6 +225,7 @@
             margin-top: 1rem;
             font-size: 0.875rem;
             display: none;
+            animation: fadeIn 0.3s ease;
         }
 
         .message.error {
@@ -250,12 +288,49 @@
             border-color: #d1d5db;
         }
 
-        .view-btn .reward-text {
+        .reward-text {
+            font-size: 0.875rem;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .ref-box {
+            margin-top: 1rem;
+        }
+
+        .ref-link {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .ref-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: #f9fafb;
+            padding: 1.25rem;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            color: #2563eb;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
             font-size: 0.875rem;
             color: #4b5563;
         }
 
-        /* API İşlem yüklenme göstergesi */
         .loading {
             position: fixed;
             top: 0;
@@ -281,6 +356,11 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 640px) {
@@ -310,6 +390,17 @@
             .tab {
                 width: 100%;
                 text-align: center;
+                justify-content: center;
+            }
+
+            .history-item {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .ref-link {
+                flex-direction: column;
             }
         }
     </style>
@@ -321,32 +412,60 @@
 
     <div class="header">
         <div class="header-content">
-            <div class="logo">DGB Faucet</div>
+            <div class="logo">
+                <i class="fas fa-coins"></i>
+                DGB Faucet
+            </div>
             <div class="user-info">
-                <div class="balance">Bakiye: <span id="userBalance">0</span> DGB</div>
-                <button class="logout-btn" onclick="logout()">Çıkış</button>
+                <div class="balance">
+                    <i class="fas fa-wallet"></i>
+                    Bakiye: <span id="userBalance">0</span> DGB
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Çıkış
+                </button>
             </div>
         </div>
     </div>
 
     <div class="container">
         <div class="tabs">
-            <button class="tab active" onclick="openTab('faucet')">Faucet</button>
-            <button class="tab" onclick="openTab('ptc')">PTC Reklamlar</button>
-            <button class="tab" onclick="openTab('withdraw')">Para Çek</button>
-            <button class="tab" onclick="openTab('referral')">Referans</button>
+            <button class="tab active" onclick="openTab('faucet')">
+                <i class="fas fa-faucet"></i>
+                Faucet
+            </button>
+            <button class="tab" onclick="openTab('ptc')">
+                <i class="fas fa-ad"></i>
+                PTC Reklamlar
+            </button>
+            <button class="tab" onclick="openTab('withdraw')">
+                <i class="fas fa-money-bill-wave"></i>
+                Para Çek
+            </button>
+            <button class="tab" onclick="openTab('referral')">
+                <i class="fas fa-users"></i>
+                Referans
+            </button>
         </div>
 
         <!-- Faucet Tab -->
         <div id="faucet" class="tab-content active">
             <div class="card">
-                <div class="card-title">DGB Kazan</div>
+                <div class="card-title">
+                    <i class="fas fa-faucet"></i>
+                    DGB Kazan
+                </div>
                 <button class="btn btn-primary" id="claimButton" onclick="claim()">
+                    <i class="fas fa-hand-holding-usd"></i>
                     Claim (0.0078673589 DGB)
                 </button>
                 <div id="claimMessage" class="message"></div>
                 <div style="margin-top: 2rem;">
-                    <div class="card-title">Son İşlemler</div>
+                    <div class="card-title">
+                        <i class="fas fa-history"></i>
+                        Son İşlemler
+                    </div>
                     <div id="claimHistory"></div>
                 </div>
             </div>
@@ -355,7 +474,10 @@
         <!-- PTC Tab -->
         <div id="ptc" class="tab-content">
             <div class="card">
-                <div class="card-title">PTC Reklamlar</div>
+                <div class="card-title">
+                    <i class="fas fa-ad"></i>
+                    PTC Reklamlar
+                </div>
                 <div id="ptcList" class="ptc-list">
                     <!-- Reklamlar buraya yüklenecek -->
                 </div>
@@ -366,15 +488,24 @@
         <!-- Withdraw Tab -->
         <div id="withdraw" class="tab-content">
             <div class="card">
-                <div class="card-title">Para Çek</div>
+                <div class="card-title">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Para Çek
+                </div>
                 <div class="form-group">
                     <label>Miktar (Min: 1 DGB)</label>
                     <input type="number" id="withdrawAmount" class="form-control" min="1" step="0.0000001" placeholder="Çekilecek miktar">
                 </div>
-                <button class="btn btn-primary" onclick="withdraw()">Para Çek</button>
+                <button class="btn btn-primary" onclick="withdraw()">
+                    <i class="fas fa-paper-plane"></i>
+                    Para Çek
+                </button>
                 <div id="withdrawMessage" class="message"></div>
                 <div style="margin-top: 2rem;">
-                    <div class="card-title">Son İşlemler</div>
+                    <div class="card-title">
+                        <i class="fas fa-history"></i>
+                        Son İşlemler
+                    </div>
                     <div id="withdrawHistory"></div>
                 </div>
             </div>
@@ -383,14 +514,20 @@
         <!-- Referral Tab -->
         <div id="referral" class="tab-content">
             <div class="card">
-                <div class="card-title">Referans Sistemi</div>
+                <div class="card-title">
+                    <i class="fas fa-users"></i>
+                    Referans Sistemi
+                </div>
                 <p style="margin-bottom: 1rem; color: #4b5563;">
                     Arkadaşlarınızı davet edin, onların her kazancından %40 bonus kazanın!
                 </p>
                 <div class="ref-box">
                     <div class="ref-link">
                         <input type="text" id="refLink" class="form-control" readonly>
-                        <button class="btn btn-primary" style="width: auto;" onclick="copyRefLink()">Kopyala</button>
+                        <button class="btn btn-primary" style="width: auto;" onclick="copyRefLink()">
+                            <i class="fas fa-copy"></i>
+                            Kopyala
+                        </button>
                     </div>
                     <div class="ref-stats">
                         <div class="stat-card">
@@ -403,6 +540,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="referralMessage" class="message"></div>
             </div>
         </div>
     </div>
@@ -443,12 +581,13 @@
                     }
                 });
 
+                const data = await response.json();
+                
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.detail || 'API request failed');
+                    throw new Error(data.detail || 'API request failed');
                 }
 
-                return await response.json();
+                return data;
             } catch (error) {
                 console.error('API Error:', error);
                 throw error;
@@ -468,7 +607,7 @@
                 initializeReferral();
             } catch (error) {
                 console.error('Initialization error:', error);
-                showMessage('claimMessage', 'Uygulama başlatılamadı', 'error');
+                showMessage('claimMessage', 'Uygulama başlatılamadı: ' + error.message, 'error');
             }
         }
 
@@ -497,11 +636,8 @@
                     })
                 });
 
-                userBalance = data.newBalance;
-                localStorage.setItem('balance', userBalance);
-                document.getElementById('userBalance').textContent = userBalance.toFixed(8);
-
                 showMessage('claimMessage', `Başarılı! ${CONFIG.CLAIM_AMOUNT} DGB kazandınız!`, 'success');
+                await loadUserData();
                 await loadHistory();
             } catch (error) {
                 showMessage('claimMessage', 'Claim işlemi başarısız: ' + error.message, 'error');
@@ -526,12 +662,9 @@
                     })
                 });
 
-                userBalance = data.newBalance;
-                localStorage.setItem('balance', userBalance);
-                document.getElementById('userBalance').textContent = userBalance.toFixed(8);
                 document.getElementById('withdrawAmount').value = '';
-
-                showMessage('withdrawMessage', `${amount} DGB çekim talebiniz alındı`, 'success');
+                showMessage('withdrawMessage', `${amount} DGB çekim işlemi başarılı!`, 'success');
+                await loadUserData();
                 await loadHistory();
             } catch (error) {
                 showMessage('withdrawMessage', 'Para çekme işlemi başarısız: ' + error.message, 'error');
@@ -575,10 +708,6 @@
                     })
                 });
 
-                userBalance = data.newBalance;
-                localStorage.setItem('balance', userBalance);
-                document.getElementById('userBalance').textContent = userBalance.toFixed(8);
-
                 showMessage('ptcMessage', `Tebrikler! ${reward} DGB kazandınız!`, 'success');
                 
                 // Reklamı listeden kaldır
@@ -586,6 +715,7 @@
                 adElement.style.opacity = '0';
                 setTimeout(() => adElement.remove(), 300);
                 
+                await loadUserData();
             } catch (error) {
                 showMessage('ptcMessage', 'Reklam görüntülenemedi: ' + error.message, 'error');
             }
@@ -604,7 +734,10 @@
                         .reverse()
                         .map(claim => `
                             <div class="history-item">
-                                <span>${claim.amount} DGB</span>
+                                <span>
+                                    <i class="fas fa-coins"></i>
+                                    ${claim.amount} DGB
+                                </span>
                                 <span>${new Date(claim.timestamp).toLocaleString()}</span>
                             </div>
                         `).join('');
@@ -620,7 +753,11 @@
                         .reverse()
                         .map(withdraw => `
                             <div class="history-item">
-                                <span>${withdraw.amount} DGB (${withdraw.status})</span>
+                                <span>
+                                    <i class="fas fa-paper-plane"></i>
+                                    ${withdraw.amount} DGB
+                                    <span class="status">${withdraw.status}</span>
+                                </span>
                                 <span>${new Date(withdraw.timestamp).toLocaleString()}</span>
                             </div>
                         `).join('');
@@ -643,7 +780,8 @@
             try {
                 const data = await loadUserData();
                 document.getElementById('refCount').textContent = data.ref_count || 0;
-                document.getElementById('refEarnings').textContent = (data.referral_earnings || 0).toFixed(8) + ' DGB';
+                document.getElementById('refEarnings').textContent = 
+                    (data.referral_earnings || 0).toFixed(8) + ' DGB';
             } catch (error) {
                 console.error('Referral stats update error:', error);
             }
