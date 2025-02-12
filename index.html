@@ -509,7 +509,7 @@
         <div class="loading-spinner"></div>
     </div>
     <script>
-// Sabitler
+        // Sabitler
 const CONFIG = {
     JSONBIN_API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W',
     JSONBIN_BIN_ID: '67a7a415e41b4d34e4867ffe',
@@ -524,7 +524,7 @@ const CONFIG = {
 let userEmail = localStorage.getItem('userEmail');
 let userBalance = parseFloat(localStorage.getItem('balance') || '0');
 let canClaim = true;
-let timeLeft = 5; // 5 saniye
+let timeLeft = 0; // Timer'ı 0 saniye olarak ayarla
 
 // Sayfa yüklendiğinde
 window.onload = async function() {
@@ -700,6 +700,7 @@ async function claim() {
         await loadHistory();
 
         canClaim = false;
+        timeLeft = 0; // Timer'ı 0 saniye olarak ayarla
         startClaimTimer();
 
     } catch (error) {
@@ -707,6 +708,29 @@ async function claim() {
         showMessage('claimMessage', 'Claim işlemi başarısız', 'error');
     } finally {
         toggleLoading(false);
+    }
+}
+
+// Timer başlatma
+function startClaimTimer() {
+    const timerSpan = document.getElementById('timeLeft');
+    const claimButton = document.getElementById('claimButton');
+
+    if (!canClaim) {
+        claimButton.disabled = true;
+        
+        const timer = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                canClaim = true;
+                claimButton.disabled = false;
+                timeLeft = 0;
+                timerSpan.textContent = 'Hazır!';
+            }
+        }, 1000);
+    } else {
+        timerSpan.textContent = 'Hazır!';
+        claimButton.disabled = false;
     }
 }
 
@@ -796,31 +820,6 @@ function updateWithdrawHistory(history) {
         `).join('') || '<p>Henüz çekim yapılmamış.</p>';
 
     historyDiv.innerHTML = html;
-}
-
-// Timer başlatma
-function startClaimTimer() {
-    const timerSpan = document.getElementById('timeLeft');
-    const claimButton = document.getElementById('claimButton');
-
-    if (!canClaim) {
-        claimButton.disabled = true;
-        
-        const timer = setInterval(() => {
-            timeLeft--;
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                canClaim = true;
-                claimButton.disabled = false;
-                timeLeft = 300;
-                timerSpan.textContent = 'Hazır!';
-            }
-        }, 1000);
-    }
 }
 
 // PTC reklamları yükleme 
