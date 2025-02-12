@@ -761,23 +761,25 @@ async function withdraw() {
     try {
         toggleLoading(true);
 
-        // FaucetPay ile ödeme gönder
+        // FaucetPay ile ödeme gönder - form data olarak
+        const formData = new URLSearchParams();
+        formData.append('api_key', CONFIG.FAUCETPAY_API_KEY);
+        formData.append('amount', amount);
+        formData.append('to', userEmail);
+        formData.append('currency', 'DGB');
+
         const faucetPayResponse = await fetch('https://faucetpay.io/api/v1/send', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: JSON.stringify({
-                api_key: CONFIG.FAUCETPAY_API_KEY,
-                amount: amount,
-                to: userEmail,
-                currency: 'DGB'
-            })
+            body: formData
         });
 
         const faucetPayResult = await faucetPayResponse.json();
+        console.log('FaucetPay response:', faucetPayResult); // Hata ayıklama için yanıtı görelim
 
-        if (faucetPayResult.status === 200) {
+        if (faucetPayResult.status === 200 || faucetPayResult.status === true) {
             // Ödeme başarılı - kullanıcı bakiyesini güncelle
             const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
                 headers: { 'X-Master-Key': CONFIG.JSONBIN_API_KEY }
@@ -797,7 +799,7 @@ async function withdraw() {
                 email: userEmail,
                 timestamp: new Date().toISOString(),
                 status: 'completed',
-                txid: faucetPayResult.payout_id
+                txid: faucetPayResult.payout_id || faucetPayResult.id
             });
 
             await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, {
