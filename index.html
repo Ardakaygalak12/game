@@ -532,7 +532,7 @@
     </div>
 
     <script>
-        // CORS ve performans sorunlarını çözen son versiyon
+// Sabitler
 const CONFIG = {
     JSONBIN_API_KEY: '$2a$10$m3ykh1NKxmtQDVM140H6TOTqsemkiBEdfdQnG/ApyhjJ1Duj2Ri6W',
     JSONBIN_BIN_ID: '67a7a415e41b4d34e4867ffe',
@@ -548,19 +548,17 @@ let userEmail = localStorage.getItem('userEmail');
 let userBalance = parseFloat(localStorage.getItem('balance') || '0');
 let canClaim = true;
 
-// Güvenilir CORS proxy listesi
-const CORS_PROXIES = [
-    'https://corsproxy.io/?',
-    'https://cors.eu.org/',
-    'https://cors-anywhere.herokuapp.com/',
-    'https://api.allorigins.win/raw?url='
-];
+// CORS proxy ve fetch işlemleri için güvenilir sistem
+async function fetchWithRetry(url, options = {}) {
+    const proxies = [
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?',
+        'https://cors.eu.org/'
+    ];
 
-// CORS proxy ile fetch işlemi
-async function fetchWithProxy(url, options = {}) {
-    let error;
+    let lastError;
     
-    for (const proxy of CORS_PROXIES) {
+    for (const proxy of proxies) {
         try {
             const proxyUrl = proxy + encodeURIComponent(url);
             const response = await fetch(proxyUrl, {
@@ -573,17 +571,17 @@ async function fetchWithProxy(url, options = {}) {
             
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response;
-        } catch (e) {
-            error = e;
-            console.warn(`Proxy ${proxy} failed, trying next...`);
+        } catch (error) {
+            console.warn(`Proxy ${proxy} failed:`, error.message);
+            lastError = error;
             continue;
         }
     }
     
-    throw error;
+    throw lastError;
 }
 
-// JSONBin veri işlemleri
+// JSONBin istekleri için özel fonksiyon
 async function jsonbinRequest(method = 'GET', body = null) {
     const options = {
         method,
@@ -599,14 +597,15 @@ async function jsonbinRequest(method = 'GET', body = null) {
     }
 
     try {
-        const response = await fetchWithProxy(
+        const response = await fetchWithRetry(
             `https://api.jsonbin.io/v3/b/${CONFIG.JSONBIN_BIN_ID}`, 
             options
         );
         return await response.json();
     } catch (error) {
         console.error('JSONBin API hatası:', error);
-        throw new Error('Veri işleme hatası oluştu');
+        showMessage('claimMessage', 'Bağlantı hatası oluştu, lütfen tekrar deneyin.', 'error');
+        throw error;
     }
 }
 
@@ -619,35 +618,29 @@ function toggleLoading(show) {
             if (loadingEl.style.display === 'flex') {
                 loadingEl.style.display = 'none';
             }
-        }, 15000); // 15 saniye timeout
+        }, 15000);
     } else {
         loadingEl.style.display = 'none';
     }
 }
 
-// Sayfa yüklendiğinde
-window.onload = async function() {
-    if (!userEmail) {
-        window.location.href = 'login.html';
-        return;
-    }
-    await initializeApp();
-};
-
 // Uygulama başlatma
 async function initializeApp() {
     try {
         toggleLoading(true);
+        
+        // Paralel veri yükleme
         await Promise.all([
             loadUserData(),
             loadHistory(),
             loadPtcAds()
         ]);
+
         initializeReferral();
         document.getElementById('timeLeft').textContent = 'Hazır!';
     } catch (error) {
-        console.error('Başlatma hatası:', error);
-        showMessage('claimMessage', 'Yükleme hatası, lütfen sayfayı yenileyin', 'error');
+        console.error('Başlangıç hatası:', error);
+        showMessage('claimMessage', 'Bir hata oluştu', 'error');
     } finally {
         toggleLoading(false);
     }
@@ -658,14 +651,16 @@ async function loadUserData() {
     try {
         const data = await jsonbinRequest('GET');
         const user = data.record.users.find(u => u.email === userEmail);
-        
-        if (!user) throw new Error('Kullanıcı bulunamadı');
-        
+
+        if (!user) {
+            throw new Error('Kullanıcı bulunamadı');
+        }
+
         userBalance = user.balance || 0;
         localStorage.setItem('balance', userBalance);
         document.getElementById('userBalance').textContent = userBalance.toFixed(8);
         document.getElementById('faucetpayEmail').value = user.email || '';
-        
+
         return user;
     } catch (error) {
         console.error('Veri yükleme hatası:', error);
@@ -676,7 +671,7 @@ async function loadUserData() {
 // Claim işlemi
 async function claim() {
     if (!canClaim) {
-        showMessage('claimMessage', 'Lütfen bekleyin', 'warning');
+        showMessage('claimMessage', 'Lütfen bekleme süresinin dolmasını bekleyin', 'warning');
         return;
     }
 
@@ -728,7 +723,7 @@ async function claim() {
     }
 }
 
-// Claim timer'ı
+// Timer işlemleri
 function startClaimTimer() {
     let timeLeft = 3600; // 1 saat
     const timerElement = document.getElementById('timeLeft');
@@ -757,7 +752,7 @@ async function faucetpayRequest(endpoint, params) {
     });
 
     try {
-        const response = await fetchWithProxy(`https://faucetpay.io/api/v1/${endpoint}`, {
+        const response = await fetchWithRetry(`https://faucetpay.io/api/v1/${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -789,10 +784,6 @@ async function withdraw() {
     try {
         toggleLoading(true);
 
-        const data = await jsonbinRequest('GET');
-        const userIndex = data.record.users.findIndex(u => u.email === userEmail);
-
-        // FaucetPay hesap kontrolü
         const accountResult = await faucetpayRequest('checkaddress', {
             address: userEmail,
             currency: 'DGB'
@@ -801,6 +792,9 @@ async function withdraw() {
         if (!accountResult.status) {
             throw new Error('Geçersiz FaucetPay hesabı');
         }
+
+        const data = await jsonbinRequest('GET');
+        const userIndex = data.record.users.findIndex(u => u.email === userEmail);
 
         data.record.users[userIndex].balance -= amount;
         
@@ -816,7 +810,6 @@ async function withdraw() {
         };
 
         data.record.users[userIndex].withdrawals.push(withdrawalData);
-
         await jsonbinRequest('PUT', data.record);
 
         userBalance -= amount;
@@ -837,9 +830,9 @@ async function withdraw() {
 
 // PTC reklamları yükleme
 async function loadPtcAds() {
+    const ptcList = document.getElementById('ptcList');
     try {
         const data = await jsonbinRequest('GET');
-        const ptcList = document.getElementById('ptcList');
         const ads = data.record.ptcAds || [];
         
         if (ads.length > 0) {
@@ -857,7 +850,7 @@ async function loadPtcAds() {
         }
     } catch (error) {
         console.error('PTC reklamları yükleme hatası:', error);
-        document.getElementById('ptcList').innerHTML = '<p>Reklamlar yüklenemedi.</p>';
+        ptcList.innerHTML = '<p>Reklamlar yüklenemedi.</p>';
     }
 }
 
@@ -889,7 +882,6 @@ async function viewPtcAd(adId) {
             document.getElementById('userBalance').textContent = userBalance.toFixed(8);
 
             showMessage('ptcMessage', `Tebrikler! ${ad.reward} DGB kazandınız!`, 'success');
-            
             document.querySelector(`[onclick="viewPtcAd('${adId}')"]`).closest('.ptc-ad').remove();
         }
     } catch (error) {
@@ -900,7 +892,7 @@ async function viewPtcAd(adId) {
     }
 }
 
-// Geçmiş yükleme
+// Geçmiş yükleme ve güncelleme
 async function loadHistory() {
     try {
         const data = await jsonbinRequest('GET');
@@ -915,7 +907,6 @@ async function loadHistory() {
     }
 }
 
-// Claim geçmişini güncelleme
 function updateClaimHistory(history) {
     const historyDiv = document.getElementById('claimHistory');
     const html = history
@@ -931,7 +922,6 @@ function updateClaimHistory(history) {
     historyDiv.innerHTML = html;
 }
 
-// Para çekme geçmişini güncelleme
 function updateWithdrawHistory(history) {
     const historyDiv = document.getElementById('withdrawHistory');
     const html = history
@@ -959,7 +949,6 @@ function initializeReferral() {
     updateReferralStats();
 }
 
-// Referral istatistiklerini güncelleme
 async function updateReferralStats() {
     try {
         const data = await jsonbinRequest('GET');
@@ -977,7 +966,6 @@ async function updateReferralStats() {
     }
 }
 
-// Referral linkini kopyalama
 function copyRefLink() {
     const refLink = document.getElementById('refLink');
     refLink.select();
@@ -985,7 +973,7 @@ function copyRefLink() {
     showMessage('referralMessage', 'Referans linki kopyalandı!', 'success');
 }
 
-// Mesaj gösterme fonksiyonu
+// Yardımcı fonksiyonlar
 function showMessage(elementId, text, type) {
     const message = document.getElementById(elementId);
     if (!message) return;
@@ -1001,134 +989,76 @@ function showMessage(elementId, text, type) {
     }, 5000);
 }
 
-// Tab değiştirme
 function openTab(tabName) {
-    // Tüm tab içeriklerini gizle
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
     });
-    
-    // Tüm tab butonlarından active sınıfını kaldır
     document.querySelectorAll('.tab-button').forEach(btn => {
         btn.classList.remove('active');
     });
     
-    // Seçilen tab'ı göster
-    const selectedTab = document.getElementById(tabName);
-    if (selectedTab) {
-        selectedTab.classList.add('active');
-    }
-    
-    // Seçilen butonun active sınıfını ekle
-    const selectedButton = document.querySelector(`[onclick="openTab('${tabName}')"]`);
-    if (selectedButton) {
-        selectedButton.classList.add('active');
-    }
+    document.getElementById(tabName).classList.add('active');
+    document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
 }
 
-// FaucetPay email kaydetme
-async function saveFaucetPayEmail() {
-    try {
-        const email = document.getElementById('faucetpayEmail').value;
-        if (!email) {
-            throw new Error('Lütfen bir email adresi girin');
-        }
-
-        // Email formatı kontrolü
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            throw new Error('Geçersiz email formatı');
-        }
-
-        const data = await jsonbinRequest('GET');
-        const userIndex = data.record.users.findIndex(u => u.email === userEmail);
-        
-        if (userIndex === -1) {
-            throw new Error('Kullanıcı bulunamadı');
-        }
-
-        // Email güncelle
-        data.record.users[userIndex].faucetpayEmail = email;
-        await jsonbinRequest('PUT', data.record);
-
-        showMessage('faucetpayMessage', 'FaucetPay email adresi başarıyla kaydedildi', 'success');
-    } catch (error) {
-        console.error('FaucetPay email kaydetme hatası:', error);
-        showMessage('faucetpayMessage', error.message, 'error');
-    }
+function saveFaucetPayEmail() {
+    showMessage('faucetpayMessage', 'FaucetPay bağlantınız kayıtlı emailiniz ile otomatik sağlanmıştır.', 'info');
 }
 
-// Çıkış yapma
 function logout() {
     localStorage.clear();
     window.location.href = 'login.html';
 }
 
-// Helper fonksiyonlar
-function validateWithdrawAmount(value) {
-    const amount = parseFloat(value);
-    const withdrawButton = document.querySelector('button[onclick="withdraw()"]');
-    
-    if (!amount || amount < CONFIG.MIN_WITHDRAW) {
-        withdrawButton.disabled = true;
-        showMessage('withdrawMessage', `Minimum çekim tutarı ${CONFIG.MIN_WITHDRAW} DGB`, 'warning');
-        return false;
-    }
-    
-    if (amount > userBalance) {
-        withdrawButton.disabled = true;
-        showMessage('withdrawMessage', 'Yetersiz bakiye', 'warning');
-        return false;
-    }
-    
-    withdrawButton.disabled = false;
-    return true;
-}
-
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
-    // Event delegation için click handler
-    document.body.addEventListener('click', (e) => {
-        const target = e.target;
-        
-        if (target.matches('.tab-button')) {
-            const tabName = target.getAttribute('data-tab') || target.getAttribute('onclick').match(/'(.*?)'/)[1];
-            openTab(tabName);
-            e.preventDefault();
-        } else if (target.matches('.logout-btn')) {
-            logout();
-            e.preventDefault();
-        }
+    if (!userEmail) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Internet bağlantı kontrolü
+    if (!navigator.onLine) {
+        showMessage('claimMessage', 'İnternet bağlantınızı kontrol edin', 'error');
+    }
+
+    // Online/Offline durumu
+    window.addEventListener('online', () => {
+        showMessage('claimMessage', 'İnternet bağlantısı sağlandı', 'success');
     });
 
-    // Form işlemleri için debounce
-    const debounce = (fn, delay) => {
-        let timeoutId;
-        return (...args) => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => fn.apply(null, args), delay);
-        };
-    };
+    window.addEventListener('offline', () => {
+        showMessage('claimMessage', 'İnternet bağlantısı kesildi', 'error');
+    });
 
-    // Withdraw input validation
+    // Form validasyonları
     const withdrawInput = document.getElementById('withdrawAmount');
     if (withdrawInput) {
-        withdrawInput.addEventListener('input', debounce((e) => {
-            validateWithdrawAmount(e.target.value);
-        }, 300));
+        withdrawInput.addEventListener('input', (e) => {
+            const amount = parseFloat(e.target.value);
+            const withdrawButton = document.querySelector('button[onclick="withdraw()"]');
+            
+            if (!amount || amount < CONFIG.MIN_WITHDRAW) {
+                withdrawButton.disabled = true;
+                showMessage('withdrawMessage', `Minimum çekim tutarı ${CONFIG.MIN_WITHDRAW} DGB`, 'warning');
+                return;
+            }
+            
+            if (amount > userBalance) {
+                withdrawButton.disabled = true;
+                showMessage('withdrawMessage', 'Yetersiz bakiye', 'warning');
+                return;
+            }
+            
+            withdrawButton.disabled = false;
+        });
     }
 
-    // FaucetPay email input validation
-    const faucetpayEmailInput = document.getElementById('faucetpayEmail');
-    if (faucetpayEmailInput) {
-        faucetpayEmailInput.addEventListener('input', debounce((e) => {
-            const email = e.target.value;
-            const saveButton = document.querySelector('button[onclick="saveFaucetPayEmail()"]');
-            saveButton.disabled = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }, 300));
-    }
+    // Uygulamayı başlat
+    initializeApp();
 });
 
-// URL parametrelerini kontrol et ve referral sistemini başlat
+// URL parametrelerini kontrol et
 function checkReferral() {
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
@@ -1146,43 +1076,19 @@ function checkReferral() {
 // Sayfa yüklendiğinde referral kontrolü yap
 window.addEventListener('load', checkReferral);
 
-// Service Worker kayıt
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(registration => {
-            console.log('ServiceWorker registration successful');
-        }).catch(err => {
-            console.log('ServiceWorker registration failed: ', err);
-        });
-    });
-}
-
-// Offline/Online durumu kontrolü
-window.addEventListener('online', () => {
-    showMessage('claimMessage', 'İnternet bağlantısı sağlandı', 'success');
-});
-
-window.addEventListener('offline', () => {
-    showMessage('claimMessage', 'İnternet bağlantısı kesildi', 'error');
-});
-
 // Hata yakalama
 window.onerror = function(msg, url, lineNo, columnNo, error) {
-    console.error('Hata:', msg, 'URL:', url, 'Satır:', lineNo, 'Sütun:', columnNo, 'Hata objesi:', error);
+    console.error('Hata:', {
+        message: msg,
+        url: url,
+        line: lineNo,
+        column: columnNo,
+        error: error
+    });
+    
+    showMessage('claimMessage', 'Bir hata oluştu, lütfen sayfayı yenileyin', 'error');
     return false;
 };
-
-// Performans izleme
-if ('performance' in window) {
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            const timing = performance.getEntriesByType('navigation')[0];
-            if (timing.duration > 5000) { // 5 saniyeden uzun süren yüklemeler
-                console.warn('Sayfa yükleme performansı düşük:', timing);
-            }
-        }, 0);
-    });
-}
     </script>
 </body>
 </html>
