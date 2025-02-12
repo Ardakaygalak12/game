@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 
-function sendPayment($address, $amount, $currency = 'BTC') {
+function sendPayment($address, $amount, $currency = 'DGB') {
     $url = 'https://faucetpay.io/api/v1/send';
     
     $data = array(
