@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -89,24 +89,6 @@
             padding: 0 1rem;
         }
 
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .card-title {
-            font-size: 1.125rem;
-            color: #1f2937;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
         .tabs {
             display: flex;
             gap: 0.5rem;
@@ -136,6 +118,24 @@
             background: #2563eb;
             color: white;
             border-color: #2563eb;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .tab-content {
@@ -202,23 +202,6 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .history-item {
-            padding: 1rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.875rem;
-            color: #374151;
-            transition: transform 0.2s;
-        }
-
-        .history-item:hover {
-            transform: translateX(5px);
-        }
-
         .message {
             padding: 1rem;
             border-radius: 6px;
@@ -238,6 +221,23 @@
             background: #dcfce7;
             color: #166534;
             border: 1px solid #bbf7d0;
+        }
+
+        .history-item {
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: #374151;
+            transition: transform 0.2s;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
         }
 
         .ptc-list {
@@ -294,6 +294,28 @@
             font-weight: 600;
         }
 
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
         .ref-box {
             margin-top: 1rem;
         }
@@ -329,28 +351,6 @@
         .stat-label {
             font-size: 0.875rem;
             color: #4b5563;
-        }
-
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .loading-spinner {
-            width: 3rem;
-            height: 3rem;
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #2563eb;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
@@ -419,11 +419,11 @@
             <div class="user-info">
                 <div class="balance">
                     <i class="fas fa-wallet"></i>
-                    Bakiye: <span id="userBalance">0</span> DGB
+                    Balance: <span id="userBalance">0</span> DGB
                 </div>
                 <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
-                    Çıkış
+                    Logout
                 </button>
             </div>
         </div>
@@ -437,24 +437,23 @@
             </button>
             <button class="tab" onclick="openTab('ptc')">
                 <i class="fas fa-ad"></i>
-                PTC Reklamlar
+                PTC Ads
             </button>
             <button class="tab" onclick="openTab('withdraw')">
                 <i class="fas fa-money-bill-wave"></i>
-                Para Çek
+                Withdraw
             </button>
             <button class="tab" onclick="openTab('referral')">
                 <i class="fas fa-users"></i>
-                Referans
+                Referral
             </button>
         </div>
 
-        <!-- Faucet Tab -->
         <div id="faucet" class="tab-content active">
             <div class="card">
                 <div class="card-title">
                     <i class="fas fa-faucet"></i>
-                    DGB Kazan
+                    Earn DGB
                 </div>
                 <button class="btn btn-primary" id="claimButton" onclick="claim()">
                     <i class="fas fa-hand-holding-usd"></i>
@@ -464,79 +463,74 @@
                 <div style="margin-top: 2rem;">
                     <div class="card-title">
                         <i class="fas fa-history"></i>
-                        Son İşlemler
+                        Recent Claims
                     </div>
                     <div id="claimHistory"></div>
                 </div>
             </div>
         </div>
 
-        <!-- PTC Tab -->
         <div id="ptc" class="tab-content">
             <div class="card">
                 <div class="card-title">
                     <i class="fas fa-ad"></i>
-                    PTC Reklamlar
+                    PTC Advertisements
                 </div>
-                <div id="ptcList" class="ptc-list">
-                    <!-- Reklamlar buraya yüklenecek -->
-                </div>
+                <div id="ptcList" class="ptc-list"></div>
                 <div id="ptcMessage" class="message"></div>
             </div>
         </div>
 
-        <!-- Withdraw Tab -->
         <div id="withdraw" class="tab-content">
             <div class="card">
                 <div class="card-title">
                     <i class="fas fa-money-bill-wave"></i>
-                    Para Çek
+                    Withdraw Funds
                 </div>
                 <div class="form-group">
-                    <label>Miktar (Min: 1 DGB)</label>
-                    <input type="number" id="withdrawAmount" class="form-control" min="1" step="0.0000001" placeholder="Çekilecek miktar">
+                    <label>Amount (Min: 1 DGB)</label>
+                    <input type="number" id="withdrawAmount" class="form-control" min="1" step="0.0000001" placeholder="Amount to withdraw">
                 </div>
                 <button class="btn btn-primary" onclick="withdraw()">
                     <i class="fas fa-paper-plane"></i>
-                    Para Çek
+                    Withdraw
                 </button>
                 <div id="withdrawMessage" class="message"></div>
                 <div style="margin-top: 2rem;">
                     <div class="card-title">
                         <i class="fas fa-history"></i>
-                        Son İşlemler
+                        Recent Withdrawals
                     </div>
                     <div id="withdrawHistory"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Referral Tab -->
         <div id="referral" class="tab-content">
             <div class="card">
                 <div class="card-title">
                     <i class="fas fa-users"></i>
-                    Referans Sistemi
+                    Referral System
                 </div>
                 <p style="margin-bottom: 1rem; color: #4b5563;">
-                    Arkadaşlarınızı davet edin, onların her kazancından %40 bonus kazanın!
+                    Invite your friends and earn 40% of their earnings!
                 </p>
                 <div class="ref-box">
                     <div class="ref-link">
                         <input type="text" id="refLink" class="form-control" readonly>
                         <button class="btn btn-primary" style="width: auto;" onclick="copyRefLink()">
                             <i class="fas fa-copy"></i>
-                            Kopyala
+                            Copy
                         </button>
                     </div>
                     <div class="ref-stats">
                         <div class="stat-card">
                             <div class="stat-value" id="refCount">0</div>
-                            <div class="stat-label">Toplam Referans</div>
+                            <div class="stat-label">Total Referrals</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="refEarnings">0 DGB</div>
-                            <div class="stat-label">Referans Kazancı</div>
+                            <div class="stat-label">Referral Earnings</div>
                         </div>
                     </div>
                 </div>
@@ -546,37 +540,37 @@
     </div>
 
     <script>
-        // API ve Config
-        const API = {
+        // API Configuration
+        const API_CONFIG = {
             BASE_URL: 'http://localhost:8000/api',
-            ENDPOINTS: {
-                USER: '/user',
-                CLAIM: '/claim',
-                WITHDRAW: '/withdraw',
-                PTC_ADS: '/ptc-ads',
-                VIEW_PTC: '/view-ptc'
-            }
-        };
-
-        const CONFIG = {
             CLAIM_AMOUNT: 0.0078673589,
             MIN_WITHDRAW: 1.0,
-            REF_COMMISSION: 0.40,
-            BASE_URL: window.location.origin
+            REF_COMMISSION: 0.40
         };
 
+        // Session Management
         let userEmail = localStorage.getItem('userEmail');
-        let userBalance = parseFloat(localStorage.getItem('balance') || '0');
+        let sessionId = localStorage.getItem('sessionId') || generateSessionId();
 
-        // API istekleri için yardımcı fonksiyon
+        function generateSessionId() {
+            const id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            localStorage.setItem('sessionId', id);
+            return id;
+        }
+
+        // API Request Handler
         async function apiRequest(endpoint, options = {}) {
             const loading = document.querySelector('.loading');
             try {
                 loading.style.display = 'flex';
-                const response = await fetch(`${API.BASE_URL}${endpoint}`, {
+                const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
                     ...options,
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-Session-ID': sessionId,
                         ...options.headers
                     }
                 });
@@ -584,7 +578,7 @@
                 const data = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(data.detail || 'API request failed');
+                    throw new Error(data.detail || data.message || 'Request failed');
                 }
 
                 return data;
@@ -596,65 +590,38 @@
             }
         }
 
-        // Uygulama başlatma
-        async function initializeApp() {
-            try {
-                await Promise.all([
-                    loadUserData(),
-                    loadHistory(),
-                    loadPtcAds()
-                ]);
-                initializeReferral();
-            } catch (error) {
-                console.error('Initialization error:', error);
-                showMessage('claimMessage', 'Uygulama başlatılamadı: ' + error.message, 'error');
-            }
-        }
-
-        // Kullanıcı verilerini yükleme
-        async function loadUserData() {
-            try {
-                const data = await apiRequest(`${API.ENDPOINTS.USER}/${userEmail}`);
-                userBalance = data.balance || 0;
-                localStorage.setItem('balance', userBalance);
-                document.getElementById('userBalance').textContent = userBalance.toFixed(8);
-                return data;
-            } catch (error) {
-                console.error('User data loading error:', error);
-                throw error;
-            }
-        }
-
-        // Claim işlemi
+        // Claim Function
         async function claim() {
             try {
-                const data = await apiRequest(API.ENDPOINTS.CLAIM, {
+                const data = await apiRequest('/claim', {
                     method: 'POST',
                     body: JSON.stringify({
                         email: userEmail,
-                        amount: CONFIG.CLAIM_AMOUNT
+                        amount: API_CONFIG.CLAIM_AMOUNT
                     })
                 });
 
-                showMessage('claimMessage', `Başarılı! ${CONFIG.CLAIM_AMOUNT} DGB kazandınız!`, 'success');
-                await loadUserData();
-                await loadHistory();
+                if (data.success) {
+                    showMessage('claimMessage', `Success! You earned ${API_CONFIG.CLAIM_AMOUNT} DGB!`, 'success');
+                    await loadUserData();
+                    await loadHistory();
+                }
             } catch (error) {
-                showMessage('claimMessage', 'Claim işlemi başarısız: ' + error.message, 'error');
+                showMessage('claimMessage', `Claim failed: ${error.message}`, 'error');
             }
         }
 
-        // Para çekme işlemi
+        // Withdrawal Function
         async function withdraw() {
             const amount = parseFloat(document.getElementById('withdrawAmount').value);
             
-            if (!amount || amount < CONFIG.MIN_WITHDRAW) {
-                showMessage('withdrawMessage', `Minimum çekim tutarı ${CONFIG.MIN_WITHDRAW} DGB`, 'error');
+            if (!amount || amount < API_CONFIG.MIN_WITHDRAW) {
+                showMessage('withdrawMessage', `Minimum withdrawal amount is ${API_CONFIG.MIN_WITHDRAW} DGB`, 'error');
                 return;
             }
 
             try {
-                const data = await apiRequest(API.ENDPOINTS.WITHDRAW, {
+                const data = await apiRequest('/withdraw', {
                     method: 'POST',
                     body: JSON.stringify({
                         email: userEmail,
@@ -662,74 +629,108 @@
                     })
                 });
 
-                document.getElementById('withdrawAmount').value = '';
-                showMessage('withdrawMessage', `${amount} DGB çekim işlemi başarılı!`, 'success');
-                await loadUserData();
-                await loadHistory();
+                if (data.success) {
+                    document.getElementById('withdrawAmount').value = '';
+                    showMessage('withdrawMessage', `Successfully withdrew ${amount} DGB!`, 'success');
+                    await loadUserData();
+                    await loadHistory();
+                }
             } catch (error) {
-                showMessage('withdrawMessage', 'Para çekme işlemi başarısız: ' + error.message, 'error');
+                showMessage('withdrawMessage', `Withdrawal failed: ${error.message}`, 'error');
             }
         }
 
-        // PTC reklamları yükleme
+        // PTC Functions
         async function loadPtcAds() {
             const ptcList = document.getElementById('ptcList');
             try {
-                const ads = await apiRequest(API.ENDPOINTS.PTC_ADS);
+                const ads = await apiRequest('/ptc-ads?email=' + encodeURIComponent(userEmail));
                 
                 if (ads.length > 0) {
                     ptcList.innerHTML = ads.map(ad => `
                         <div class="ptc-ad" id="ptc-${ad.id}">
                             <h3>${ad.title}</h3>
-                            <p>${ad.description}</p>
-                            <div class="view-btn" onclick="viewPtcAd('${ad.id}', ${ad.reward})">
-                                <span>Reklamı Görüntüle</span>
+                            <p>${ad.description || ''}</p>
+                            <div class="view-btn" onclick="startPtcView(${ad.id}, ${ad.reward}, ${ad.duration})">
+                                <span>View Advertisement</span>
                                 <span class="reward-text">${ad.reward} DGB</span>
                             </div>
                         </div>
                     `).join('');
                 } else {
-                    ptcList.innerHTML = '<div class="ptc-ad"><p>Şu anda aktif reklam bulunmuyor.</p></div>';
+                    ptcList.innerHTML = '<div class="ptc-ad"><p>No active advertisements available.</p></div>';
                 }
             } catch (error) {
-                console.error('PTC ads loading error:', error);
-                ptcList.innerHTML = '<div class="ptc-ad"><p>Reklamlar yüklenemedi.</p></div>';
+                console.error('PTC loading error:', error);
+                ptcList.innerHTML = '<div class="ptc-ad"><p>Failed to load advertisements.</p></div>';
             }
         }
 
-        // PTC reklam görüntüleme
-        async function viewPtcAd(adId, reward) {
+        async function startPtcView(adId, reward, duration) {
             try {
-                const data = await apiRequest(API.ENDPOINTS.VIEW_PTC, {
+                const startData = await apiRequest('/ptc/start', {
                     method: 'POST',
                     body: JSON.stringify({
                         email: userEmail,
-                        ad_id: adId
+                        ad_id: adId,
+                        session_id: sessionId
                     })
                 });
 
-                showMessage('ptcMessage', `Tebrikler! ${reward} DGB kazandınız!`, 'success');
-                
-                // Reklamı listeden kaldır
-                const adElement = document.getElementById(`ptc-${adId}`);
-                adElement.style.opacity = '0';
-                setTimeout(() => adElement.remove(), 300);
-                
-                await loadUserData();
+                if (startData.success) {
+                    const adElement = document.getElementById(`ptc-${adId}`);
+                    const originalContent = adElement.innerHTML;
+                    let timeLeft = duration;
+
+                    adElement.innerHTML = `
+                        <h3>Viewing Advertisement</h3>
+                        <div class="timer">Time remaining: ${timeLeft} seconds</div>
+                        <iframe src="${startData.url}" style="width:100%;height:400px;border:none;"></iframe>
+                    `;
+
+                    const timer = setInterval(async () => {
+                        timeLeft--;
+                        adElement.querySelector('.timer').textContent = `Time remaining: ${timeLeft} seconds`;
+
+                        if (timeLeft <= 0) {
+                            clearInterval(timer);
+                            try {
+                                const completeData = await apiRequest('/ptc/complete', {
+                                    method: 'POST',
+                                    body: JSON.stringify({
+                                        email: userEmail,
+                                        ad_id: adId,
+                                        session_id: sessionId
+                                    })
+                                });
+
+                                if (completeData.success) {
+                                    showMessage('ptcMessage', `Success! You earned ${reward} DGB!`, 'success');
+                                    adElement.style.opacity = '0';
+                                    setTimeout(() => adElement.remove(), 300);
+                                    await loadUserData();
+                                }
+                            } catch (error) {
+                                adElement.innerHTML = originalContent;
+                                showMessage('ptcMessage', `Failed to complete view: ${error.message}`, 'error');
+                            }
+                        }
+                    }, 1000);
+                }
             } catch (error) {
-                showMessage('ptcMessage', 'Reklam görüntülenemedi: ' + error.message, 'error');
+                showMessage('ptcMessage', `Failed to start view: ${error.message}`, 'error');
             }
         }
 
-        // İşlem geçmişini yükleme
+        // History Management
         async function loadHistory() {
             try {
-                const data = await loadUserData();
+                const userData = await loadUserData();
                 
-                // Claim geçmişi
+                // Claim history
                 const claimHistory = document.getElementById('claimHistory');
-                if (data.claim_history && data.claim_history.length > 0) {
-                    claimHistory.innerHTML = data.claim_history
+                if (userData.claim_history && userData.claim_history.length > 0) {
+                    claimHistory.innerHTML = userData.claim_history
                         .slice(-5)
                         .reverse()
                         .map(claim => `
@@ -742,13 +743,13 @@
                             </div>
                         `).join('');
                 } else {
-                    claimHistory.innerHTML = '<p>Henüz claim yapılmamış.</p>';
+                    claimHistory.innerHTML = '<p>No claims yet.</p>';
                 }
 
-                // Çekim geçmişi
+                // Withdrawal history
                 const withdrawHistory = document.getElementById('withdrawHistory');
-                if (data.withdrawals && data.withdrawals.length > 0) {
-                    withdrawHistory.innerHTML = data.withdrawals
+                if (userData.withdrawals && userData.withdrawals.length > 0) {
+                    withdrawHistory.innerHTML = userData.withdrawals
                         .slice(-5)
                         .reverse()
                         .map(withdraw => `
@@ -756,45 +757,47 @@
                                 <span>
                                     <i class="fas fa-paper-plane"></i>
                                     ${withdraw.amount} DGB
-                                    <span class="status">${withdraw.status}</span>
                                 </span>
                                 <span>${new Date(withdraw.timestamp).toLocaleString()}</span>
                             </div>
                         `).join('');
                 } else {
-                    withdrawHistory.innerHTML = '<p>Henüz çekim yapılmamış.</p>';
+                    withdrawHistory.innerHTML = '<p>No withdrawals yet.</p>';
                 }
             } catch (error) {
                 console.error('History loading error:', error);
             }
         }
 
-        // Referral sistemi
+        // Referral System
         function initializeReferral() {
-            const refLink = `${CONFIG.BASE_URL}?ref=${btoa(userEmail)}`;
+            const refLink = `${window.location.origin}?ref=${btoa(userEmail)}`;
             document.getElementById('refLink').value = refLink;
-            updateReferralStats();
-        }
-
-        async function updateReferralStats() {
-            try {
-                const data = await loadUserData();
-                document.getElementById('refCount').textContent = data.ref_count || 0;
-                document.getElementById('refEarnings').textContent = 
-                    (data.referral_earnings || 0).toFixed(8) + ' DGB';
-            } catch (error) {
-                console.error('Referral stats update error:', error);
-            }
         }
 
         function copyRefLink() {
             const refLink = document.getElementById('refLink');
             refLink.select();
             document.execCommand('copy');
-            showMessage('referralMessage', 'Referans linki kopyalandı!', 'success');
+            showMessage('referralMessage', 'Referral link copied!', 'success');
         }
 
-        // Yardımcı fonksiyonlar
+        // User Data Management
+        async function loadUserData() {
+            try {
+                const data = await apiRequest(`/user/${encodeURIComponent(userEmail)}`);
+                document.getElementById('userBalance').textContent = data.balance.toFixed(8);
+                document.getElementById('refCount').textContent = data.ref_count || 0;
+                document.getElementById('refEarnings').textContent = 
+                    (data.referral_earnings || 0).toFixed(8) + ' DGB';
+                return data;
+            } catch (error) {
+                console.error('Failed to load user data:', error);
+                throw error;
+            }
+        }
+
+        // UI Helpers
         function openTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -823,14 +826,43 @@
             window.location.href = 'login.html';
         }
 
-        // Sayfa yüklendiğinde
-        window.onload = async function() {
+        // Check URL for referral
+        function checkReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ref = urlParams.get('ref');
+            if (ref) {
+                try {
+                    const referrerEmail = atob(ref);
+                    localStorage.setItem('referrer', referrerEmail);
+                } catch (e) {
+                    console.error('Invalid referral code');
+                }
+            }
+        }
+
+        // Initialize Application
+        async function initializeApp() {
             if (!userEmail) {
                 window.location.href = 'login.html';
                 return;
             }
-            await initializeApp();
-        };
+
+            try {
+                checkReferral();
+                await Promise.all([
+                    loadUserData(),
+                    loadHistory(),
+                    loadPtcAds()
+                ]);
+                initializeReferral();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showMessage('claimMessage', 'Failed to initialize application: ' + error.message, 'error');
+            }
+        }
+
+        // Event Listeners
+        window.onload = initializeApp;
     </script>
 </body>
 </html>
