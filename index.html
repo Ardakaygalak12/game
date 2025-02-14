@@ -3,143 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goblin Mining Game</title>
+    <title>Goblin Mining Empire</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4a2;
-            --secondary-color: #2a4;
-            --background-dark: #222;
-            --background-light: #333;
-            --text-light: #fff;
-            --text-dark: #ddd;
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+            --accent-color: #FFC107;
+            --background-dark: #1a1a1a;
+            --background-medium: #2d2d2d;
+            --background-light: #3d3d3d;
+            --text-light: #ffffff;
+            --text-dark: #dddddd;
+            --success-color: #4CAF50;
+            --error-color: #f44336;
+            --warning-color: #ff9800;
+            --info-color: #2196f3;
+            --goblin-green: #8bc34a;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'MedievalSharp', cursive;
         }
 
         body {
             background-color: var(--background-dark);
             color: var(--text-light);
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMxYTFhMWEiLz48cGF0aCBkPSJNMCAwaDEwdjEwaC0xMHoiIGZpbGw9IiMyZDJkMmQiIG9wYWNpdHk9IjAuMSIvPjwvc3ZnPg==');
+            min-height: 100vh;
         }
 
-        .login-container, .register-container {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: var(--background-light);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            z-index: 1000;
+        /* Animations */
+        @keyframes glowing {
+            0% { box-shadow: 0 0 5px var(--accent-color); }
+            50% { box-shadow: 0 0 20px var(--accent-color); }
+            100% { box-shadow: 0 0 5px var(--accent-color); }
         }
 
-        .auth-visible {
-            display: block;
+        @keyframes mining {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
         }
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.5rem;
-            margin-top: 0.25rem;
-            border: none;
-            border-radius: 5px;
-            background-color: var(--background-dark);
-            color: var(--text-light);
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: var(--secondary-color);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .game-container {
-            display: none;
             max-width: 1200px;
             margin: 0 auto;
             padding: 1rem;
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: linear-gradient(to right, var(--background-medium), var(--background-light));
             padding: 1rem;
-            background-color: var(--background-light);
             border-radius: 10px;
             margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .balances {
+        .nav-menu {
             display: flex;
             gap: 1rem;
+            margin-top: 1rem;
         }
 
-        .balance-item {
-            background-color: var(--background-dark);
+        .nav-item {
             padding: 0.5rem 1rem;
             border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .mine-area {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+        .nav-item:hover {
+            background-color: var(--background-dark);
         }
 
-        .goblin-shop, .mining-section, .faucet-section {
-            background-color: var(--background-light);
+        .nav-item.active {
+            background-color: var(--primary-color);
+        }
+
+        .section {
+            background-color: var(--background-medium);
             padding: 1rem;
             border-radius: 10px;
+            margin-bottom: 1rem;
         }
 
         .goblin-card {
-            background-color: var(--background-dark);
+            background-color: var(--background-light);
             padding: 1rem;
             border-radius: 5px;
             margin-bottom: 1rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-
-        .earnings-area {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
+            transition: transform 0.3s;
         }
 
-        .ptc-section, .shortlink-section, .withdraw-section {
-            background-color: var(--background-light);
-            padding: 1rem;
-            border-radius: 10px;
+        .goblin-card:hover {
+            transform: translateY(-5px);
         }
 
-        .ptc-ad {
-            background-color: var(--background-dark);
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
+        .goblin-icon {
+            font-size: 2rem;
+            color: var(--goblin-green);
         }
 
         .progress-bar {
@@ -158,485 +133,885 @@
             transition: width 0.3s;
         }
 
+        .button {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .button:disabled {
+            background-color: var(--background-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
             padding: 1rem;
             border-radius: 5px;
-            background-color: var(--primary-color);
+            background-color: var(--success-color);
             color: var(--text-light);
             display: none;
             animation: slideIn 0.3s ease-out;
+            z-index: 1000;
         }
 
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(0);
-            }
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--background-medium);
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
         }
 
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 1rem;
+            .grid {
+                grid-template-columns: 1fr;
             }
 
-            .balances {
+            .header {
+                text-align: center;
+            }
+
+            .nav-menu {
                 flex-direction: column;
-                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <div class="form-group">
-            <label for="login-username">Username</label>
-            <input type="text" id="login-username" required>
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="login-form">
+                <h2>Login</h2>
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button class="button" onclick="login()">Login</button>
+                <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
+            </div>
+            <div id="register-form" style="display: none;">
+                <h2>Register</h2>
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email (Optional)</label>
+                    <input type="email" id="register-email">
+                </div>
+                <div class="form-group">
+                    <label for="referral-code">Referral Code (Optional)</label>
+                    <input type="text" id="referral-code">
+                </div>
+                <button class="button" onclick="register()">Register</button>
+                <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="login-password">Password</label>
-            <input type="password" id="login-password" required>
-        </div>
-        <button onclick="login()">Login</button>
-        <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
-    </div>
-
-    <div class="register-container">
-        <h2>Register</h2>
-        <div class="form-group">
-            <label for="register-username">Username</label>
-            <input type="text" id="register-username" required>
-        </div>
-        <div class="form-group">
-            <label for="register-password">Password</label>
-            <input type="password" id="register-password" required>
-        </div>
-        <div class="form-group">
-            <label for="referral-code">Referral Code (Optional)</label>
-            <input type="text" id="referral-code">
-        </div>
-        <button onclick="register()">Register</button>
-        <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
     </div>
 
     <div class="game-container">
         <div class="header">
-            <h1>Goblin Mining Game</h1>
-            <div class="balances">
-                <div class="balance-item">
-                    <i class="fas fa-coins"></i>
-                    GFT: <span id="gft-balance">0</span>
+            <h1>Goblin Mining Empire</h1>
+            <div class="user-info">
+                <div class="balances">
+                    <span><i class="fas fa-coins"></i> GFT: <span id="gft-balance">0</span></span>
+                    <span><i class="fas fa-gem"></i> DGB: <span id="dgb-balance">0</span></span>
+                    <span><i class="fas fa-dog"></i> DOGE: <span id="doge-balance">0</span></span>
                 </div>
-                <div class="balance-item">
-                    <i class="fas fa-gem"></i>
-                    DGB: <span id="dgb-balance">0</span>
+                <div class="user-level">
+                    Level: <span id="user-level">1</span>
+                    <div class="progress-bar">
+                        <div id="exp-progress" class="progress"></div>
+                    </div>
                 </div>
-                <div class="balance-item">
-                    <i class="fas fa-dog"></i>
-                    DOGE: <span id="doge-balance">0</span>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="showSection('mine')">Mine</div>
+                <div class="nav-item" onclick="showSection('shop')">Shop</div>
+                <div class="nav-item" onclick="showSection('earn')">Earn</div>
+                <div class="nav-item" onclick="showSection('convert')">Convert</div>
+                <div class="nav-item" onclick="showSection('withdraw')">Withdraw</div>
+                <div class="nav-item" onclick="showSection('referral')">Referral</div>
+            </nav>
+        </div>
+
+        <div id="mine-section" class="section">
+            <h2>Mining Operations</h2>
+            <div class="grid">
+                <div id="active-goblins">
+                    <!-- Active goblins will be populated here -->
+                </div>
+                <div class="mining-stats">
+                    <h3>Mining Stats</h3>
+                    <p>Total Mining Power: <span id="total-mining-power">0</span> GFT/min</p>
+                    <p>Mining Bonus: <span id="mining-bonus">0</span>%</p>
+                    <button class="button" onclick="collectMining()">Collect Mining Rewards</button>
                 </div>
             </div>
         </div>
 
-        <div class="mine-area">
-            <div class="goblin-shop">
-                <h2>Goblin Shop</h2>
+        <div id="shop-section" class="section" style="display: none;">
+            <h2>Goblin Shop</h2>
+            <div class="grid">
                 <div class="goblin-card">
-                    <div>
+                    <div class="goblin-icon"><i class="fas fa-user"></i></div>
+                    <div class="goblin-info">
                         <h3>Basic Goblin</h3>
                         <p>Mining Power: 0.1 GFT/min</p>
                         <p>Cost: 100 GFT</p>
+                        <button class="button" onclick="buyGoblin('basic')">Buy</button>
                     </div>
-                    <button onclick="buyGoblin('basic')">Buy</button>
                 </div>
                 <div class="goblin-card">
-                    <div>
+                    <div class="goblin-icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="goblin-info">
                         <h3>Advanced Goblin</h3>
                         <p>Mining Power: 0.5 GFT/min</p>
                         <p>Cost: 500 GFT</p>
+                        <button class="button" onclick="buyGoblin('advanced')">Buy</button>
                     </div>
-                    <button onclick="buyGoblin('advanced')">Buy</button>
                 </div>
                 <div class="goblin-card">
-                    <div>
+                    <div class="goblin-icon"><i class="fas fa-crown"></i></div>
+                    <div class="goblin-info">
                         <h3>Expert Goblin</h3>
                         <p>Mining Power: 2.0 GFT/min</p>
                         <p>Cost: 2000 GFT</p>
+                        <button class="button" onclick="buyGoblin('expert')">Buy</button>
                     </div>
-                    <button onclick="buyGoblin('expert')">Buy</button>
-                </div>
-            </div>
-
-            <div class="mining-section">
-                <h2>Mining Operation</h2>
-                <div id="active-goblins">
-                    <!-- Goblin mining status will be populated here -->
-                </div>
-                <button onclick="collectMining()">Collect Mining Rewards</button>
-            </div>
-
-            <div class="faucet-section">
-                <h2>Faucet</h2>
-                <p>Claim 0.1 GFT every 5 seconds</p>
-                <button id="faucet-button" onclick="claimFaucet()">Claim</button>
-                <div class="progress-bar">
-                    <div id="faucet-progress" class="progress"></div>
                 </div>
             </div>
         </div>
 
-        <div class="earnings-area">
-            <div class="ptc-section">
-                <h2>PTC Ads</h2>
-                <div id="ptc-ads">
-                    <!-- PTC ads will be populated here -->
+        <div id="earn-section" class="section" style="display: none;">
+            <h2>Earn GFT</h2>
+            <div class="grid">
+                <div class="earn-card">
+                    <h3>Faucet</h3>
+                    <p>Claim 0.1 GFT every 5 seconds</p>
+                    <button id="faucet-button" class="button" onclick="claimFaucet()">Claim</button>
+                    <div class="progress-bar">
+                        <div id="faucet-progress" class="progress"></div>
+                    </div>
+                </div>
+                <div class="earn-card">
+                    <h3>PTC Ads</h3>
+                    <div id="ptc-ads">
+                        <!-- PTC ads will be populated here -->
+                    </div>
+                </div>
+                <div class="earn-card">
+                    <h3>Shortlinks</h3>
+                    <div id="shortlinks">
+                        <!-- Shortlinks will be populated here -->
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="shortlink-section">
-                <h2>Shortlinks</h2>
-                <div id="shortlinks">
-                    <!-- Shortlinks will be populated here -->
+        <div id="convert-section" class="section" style="display: none;">
+            <h2>Convert Currency</h2>
+            <div class="grid">
+                <div class="convert-card">
+                    <h3>Convert GFT</h3>
+                    <div class="form-group">
+                        <label for="convert-amount">Amount</label>
+                        <input type="number" id="convert-amount" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>From</label>
+                        <select id="convert-from">
+                            <option value="GFT">GFT</option>
+                            <option value="DGB">DGB</option>
+                            <option value="DOGE">DOGE</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>To</label>
+                        <select id="convert-to">
+                            <option value="DGB">DGB</option>
+                            <option value="DOGE">DOGE</option>
+                            <option value="GFT">GFT</option>
+                        </select>
+                    </div>
+                    <button class="button" onclick="convertCurrency()">Convert</button>
+                </div>
+                <div class="rates-card">
+                    <h3>Exchange Rates</h3>
+                    <p>1 GFT = 0.1 DGB</p>
+                    <p>1 GFT = 0.05 DOGE</p>
+                    <p>1 DGB = 8.0 GFT</p>
+                    <p>1 DOGE = 15.0 GFT</p>
                 </div>
             </div>
+        </div>
 
-            <div class="withdraw-section">
-                <h2>Withdraw</h2>
-                <div class="form-group">
-                    <label for="withdraw-amount">Amount</label>
-                    <input type="number" id="withdraw-amount" min="0" step="0.1">
+        <div id="withdraw-section" class="section" style="display: none;">
+            <h2>Withdraw to FaucetPay</h2>
+            <div class="grid">
+                <div class="withdraw-card">
+                    <div class="form-group">
+                        <label for="withdraw-amount">Amount</label>
+                        <input type="number" id="withdraw-amount" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="withdraw-currency">Currency</label>
+                        <select id="withdraw-currency">
+                            <option value="DGB">DGB</option>
+                            <option value="DOGE">DOGE</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="faucetpay-address">FaucetPay Address</label>
+                        <input type="text" id="faucetpay-address">
+                    </div>
+                    <button class="button" onclick="withdraw()">Withdraw</button>
                 </div>
-                <div class="form-group">
-                    <label for="withdraw-currency">Currency</label>
-                    <select id="withdraw-currency">
-                        <option value="DGB">DGB</option>
-                        <option value="DOGE">DOGE</option>
-                    </select>
+            </div>
+        </div>
+
+        <div id="referral-section" class="section" style="display: none;">
+            <h2>Referral Program</h2>
+            <div class="grid">
+                <div class="referral-card">
+                    <h3>Your Referral Code</h3>
+                    <div class="referral-code">
+                        <span id="referral-code-display"></span>
+                        <button class="button" onclick="copyReferralCode()">Copy</button>
+                    </div>
+                    <div class="referral-stats">
+                        <p>Total Referred: <span id="total-referred">0</span></p>
+                        <p>Active Referred: <span id="active-referred">0</span></p>
+                        <p>Mining Bonus: <span id="referral-bonus">0</span>%</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="faucetpay-address">FaucetPay Address</label>
-                    <input type="text" id="faucetpay-address">
+                <div class="referred-users">
+                    <h3>Referred Users</h3>
+                    <div id="referred-users-list">
+                        <!-- Referred users will be populated here -->
+                    </div>
                 </div>
-                <button onclick="withdraw()">Withdraw to FaucetPay</button>
             </div>
         </div>
     </div>
 
-    <div class="notification" id="notification"></div>
+    <div id="notification" class="notification"></div>
 
     <script>
-        // API endpoint
-        const API_URL = 'http://127.0.0.1:5000';
-        let token = localStorage.getItem('token');
+// API Configuration
+const API_URL = 'http://localhost:5000';
+let token = localStorage.getItem('token');
 
-        // Show login form on load if no token
-        window.onload = () => {
-            if (!token) {
-                showLogin();
-            } else {
-                showGame();
-                initializeGame();
+// Check authentication on load
+window.onload = () => {
+    if (!token) {
+        showAuthModal();
+    } else {
+        initializeGame();
+    }
+};
+
+// Authentication Functions
+function showAuthModal() {
+    document.getElementById('auth-modal').style.display = 'flex';
+}
+
+function hideAuthModal() {
+    document.getElementById('auth-modal').style.display = 'none';
+}
+
+function showLogin() {
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('register-form').style.display = 'none';
+}
+
+function showRegister() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+}
+
+async function login() {
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            token = data.token;
+            localStorage.setItem('token', token);
+            hideAuthModal();
+            initializeGame();
+            showNotification('Login successful!');
+        } else {
+            showNotification(data.error, 'error');
+        }
+    } catch (error) {
+        showNotification('Error connecting to server', 'error');
+    }
+}
+
+async function register() {
+    const username = document.getElementById('register-username').value;
+    const password = document.getElementById('register-password').value;
+    const email = document.getElementById('register-email').value;
+    const referralCode = document.getElementById('referral-code').value;
+
+    try {
+        const response = await fetch(`${API_URL}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                password,
+                email,
+                referral_code: referralCode
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showLogin();
+            showNotification('Registration successful! Please login.');
+        } else {
+            showNotification(data.error, 'error');
+        }
+    } catch (error) {
+        showNotification('Error connecting to server', 'error');
+    }
+}
+
+// Game Initialization
+async function initializeGame() {
+    await Promise.all([
+        updateUserStats(),
+        loadPtcAds(),
+        loadShortlinks(),
+        startFaucetTimer(),
+        loadReferralStats(),
+        startMiningInterval()
+    ]);
+}
+
+// User Stats
+async function updateUserStats() {
+    try {
+        const response = await fetch(`${API_URL}/user/stats`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
-        };
+        });
 
-        // Auth functions
-        function showLogin() {
-            document.querySelector('.login-container').classList.add('auth-visible');
-            document.querySelector('.register-container').classList.remove('auth-visible');
-            document.querySelector('.game-container').style.display = 'none';
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('gft-balance').textContent = data.gft_balance.toFixed(8);
+            document.getElementById('dgb-balance').textContent = data.dgb_balance.toFixed(8);
+            document.getElementById('doge-balance').textContent = data.doge_balance.toFixed(8);
+            document.getElementById('user-level').textContent = data.level;
+            document.getElementById('total-mining-power').textContent = data.mining_power.toFixed(2);
+            document.getElementById('mining-bonus').textContent = (data.mining_bonus * 100).toFixed(1);
+            
+            // Update experience progress bar
+            const expProgress = (data.experience % 100) / 100;
+            document.getElementById('exp-progress').style.width = `${expProgress * 100}%`;
+            
+            // Update goblin list
+            updateGoblinList(data.goblins);
         }
+    } catch (error) {
+        showNotification('Error updating stats', 'error');
+    }
+}
 
-        function showRegister() {
-            document.querySelector('.login-container').classList.remove('auth-visible');
-            document.querySelector('.register-container').classList.add('auth-visible');
-            document.querySelector('.game-container').style.display = 'none';
-        }
+// Mining Functions
+function updateGoblinList(goblins) {
+    const container = document.getElementById('active-goblins');
+    container.innerHTML = '';
 
-        function showGame() {
-            document.querySelector('.login-container').classList.remove('auth-visible');
-            document.querySelector('.register-container').classList.remove('auth-visible');
-            document.querySelector('.game-container').style.display = 'block';
-        }
+    goblins.forEach(goblin => {
+        const goblinElement = document.createElement('div');
+        goblinElement.className = 'goblin-card';
+        goblinElement.innerHTML = `
+            <div class="goblin-icon"><i class="fas fa-user${goblin.type === 'basic' ? '': goblin.type === 'advanced' ? '-tie' : '-crown'}"></i></div>
+            <div class="goblin-info">
+                <h3>${goblin.type.charAt(0).toUpperCase() + goblin.type.slice(1)} Goblin</h3>
+                <p>Level: ${goblin.level}</p>
+                <p>Mining Power: ${goblin.mining_power.toFixed(2)} GFT/min</p>
+                <div class="progress-bar">
+                    <div class="progress mining-progress" style="animation: mining 1s infinite"></div>
+                </div>
+            </div>
+        `;
+        container.appendChild(goblinElement);
+    });
+}
 
-        async function login() {
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
+let miningInterval = null;
+function startMiningInterval() {
+    if (miningInterval) clearInterval(miningInterval);
+    miningInterval = setInterval(collectMining, 60000); // Collect every minute
+}
 
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    token = data.token;
-                    localStorage.setItem('token', token);
-                    showGame();
-                    initializeGame();
-                    showNotification('Login successful!');
-                } else {
-                    showNotification(data.error, 'error');
-                }
-            } catch (error) {
-                showNotification('Error connecting to server', 'error');
+async function collectMining() {
+    try {
+        const response = await fetch(`${API_URL}/mine`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.reward > 0) {
+            updateUserStats();
+            showNotification(`Collected ${data.reward.toFixed(8)} GFT from mining!`);
         }
+    } catch (error) {
+        showNotification('Error collecting mining rewards', 'error');
+    }
+}
 
-        async function register() {
-            const username = document.getElementById('register-username').value;
-            const password = document.getElementById('register-password').value;
-            const referralCode = document.getElementById('referral-code').value;
+async function buyGoblin(type) {
+    try {
+        const response = await fetch(`${API_URL}/goblin/buy`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ type })
+        });
 
-            try {
-                const response = await fetch(`${API_URL}/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password, referral_code: referralCode })
-                });
+        const data = await response.json();
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    showLogin();
-                    showNotification('Registration successful! Please login.');
-                } else {
-                    showNotification(data.error, 'error');
-                }
-            } catch (error) {
-                showNotification('Error connecting to server', 'error');
-            }
+        if (response.ok) {
+            updateUserStats();
+            showNotification(`Successfully bought ${type} goblin!`);
+        } else {
+            showNotification(data.error, 'error');
         }
+    } catch (error) {
+        showNotification('Error buying goblin', 'error');
+    }
+}
 
-        // Game functions
-        async function initializeGame() {
-            updateBalances();
-            startFaucetTimer();
-            loadPtcAds();
-            loadShortlinks();
-            startMiningInterval();
-        }
+// Faucet Functions
+let faucetTimer = null;
+function startFaucetTimer() {
+    const button = document.getElementById('faucet-button');
+    const progressBar = document.getElementById('faucet-progress');
+    let progress = 0;
 
-        async function updateBalances() {
-            // Implement balance update logic
-        }
-
-        async function buyGoblin(type) {
-            try {
-                const response = await fetch(`${API_URL}/goblin/buy`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ type })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    updateBalances();
-                    showNotification(`Successfully bought ${type} goblin!`);
-                } else {
-                    showNotification(data.error, 'error');
-                }
-            } catch (error) {
-                showNotification('Error connecting to server', 'error');
-            }
-        }
-
-        let faucetTimer = null;
-        function startFaucetTimer() {
-            const progressBar = document.getElementById('faucet-progress');
-            const button = document.getElementById('faucet-button');
-            let progress = 0;
-
-            faucetTimer = setInterval(() => {
-                progress += 2;
-                progressBar.style.width = `${progress}%`;
-                
-                if (progress >= 100) {
-                    button.disabled = false;
-                    clearInterval(faucetTimer);
-                    progressBar.style.width = '0%';
-                }
-            }, 100);
-        }
-
-        async function claimFaucet() {
-            const button = document.getElementById('faucet-button');
-            button.disabled = true;
-
-            try {
-                const response = await fetch(`${API_URL}/faucet/claim`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    updateBalances();
-                    showNotification(`Claimed ${data.reward} GFT!`);
-                    startFaucetTimer();
-                } else {
-                    showNotification(data.error, 'error');
-                    button.disabled = false;
-                }
-            } catch (error) {
-                showNotification('Error connecting to server', 'error');
-                button.disabled = false;
-            }
-        }
-
-        async function loadPtcAds() {
-            try {
-                const response = await fetch(`${API_URL}/ptc/list`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const ads = await response.json();
-                const container = document.getElementById('ptc-ads');
-                container.innerHTML = '';
-
-                ads.forEach(ad => {
-                    const adElement = document.createElement('div');
-                    adElement.className = 'ptc-ad';
-                    adElement.innerHTML = `
-                        <h3>${ad.title}</h3>
-                        <p>Reward: ${ad.reward} GFT</p>
-                        <p>Duration: ${ad.duration} seconds</p>
-                        <button onclick="viewPtcAd(${ad.id}, ${ad.duration})">View Ad</button>
-                    `;
-                    container.appendChild(adElement);
-                });
-            } catch (error) {
-                showNotification('Error loading PTC ads', 'error');
-            }
-        }
-
-        async function viewPtcAd(adId, duration) {
-            const adWindow = window.open('about:blank', 'ptc_ad', 'width=800,height=600');
-            let timer = duration;
-
-            try {
-                const response = await fetch(`${API_URL}/ptc/view`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ad_id: adId })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    updateBalances();
-                    showNotification(`Earned ${data.reward} GFT from PTC ad!`);
-                    loadPtcAds();
-                } else {
-                    showNotification(data.error, 'error');
-                }
-            } catch (error) {
-                showNotification('Error viewing PTC ad', 'error');
-            }
-        }
-
-        let miningInterval = null;
-        function startMiningInterval() {
-            miningInterval = setInterval(collectMining, 60000); // Collect every minute
-        }
-
-        async function collectMining() {
-            try {
-                const response = await fetch(`${API_URL}/mine`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.reward > 0) {
-                    updateBalances();
-                    showNotification(`Collected ${data.reward} GFT from mining!`);
-                }
-            } catch (error) {
-                showNotification('Error collecting mining rewards', 'error');
-            }
-        }
-
-        async function withdraw() {
-            const amount = document.getElementById('withdraw-amount').value;
-            const currency = document.getElementById('withdraw-currency').value;
-            const address = document.getElementById('faucetpay-address').value;
-
-            if (!amount || !address) {
-                showNotification('Please fill all fields', 'error');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_URL}/withdraw`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        amount: parseFloat(amount),
-                        currency,
-                        faucetpay_address: address
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    updateBalances();
-                    showNotification('Withdrawal successful!');
-                } else {
-                    showNotification(data.error, 'error');
-                }
-            } catch (error) {
-                showNotification('Error processing withdrawal', 'error');
-            }
-        }
-
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.backgroundColor = type === 'success' ? 'var(--primary-color)' : '#f44336';
-            notification.style.display = 'block';
-
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-
-        // Clean up on page unload
-        window.onunload = () => {
+    if (faucetTimer) clearInterval(faucetTimer);
+    
+    button.disabled = true;
+    faucetTimer = setInterval(() => {
+        progress += 2;
+        progressBar.style.width = `${progress}%`;
+        
+        if (progress >= 100) {
+            button.disabled = false;
             clearInterval(faucetTimer);
-            clearInterval(miningInterval);
-        };
+            progressBar.style.width = '0%';
+        }
+    }, 100); // 5 seconds total
+}
+
+async function claimFaucet() {
+    const button = document.getElementById('faucet-button');
+    button.disabled = true;
+
+    try {
+        const response = await fetch(`${API_URL}/faucet/claim`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            updateUserStats();
+            showNotification(`Claimed ${data.reward.toFixed(8)} GFT!`);
+            startFaucetTimer();
+        } else {
+            showNotification(data.error, 'error');
+            button.disabled = false;
+        }
+    } catch (error) {
+        showNotification('Error claiming faucet', 'error');
+        button.disabled = false;
+    }
+}
+
+// PTC Functions
+async function loadPtcAds() {
+    try {
+        const response = await fetch(`${API_URL}/ptc/list`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const ads = await response.json();
+        const container = document.getElementById('ptc-ads');
+        container.innerHTML = '';
+
+        ads.forEach(ad => {
+            const adElement = document.createElement('div');
+            adElement.className = 'ptc-ad';
+            adElement.innerHTML = `
+                <h3>${ad.title}</h3>
+                <p>Reward: ${ad.reward.toFixed(8)} GFT</p>
+                <p>Duration: ${ad.duration} seconds</p>
+                <button class="button" onclick="viewPtcAd(${ad.id}, ${ad.duration})">View Ad</button>
+            `;
+            container.appendChild(adElement);
+        });
+    } catch (error) {
+        showNotification('Error loading PTC ads', 'error');
+    }
+}
+
+let ptcTimer = null;
+function startPtcTimer(adId, duration) {
+    const button = document.querySelector(`[onclick="viewPtcAd(${adId}, ${duration})"]`);
+    let timeLeft = duration;
+    
+    button.disabled = true;
+    button.textContent = `Wait ${timeLeft}s`;
+    
+    ptcTimer = setInterval(() => {
+        timeLeft--;
+        button.textContent = `Wait ${timeLeft}s`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(ptcTimer);
+            button.disabled = false;
+            button.textContent = 'Claim Reward';
+            button.onclick = () => claimPtcReward(adId);
+        }
+    }, 1000);
+}
+
+async function viewPtcAd(adId, duration) {
+    try {
+        const response = await fetch(`${API_URL}/ptc/view`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ad_id: adId })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            startPtcTimer(adId, duration);
+        } else {
+            showNotification(data.error, 'error');
+        }
+    } catch (error) {
+        showNotification('Error viewing PTC ad', 'error');
+    }
+}
+
+// Shortlink Functions
+async function loadShortlinks() {
+    try {
+        const response = await fetch(`${API_URL}/shortlink/list`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const shortlinks = await response.json();
+        const container = document.getElementById('shortlinks');
+        container.innerHTML = '';
+
+        shortlinks.forEach(link => {
+            const linkElement = document.createElement('div');
+            linkElement.className = 'shortlink-card';
+            linkElement.innerHTML = `
+                <h3>Shortlink #${link.id}</h3>
+                <p>Reward: ${link.reward.toFixed(8)} GFT</p>
+                <p>Energy Required: ${link.energy_required}</p>
+                <p>Cooldown: ${link.cooldown} minutes</p>
+                <button class="button" onclick="openShortlink(${link.id})">Visit Link</button>
+            `;
+            container.appendChild(linkElement);
+        });
+    } catch (error) {
+        showNotification('Error loading shortlinks', 'error');
+    }
+}
+
+async function openShortlink(id) {
+    // In a real implementation, this would open the actual shortlink
+    // For demo purposes, we'll just verify it immediately
+    try {
+        const response = await fetch(`${API_URL}/shortlink/verify`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ shortlink_id: id })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            updateUserStats();
+            showNotification(`Earned ${data.reward.toFixed(8)} GFT from shortlink!`);
+            loadShortlinks();
+        } else {
+            showNotification(data.error, 'error');
+        }
+    } catch (error) {
+        showNotification('Error verifying shortlink', 'error');
+    }
+}
+
+// Currency Conversion
+async function convertCurrency() {
+    const amount = parseFloat(document.getElementById('convert-amount').value);
+    const fromCurrency = document.getElementById('convert-from').value;
+    const toCurrency = document.getElementById('convert-to').value;
+
+    if (!amount || fromCurrency === toCurrency) {
+        showNotification('Please enter a valid amount and different currencies', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/convert`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount,
+                from_currency: fromCurrency,
+                to_currency: toCurrency
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            updateUserStats();
+            showNotification(`Converted ${amount} ${fromCurrency} to ${data.converted_amount.toFixed(8)} ${toCurrency}`);
+        } else {
+            showNotification(data.error, 'error');
+        }
+    } catch (error) {
+        showNotification('Error converting currency', 'error');
+    }
+}
+
+// Withdrawal
+async function withdraw() {
+    const amount = parseFloat(document.getElementById('withdraw-amount').value);
+    const currency = document.getElementById('withdraw-currency').value;
+    const address = document.getElementById('faucetpay-address').value;
+
+    if (!amount || !address) {
+        showNotification('Please fill all fields', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/withdraw`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount,
+                currency,
+                faucetpay_address: address
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            updateUserStats();
+            showNotification('Withdrawal successful!');
+        } else {
+            showNotification(data.error, 'error');
+        }
+    } catch (error) {
+        showNotification('Error processing withdrawal', 'error');
+    }
+}
+
+// Referral System
+async function loadReferralStats() {
+    try {
+        const response = await fetch(`${API_URL}/referral/stats`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('referral-code-display').textContent = data.referral_code;
+            document.getElementById('total-referred').textContent = data.total_referred;
+            document.getElementById('active-referred').textContent = data.active_referred;
+            document.getElementById('referral-bonus').textContent = (data.total_bonus * 100).toFixed(1);
+
+            // Update referred users list
+            const container = document.getElementById('referred-users-list');
+            container.innerHTML = '';
+            
+            data.referred_users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'referred-user';
+                userElement.innerHTML = `
+                    <p>${user.username}</p>
+                    <p>Level ${user.level}</p>
+                    <p>Last Active: ${user.last_active ? new Date(user.last_active).toLocaleDateString() : 'Never'}</p>
+                `;
+                container.appendChild(userElement);
+            });
+        }
+    } catch (error) {
+        showNotification('Error loading referral stats', 'error');
+    }
+}
+
+function copyReferralCode() {
+    const code = document.getElementById('referral-code-display').textContent;
+    navigator.clipboard.writeText(code)
+        .then(() => showNotification('Referral code copied to clipboard!'))
+        .catch(() => showNotification('Failed to copy referral code', 'error'));
+}
+
+// UI Functions
+function showSection(sectionName) {
+    const sections = ['mine', 'shop', 'earn', 'convert', 'withdraw', 'referral'];
+    sections.forEach(section => {
+        document.getElementById(`${section}-section`).style.display = 
+            section === sectionName ? 'block' : 'none';
+    });
+
+    // Update navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.textContent.toLowerCase() === sectionName) {
+            item.classList.add('active');
+        }
+    });
+}
+
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.backgroundColor = type === 'success' ? 'var(--success-color)' : 'var(--error-color)';
+    notification.style.display = 'block';
+
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+// Clean up on page unload
+window.onunload = () => {
+    clearInterval(miningInterval);
+    clearInterval(faucetTimer);
+    clearInterval(ptcTimer);
+};
 </script>
 </body>
 </html>
